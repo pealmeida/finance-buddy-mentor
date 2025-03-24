@@ -100,7 +100,7 @@ const SavingStrategies: React.FC<SavingStrategiesProps> = ({ userProfile }) => {
       timeFrame: 'immediate',
       steps: [
         'Determine a realistic savings amount (start with 5-10% of income)',
-        'Open a high-yield savings account if you don't already have one',
+        "Open a high-yield savings account if you don't already have one",
         'Set up automatic transfers to occur on payday',
         'Create separate automated savings for different goals (retirement, home, travel, etc.)',
         'Gradually increase the percentage saved as your income increases'
