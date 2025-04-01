@@ -126,7 +126,7 @@ export function useUserProfile() {
       toast({
         title: "Warning",
         description: "Could not load your financial goals. Please try again later.",
-        variant: "warning"
+        variant: "destructive"  // Changed from "warning" to "destructive"
       });
       return [];
     }
@@ -156,7 +156,7 @@ export function useUserProfile() {
       toast({
         title: "Warning",
         description: "Could not load your investments. Please try again later.",
-        variant: "warning"
+        variant: "destructive"  // Changed from "warning" to "destructive"
       });
       return [];
     }
@@ -186,7 +186,7 @@ export function useUserProfile() {
       toast({
         title: "Warning",
         description: "Could not load your debt details. Please try again later.",
-        variant: "warning"
+        variant: "destructive"  // Changed from "warning" to "destructive"
       });
       return [];
     }
