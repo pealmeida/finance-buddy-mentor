@@ -17,13 +17,15 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
   const navigate = useNavigate();
   const { toast } = useToast();
   const location = useLocation();
-  const { saveUserProfile } = useSupabaseData();
+  const { saveUserProfile, loading: savingProfile } = useSupabaseData();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEditMode = Boolean(userProfile);
   
   // Check if we're editing an existing profile or creating a new one
   const handleProfileComplete = async (profile: UserProfile) => {
     try {
+      if (isSubmitting) return; // Prevent duplicate submissions
+      
       setIsSubmitting(true);
       
       // Check for authenticated user first
@@ -45,8 +47,15 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
           name: profile.name || (session.user.user_metadata?.name as string) || 'User',
         };
         
+        // Validate profile before saving
+        if (!profileWithId.id) {
+          throw new Error("Profile must have a valid ID");
+        }
+        
         // Save profile to Supabase
+        console.log('About to save profile to Supabase:', profileWithId);
         const success = await saveUserProfile(profileWithId);
+        
         if (!success) {
           throw new Error("Failed to save profile to database");
         }
@@ -108,6 +117,7 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
             onComplete={handleProfileComplete} 
             existingProfile={userProfile} 
             isEditMode={isEditMode}
+            isSaving={isSubmitting || savingProfile}
           />
         </div>
       </div>

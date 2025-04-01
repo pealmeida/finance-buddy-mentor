@@ -19,11 +19,17 @@ interface UserOnboardingProps {
   onComplete: (profile: UserProfile) => void;
   existingProfile?: UserProfile;
   isEditMode?: boolean;
+  isSaving?: boolean;
 }
 
 const TOTAL_STEPS = 5;
 
-const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existingProfile, isEditMode }) => {
+const OnboardingContent: React.FC<UserOnboardingProps> = ({ 
+  onComplete, 
+  existingProfile, 
+  isEditMode,
+  isSaving = false 
+}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -146,15 +152,21 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
         onComplete={handleComplete}
         onCancel={isEditMode ? handleCancel : undefined}
         isEditMode={isEditMode}
+        isLoading={isSaving}
       />
     </div>
   );
 };
 
-const UserOnboarding: React.FC<UserOnboardingProps> = ({ onComplete, existingProfile, isEditMode }) => {
+const UserOnboarding: React.FC<UserOnboardingProps> = ({ onComplete, existingProfile, isEditMode, isSaving }) => {
   return (
     <OnboardingProvider>
-      <OnboardingContent onComplete={onComplete} existingProfile={existingProfile} isEditMode={isEditMode} />
+      <OnboardingContent 
+        onComplete={onComplete} 
+        existingProfile={existingProfile} 
+        isEditMode={isEditMode}
+        isSaving={isSaving} 
+      />
     </OnboardingProvider>
   );
 };
