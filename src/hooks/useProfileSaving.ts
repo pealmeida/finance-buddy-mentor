@@ -1,8 +1,16 @@
 
 import { useState } from 'react';
-import { UserProfile } from '@/types/finance';
+import { UserProfile, RiskProfile } from '@/types/finance';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+
+// Helper function to validate risk profile type
+const validateRiskProfile = (profile: string | undefined): RiskProfile => {
+  if (profile === 'conservative' || profile === 'moderate' || profile === 'aggressive') {
+    return profile as RiskProfile;
+  }
+  return 'moderate'; // Default to moderate if invalid value
+};
 
 export function useProfileSaving() {
   const { toast } = useToast();
@@ -23,6 +31,9 @@ export function useProfileSaving() {
       if (!name) throw new Error("Name is required");
       if (!email) throw new Error("Email is required");
       if (!profile.riskProfile) throw new Error("Risk profile is required");
+      
+      // Ensure riskProfile is a valid RiskProfile type
+      const validRiskProfile = validateRiskProfile(profile.riskProfile);
       
       // Upsert basic profile
       const { error: profileError } = await supabase
@@ -45,7 +56,7 @@ export function useProfileSaving() {
         .upsert({
           id: userId,
           monthly_income: profile.monthlyIncome || 0,
-          risk_profile: profile.riskProfile,
+          risk_profile: validRiskProfile,
           has_emergency_fund: profile.hasEmergencyFund,
           emergency_fund_months: profile.emergencyFundMonths,
           has_debts: profile.hasDebts

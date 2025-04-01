@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { UserProfile } from "./types/finance";
+import { UserProfile, RiskProfile } from "./types/finance";
 import Dashboard from "./pages/Dashboard";
 import OnboardingPage from "./pages/OnboardingPage";
 import SignupPage from "./pages/SignupPage";
@@ -16,6 +16,14 @@ import { supabase } from "./integrations/supabase/client";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
+
+// Helper function to ensure riskProfile is a valid RiskProfile type
+const validateRiskProfile = (profile: string | null): RiskProfile => {
+  if (profile === 'conservative' || profile === 'moderate' || profile === 'aggressive') {
+    return profile;
+  }
+  return 'moderate'; // Default to moderate if invalid value
+};
 
 // Helper function to get user profile from Supabase - outside of component
 const fetchUserProfileFromSupabase = async (userId: string) => {
@@ -91,6 +99,9 @@ const fetchUserProfileFromSupabase = async (userId: string) => {
       interestRate: debt.interest_rate
     })) : [];
     
+    // Ensure riskProfile is a valid RiskProfile type
+    const riskProfile = validateRiskProfile(financialProfileData?.risk_profile);
+    
     // Combine data from both tables into a user profile object
     return {
       id: profileData.id || userId,
@@ -98,7 +109,7 @@ const fetchUserProfileFromSupabase = async (userId: string) => {
       name: profileData.name || 'User',
       age: profileData.age || 0,
       monthlyIncome: financialProfileData?.monthly_income || 0,
-      riskProfile: financialProfileData?.risk_profile || 'moderate',
+      riskProfile: riskProfile,
       hasEmergencyFund: financialProfileData?.has_emergency_fund || false,
       emergencyFundMonths: financialProfileData?.emergency_fund_months,
       hasDebts: financialProfileData?.has_debts || false,
@@ -209,8 +220,12 @@ function App() {
             if (savedProfile) {
               try {
                 const parsedProfile = JSON.parse(savedProfile);
-                // Ensure the profile has the user's ID
+                // Ensure the profile has the user's ID and valid riskProfile
                 parsedProfile.id = session.user.id;
+                
+                // Validate the riskProfile
+                parsedProfile.riskProfile = validateRiskProfile(parsedProfile.riskProfile);
+                
                 console.log('Using local profile:', parsedProfile);
                 
                 // Check if profile is complete enough to skip onboarding
@@ -257,6 +272,10 @@ function App() {
           if (savedProfile) {
             try {
               const parsedProfile = JSON.parse(savedProfile);
+              
+              // Validate the riskProfile
+              parsedProfile.riskProfile = validateRiskProfile(parsedProfile.riskProfile);
+              
               console.log('Using local profile (no auth):', parsedProfile);
               setUserProfile(parsedProfile);
               

@@ -3,6 +3,14 @@ import { useSupabaseBase } from './useSupabaseBase';
 import { UserProfile, RiskProfile } from '@/types/finance';
 import { v4 as uuidv4 } from 'uuid';
 
+// Helper function to validate risk profile type
+const validateRiskProfile = (profile: string | null): RiskProfile => {
+  if (profile === 'conservative' || profile === 'moderate' || profile === 'aggressive') {
+    return profile as RiskProfile;
+  }
+  return 'moderate'; // Default to moderate if invalid value
+};
+
 /**
  * Hook for fetching and managing user profile data
  */
@@ -61,6 +69,9 @@ export function useUserProfile() {
         return minimalProfile;
       }
       
+      // Ensure riskProfile is a valid RiskProfile type
+      const riskProfile = validateRiskProfile(financialProfileData?.risk_profile);
+      
       // Combine data from both tables into a user profile object
       const userProfile: Partial<UserProfile> = {
         id: profileData.id || userId,
@@ -68,7 +79,7 @@ export function useUserProfile() {
         name: profileData.name || 'User',
         age: profileData.age || 0,
         monthlyIncome: financialProfileData?.monthly_income || 0,
-        riskProfile: (financialProfileData?.risk_profile as RiskProfile) || 'moderate',
+        riskProfile: riskProfile,
         hasEmergencyFund: financialProfileData?.has_emergency_fund || false,
         emergencyFundMonths: financialProfileData?.emergency_fund_months,
         hasDebts: financialProfileData?.has_debts || false,

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { UserProfile } from '@/types/finance';
+import { UserProfile, RiskProfile } from '@/types/finance';
 import { useOnboarding } from '@/context/OnboardingContext';
 import StepIndicator from './StepIndicator';
 import PersonalInfoStep from './PersonalInfoStep';
@@ -22,6 +22,14 @@ interface OnboardingContentProps {
 }
 
 const TOTAL_STEPS = 5;
+
+// Helper function to validate risk profile type
+const validateRiskProfile = (profile: string | undefined): RiskProfile => {
+  if (profile === 'conservative' || profile === 'moderate' || profile === 'aggressive') {
+    return profile as RiskProfile;
+  }
+  return 'moderate'; // Default to moderate if invalid value
+};
 
 const OnboardingContent: React.FC<OnboardingContentProps> = ({ 
   onComplete, 
@@ -120,7 +128,7 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
         name: profile.name || (session?.user?.user_metadata?.name as string || 'User'),
         age: profile.age || 0,
         monthlyIncome: profile.monthlyIncome || 0,
-        riskProfile: profile.riskProfile || 'moderate',
+        riskProfile: validateRiskProfile(profile.riskProfile),
         hasEmergencyFund: profile.hasEmergencyFund || false,
         hasDebts: profile.hasDebts || false,
         financialGoals: profile.financialGoals || [],
