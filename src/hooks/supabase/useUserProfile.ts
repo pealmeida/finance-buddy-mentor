@@ -1,6 +1,6 @@
 
 import { useSupabaseBase } from './useSupabaseBase';
-import { UserProfile } from '@/types/finance';
+import { UserProfile, RiskProfile } from '@/types/finance';
 
 /**
  * Hook for fetching and managing user profile data
@@ -45,7 +45,7 @@ export function useUserProfile() {
         name: profileData?.name || 'User',
         age: profileData?.age || 0,
         monthlyIncome: financialProfileData?.monthly_income || 0,
-        riskProfile: financialProfileData?.risk_profile || 'moderate',
+        riskProfile: (financialProfileData?.risk_profile as RiskProfile) || 'moderate',
         hasEmergencyFund: financialProfileData?.has_emergency_fund || false,
         emergencyFundMonths: financialProfileData?.emergency_fund_months,
         hasDebts: financialProfileData?.has_debts || false,
