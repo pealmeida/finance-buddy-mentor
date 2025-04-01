@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { 
   UserProfile, 
@@ -24,7 +24,7 @@ export function useSupabaseData() {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
       
       if (profileError) {
         throw new Error(`Error fetching profile: ${profileError.message}`);
@@ -35,7 +35,7 @@ export function useSupabaseData() {
         .from('financial_profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
         
       if (financialProfileError && financialProfileError.code !== 'PGRST116') {
         throw new Error(`Error fetching financial profile: ${financialProfileError.message}`);
@@ -72,32 +72,36 @@ export function useSupabaseData() {
       }
       
       // Transform goals data to match our app's structure
-      const financialGoals: FinancialGoal[] = goalsData.map((goal: any) => ({
+      const financialGoals: FinancialGoal[] = goalsData ? goalsData.map((goal: any) => ({
         id: goal.id,
         name: goal.name,
         targetAmount: goal.target_amount,
         currentAmount: goal.current_amount,
         targetDate: new Date(goal.target_date),
         priority: goal.priority as 'low' | 'medium' | 'high'
-      }));
+      })) : [];
       
       // Transform investments data to match our app's structure
-      const investments: Investment[] = investmentsData.map((investment: any) => ({
+      const investments: Investment[] = investmentsData ? investmentsData.map((investment: any) => ({
         id: investment.id,
         type: investment.type as 'stocks' | 'bonds' | 'realEstate' | 'cash' | 'crypto' | 'other',
         name: investment.name,
         value: investment.value,
         annualReturn: investment.annual_return
-      }));
+      })) : [];
       
       // Transform debt details data to match our app's structure
-      const debtDetails: DebtDetail[] = debtDetailsData.map((debt: any) => ({
+      const debtDetails: DebtDetail[] = debtDetailsData ? debtDetailsData.map((debt: any) => ({
         id: debt.id,
         type: debt.type as 'creditCard' | 'personalLoan' | 'studentLoan' | 'other',
         name: debt.name,
         amount: debt.amount,
         interestRate: debt.interest_rate
-      }));
+      })) : [];
+      
+      if (!profileData) {
+        return null;
+      }
       
       // Combine all data into a user profile object
       const userProfile: UserProfile = {
@@ -154,7 +158,7 @@ export function useSupabaseData() {
         .from('financial_profiles')
         .select('id')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
       
       // Update or insert financial profile
       if (existingFinancialProfile) {
@@ -195,7 +199,7 @@ export function useSupabaseData() {
           
         if (fetchGoalsError) throw new Error(`Error fetching existing goals: ${fetchGoalsError.message}`);
         
-        const existingGoalIds = existingGoals.map((g: any) => g.id);
+        const existingGoalIds = existingGoals ? existingGoals.map((g: any) => g.id) : [];
         const newGoalIds = profile.financialGoals.map(g => g.id);
         
         // Find goals to delete (exist in DB but not in the updated profile)
@@ -239,7 +243,7 @@ export function useSupabaseData() {
           
         if (fetchInvestmentsError) throw new Error(`Error fetching existing investments: ${fetchInvestmentsError.message}`);
         
-        const existingInvestmentIds = existingInvestments.map((i: any) => i.id);
+        const existingInvestmentIds = existingInvestments ? existingInvestments.map((i: any) => i.id) : [];
         const newInvestmentIds = profile.investments.map(i => i.id);
         
         // Find investments to delete
@@ -282,7 +286,7 @@ export function useSupabaseData() {
           
         if (fetchDebtsError) throw new Error(`Error fetching existing debts: ${fetchDebtsError.message}`);
         
-        const existingDebtIds = existingDebts.map((d: any) => d.id);
+        const existingDebtIds = existingDebts ? existingDebts.map((d: any) => d.id) : [];
         const newDebtIds = profile.debtDetails.map(d => d.id);
         
         // Find debts to delete

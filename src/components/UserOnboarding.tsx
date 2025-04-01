@@ -80,10 +80,20 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
     try {
       // Make sure we have current user ID
       if (userId && profile) {
-        // Ensure profile has the user ID
-        const profileWithId = {
+        // Ensure profile has the user ID and required fields
+        const profileWithId: UserProfile = {
           ...profile,
-          id: userId
+          id: userId,
+          // Ensure required fields have default values if not set
+          email: profile.email || 'user@example.com',
+          name: profile.name || 'User',
+          age: profile.age || 0,
+          monthlyIncome: profile.monthlyIncome || 0,
+          riskProfile: profile.riskProfile || 'moderate',
+          hasEmergencyFund: profile.hasEmergencyFund || false,
+          hasDebts: profile.hasDebts || false,
+          financialGoals: profile.financialGoals || [],
+          investments: profile.investments || []
         };
         
         // Save to Supabase
@@ -93,7 +103,19 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
         onComplete(profileWithId);
       } else {
         // Fallback for no authenticated user
-        onComplete(profile as UserProfile);
+        const completeProfile: UserProfile = {
+          ...profile as UserProfile,
+          email: profile?.email || 'user@example.com',
+          name: profile?.name || 'User',
+          age: profile?.age || 0,
+          monthlyIncome: profile?.monthlyIncome || 0,
+          riskProfile: profile?.riskProfile || 'moderate',
+          hasEmergencyFund: profile?.hasEmergencyFund || false,
+          hasDebts: profile?.hasDebts || false,
+          financialGoals: profile?.financialGoals || [],
+          investments: profile?.investments || []
+        };
+        onComplete(completeProfile);
       }
     } catch (error) {
       console.error("Error completing onboarding:", error);

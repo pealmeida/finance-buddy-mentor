@@ -1,16 +1,17 @@
+
 export type RiskProfile = 'conservative' | 'moderate' | 'aggressive';
 
 export interface UserProfile {
   id?: string;
-  email: string; // Added email field that will be used as ID
+  email: string;
   name: string;
   age: number;
   monthlyIncome: number;
   riskProfile: RiskProfile;
   hasEmergencyFund: boolean;
-  emergencyFundMonths?: number; // Added this property
+  emergencyFundMonths?: number;
   hasDebts: boolean;
-  debtDetails?: DebtDetail[]; // Added this property to store debt information
+  debtDetails?: DebtDetail[];
   financialGoals: FinancialGoal[];
   investments: Investment[];
 }

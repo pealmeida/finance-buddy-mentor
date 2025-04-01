@@ -29,20 +29,20 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
       }
       
       // Create updated profile with auth user info if available
-      let profileWithId = { ...profile };
+      let profileWithId: UserProfile = { ...profile };
       
       if (session?.user) {
         profileWithId = {
           ...profile,
           id: session.user.id,
-          email: session.user.email || profile.email || 'user@example.com'
+          email: session.user.email || profile.email
         };
       } else {
         // No auth session, use existing ID if available or placeholder
         profileWithId = {
           ...profile,
-          id: isEditMode && userProfile?.id ? userProfile.id : 'user@example.com',
-          email: profile.email || (isEditMode ? userProfile?.email : 'user@example.com') || 'user@example.com'
+          id: isEditMode && userProfile?.id ? userProfile.id : 'user-id',
+          email: profile.email || (isEditMode && userProfile?.email ? userProfile.email : 'user@example.com')
         };
       }
       
