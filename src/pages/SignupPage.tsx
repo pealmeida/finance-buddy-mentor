@@ -29,7 +29,7 @@ const SignupPage: React.FC = () => {
         password,
         options: {
           data: {
-            name: name,
+            name: name, // Store name in metadata
             // Add other metadata as needed
           },
         }
@@ -41,6 +41,7 @@ const SignupPage: React.FC = () => {
           description: error.message,
           variant: "destructive"
         });
+        console.error('Signup error:', error);
       } else {
         console.log('User signed up successfully:', data);
         
@@ -49,8 +50,27 @@ const SignupPage: React.FC = () => {
           description: "Your account has been created successfully. Please complete your profile.",
         });
         
-        // Navigate to onboarding to complete profile setup
-        navigate('/onboarding');
+        // Session should be created automatically after signUp
+        if (data.session) {
+          // Wait a moment to ensure the session is properly established
+          setTimeout(() => {
+            // Navigate to onboarding to complete profile setup
+            navigate('/onboarding');
+          }, 500);
+        } else {
+          // If session is not automatically created, we may need to sign in
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+          
+          if (signInError) {
+            throw new Error(`Error signing in after signup: ${signInError.message}`);
+          } else {
+            // Navigate to onboarding page after successful sign in
+            navigate('/onboarding');
+          }
+        }
       }
     } catch (error) {
       console.error('Unexpected error during signup:', error);

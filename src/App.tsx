@@ -22,14 +22,62 @@ const queryClient = new QueryClient();
 function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
   
   // Check if user is authenticated and load their profile
   useEffect(() => {
-    const fetchProfile = async () => {
+    const checkAuth = async () => {
       setIsLoading(true);
       
       try {
-        // Check for authenticated user
+        // First set up the auth state listener
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            console.log('Auth state changed:', event, session?.user?.id);
+            
+            if (event === 'SIGNED_IN' && session?.user) {
+              try {
+                // Allow a small delay to ensure the database has been updated
+                setTimeout(async () => {
+                  const { fetchUserProfile } = useSupabaseData();
+                  const profile = await fetchUserProfile(session.user.id);
+                  
+                  if (profile) {
+                    console.log('Profile loaded after sign in:', profile);
+                    setUserProfile(profile);
+                    localStorage.setItem('userProfile', JSON.stringify(profile));
+                  } else {
+                    // If no profile exists yet, create a minimal one with auth data
+                    const minimalProfile: UserProfile = {
+                      id: session.user.id,
+                      email: session.user.email || 'user@example.com',
+                      name: session.user.user_metadata?.name || 'User',
+                      age: 0,
+                      monthlyIncome: 0,
+                      riskProfile: 'moderate',
+                      hasEmergencyFund: false,
+                      hasDebts: false,
+                      financialGoals: [],
+                      investments: [],
+                      debtDetails: [],
+                    };
+                    console.log('Creating minimal profile:', minimalProfile);
+                    setUserProfile(minimalProfile);
+                    localStorage.setItem('userProfile', JSON.stringify(minimalProfile));
+                  }
+                }, 500);
+              } catch (error) {
+                console.error('Error loading profile after auth change:', error);
+              }
+            } else if (event === 'SIGNED_OUT') {
+              console.log('User signed out, clearing profile');
+              setUserProfile(null);
+              localStorage.removeItem('userProfile');
+            }
+          }
+        );
+        
+        // Then check for existing session
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -37,13 +85,15 @@ function App() {
         }
         
         if (session?.user) {
-          // User is logged in, try to get their profile from Supabase
+          console.log('Existing session found for user:', session.user.id);
+          
+          // Try to get their profile from Supabase
           const { fetchUserProfile } = useSupabaseData();
           const profile = await fetchUserProfile(session.user.id);
           
           if (profile) {
+            console.log('Existing profile loaded:', profile);
             setUserProfile(profile);
-            // Still save in localStorage as fallback
             localStorage.setItem('userProfile', JSON.stringify(profile));
           } else {
             // No profile in Supabase, check localStorage as fallback
@@ -53,6 +103,7 @@ function App() {
                 const parsedProfile = JSON.parse(savedProfile);
                 // Ensure the profile has the user's ID
                 parsedProfile.id = session.user.id;
+                console.log('Using local profile:', parsedProfile);
                 setUserProfile(parsedProfile);
               } catch (e) {
                 console.error("Error parsing stored profile", e);
@@ -62,6 +113,24 @@ function App() {
                   variant: "destructive",
                 });
               }
+            } else {
+              // Create a minimal profile with auth data
+              const minimalProfile: UserProfile = {
+                id: session.user.id,
+                email: session.user.email || 'user@example.com',
+                name: session.user.user_metadata?.name || 'User',
+                age: 0,
+                monthlyIncome: 0,
+                riskProfile: 'moderate',
+                hasEmergencyFund: false,
+                hasDebts: false,
+                financialGoals: [],
+                investments: [],
+                debtDetails: [],
+              };
+              console.log('Creating minimal profile from session:', minimalProfile);
+              setUserProfile(minimalProfile);
+              localStorage.setItem('userProfile', JSON.stringify(minimalProfile));
             }
           }
         } else {
@@ -69,12 +138,22 @@ function App() {
           const savedProfile = localStorage.getItem('userProfile');
           if (savedProfile) {
             try {
-              setUserProfile(JSON.parse(savedProfile));
+              const parsedProfile = JSON.parse(savedProfile);
+              console.log('Using local profile (no auth):', parsedProfile);
+              setUserProfile(parsedProfile);
             } catch (e) {
               console.error("Error parsing stored profile", e);
+              setUserProfile(null);
             }
+          } else {
+            console.log('No profile found, user needs to sign in');
+            setUserProfile(null);
           }
         }
+        
+        return () => {
+          subscription.unsubscribe();
+        };
       } catch (e) {
         console.error("Error checking auth or loading profile:", e);
         toast({
@@ -84,31 +163,11 @@ function App() {
         });
       } finally {
         setIsLoading(false);
+        setAuthChecked(true);
       }
     };
     
-    fetchProfile();
-    
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          const { fetchUserProfile } = useSupabaseData();
-          const profile = await fetchUserProfile(session.user.id);
-          if (profile) {
-            setUserProfile(profile);
-            localStorage.setItem('userProfile', JSON.stringify(profile));
-          }
-        } else if (event === 'SIGNED_OUT') {
-          setUserProfile(null);
-          localStorage.removeItem('userProfile');
-        }
-      }
-    );
-    
-    return () => {
-      subscription.unsubscribe();
-    };
+    checkAuth();
   }, []);
 
   const handleProfileComplete = (profile: UserProfile) => {
@@ -152,7 +211,7 @@ function App() {
               element={userProfile ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} 
             />
             
-            {/* Auth pages */}
+            {/* Auth pages - accessible even when logged in */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             
