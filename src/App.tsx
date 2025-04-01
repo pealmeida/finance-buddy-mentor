@@ -12,12 +12,13 @@ import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { supabase } from "./integrations/supabase/client";
 
+// Create a new QueryClient instance
 const queryClient = new QueryClient();
 
-const App = () => {
+function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   
   // Check if user profile exists in localStorage on app init
@@ -102,6 +103,6 @@ const App = () => {
       </TooltipProvider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;
