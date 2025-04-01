@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { UserProfile } from '@/types/finance';
 import { OnboardingProvider, useOnboarding } from '@/context/OnboardingContext';
 import StepIndicator from './onboarding/StepIndicator';
@@ -17,8 +18,17 @@ interface UserOnboardingProps {
 const TOTAL_STEPS = 5;
 
 const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete }) => {
+  const location = useLocation();
   const [step, setStep] = useState(1);
   const { profile } = useOnboarding();
+
+  // Check if there's a target step in the location state
+  useEffect(() => {
+    const state = location.state as { targetStep?: number } | undefined;
+    if (state && state.targetStep && state.targetStep <= TOTAL_STEPS) {
+      setStep(state.targetStep);
+    }
+  }, [location]);
 
   const handleNextStep = () => {
     if (step < TOTAL_STEPS) {

@@ -1,14 +1,16 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { UserIcon } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserIcon, ChevronLeft } from 'lucide-react';
 
 interface ProfileHeaderProps {
   userName: string;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userName }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex items-center justify-between mb-8">
       <div>
@@ -23,9 +25,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userName }) => {
           )}
         </p>
       </div>
-      <Link to="/dashboard">
-        <Button variant="outline">Back to Dashboard</Button>
-      </Link>
+      <Button 
+        variant="outline" 
+        onClick={() => navigate('/dashboard')} 
+        className="flex items-center gap-2"
+      >
+        <ChevronLeft className="h-4 w-4" /> Back to Dashboard
+      </Button>
     </div>
   );
 };
