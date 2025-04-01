@@ -19,6 +19,11 @@ export function useProfileSave() {
       console.log('Saving profile for user:', userId);
       console.log('Profile data:', profile);
       
+      // Validate profile data
+      if (!profile.name) throw new Error("Name is required");
+      if (!profile.email) throw new Error("Email is required");
+      if (!profile.riskProfile) throw new Error("Risk profile is required");
+      
       // Upsert basic profile
       const { error: profileError } = await supabase
         .from('profiles')

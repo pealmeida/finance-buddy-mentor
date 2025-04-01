@@ -47,11 +47,6 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
           name: profile.name || (session.user.user_metadata?.name as string) || 'User',
         };
         
-        // Validate profile before saving
-        if (!profileWithId.id) {
-          throw new Error("Profile must have a valid ID");
-        }
-        
         // Save profile to Supabase
         console.log('About to save profile to Supabase:', profileWithId);
         const success = await saveUserProfile(profileWithId);

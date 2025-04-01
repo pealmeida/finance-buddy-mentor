@@ -37,6 +37,7 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({
   const { saveUserProfile } = useSupabaseData();
   const { toast } = useToast();
   const [userId, setUserId] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check for authenticated user
   useEffect(() => {
@@ -92,6 +93,10 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({
   };
   
   const handleComplete = async () => {
+    if (isSubmitting) return; // Prevent duplicate submissions
+    
+    setIsSubmitting(true);
+    
     try {
       if (!profile) {
         toast({
@@ -99,14 +104,22 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({
           description: "Profile data is missing. Please complete all required fields.",
           variant: "destructive"
         });
+        setIsSubmitting(false);
         return;
+      }
+
+      // Get the session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        throw new Error(sessionError.message);
       }
 
       // Ensure we have all required properties with default values as needed
       const completeProfile: UserProfile = {
-        id: userId || (existingProfile?.id || uuidv4()),
-        email: profile.email || 'user@example.com',
-        name: profile.name || 'User',
+        id: (session?.user?.id || existingProfile?.id || uuidv4()),
+        email: profile.email || (session?.user?.email || 'user@example.com'),
+        name: profile.name || (session?.user?.user_metadata?.name as string || 'User'),
         age: profile.age || 0,
         monthlyIncome: profile.monthlyIncome || 0,
         riskProfile: profile.riskProfile || 'moderate',
@@ -120,17 +133,33 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({
 
       console.log('Completing onboarding with profile:', completeProfile);
       
+      // Save to Supabase if authenticated
+      if (session?.user) {
+        console.log('Saving profile to Supabase for user:', session.user.id);
+        const success = await saveUserProfile(completeProfile);
+        
+        if (!success) {
+          throw new Error("Failed to save profile to database");
+        }
+        console.log('Profile saved successfully');
+      }
+      
       // Complete onboarding flow
       onComplete(completeProfile);
     } catch (error) {
       console.error("Error completing onboarding:", error);
       toast({
         title: "Error Saving Profile",
-        description: "There was a problem saving your profile. Please try again.",
+        description: error instanceof Error ? error.message : "There was a problem saving your profile. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  // Combine our internal isSubmitting state with any parent-provided isSaving state
+  const isLoading = isSubmitting || isSaving;
 
   return (
     <div className="w-full max-w-3xl mx-auto py-8 px-4 sm:px-6 animate-fade-in">
@@ -152,7 +181,7 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({
         onComplete={handleComplete}
         onCancel={isEditMode ? handleCancel : undefined}
         isEditMode={isEditMode}
-        isLoading={isSaving}
+        isLoading={isLoading}
       />
     </div>
   );
