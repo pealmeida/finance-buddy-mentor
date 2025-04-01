@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import UserOnboarding from '@/components/UserOnboarding';
@@ -41,9 +41,9 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete }) =>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-gray-800">Complete Your Profile</h1>
-            <p className="text-gray-600 mt-2">
-              Let us know more about you to personalize your financial journey
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Complete Your Financial Profile</h1>
+            <p className="text-gray-600">
+              Let's collect some information to personalize your financial recommendations
             </p>
           </div>
           
