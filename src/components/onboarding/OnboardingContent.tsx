@@ -44,6 +44,7 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
   const { toast } = useToast();
   const [userId, setUserId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profileInitialized, setProfileInitialized] = useState(false);
 
   // Check for authenticated user
   useEffect(() => {
@@ -66,11 +67,12 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
 
   // Initialize onboarding context with existing profile data if in edit mode
   useEffect(() => {
-    if (isEditMode && existingProfile) {
+    if (isEditMode && existingProfile && !profileInitialized) {
       console.log('Initializing onboarding with existing profile:', existingProfile);
       updateProfile(existingProfile);
+      setProfileInitialized(true);
     }
-  }, [isEditMode, existingProfile, updateProfile]);
+  }, [isEditMode, existingProfile, updateProfile, profileInitialized]);
   
   // Check if there's a target step in the location state
   useEffect(() => {
