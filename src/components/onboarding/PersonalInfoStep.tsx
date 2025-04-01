@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Mail, DollarSign } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useOnboarding } from '@/context/OnboardingContext';
@@ -12,33 +12,6 @@ const PersonalInfoStep: React.FC = () => {
     <div>
       <h2 className="text-2xl font-semibold mb-6">Personal Information</h2>
       <div className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email Address</Label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input 
-              id="email" 
-              type="email"
-              value={profile.email || ''} 
-              onChange={(e) => updateProfile({ email: e.target.value })}
-              placeholder="johndoe@example.com"
-              className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-finance-blue"
-              required
-            />
-          </div>
-        </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="name">Full Name</Label>
-          <Input 
-            id="name" 
-            value={profile.name || ''} 
-            onChange={(e) => updateProfile({ name: e.target.value })}
-            placeholder="John Doe"
-            className="transition-all duration-300 focus:ring-2 focus:ring-finance-blue"
-          />
-        </div>
-        
         <div className="space-y-2">
           <Label htmlFor="age">Age</Label>
           <Input 

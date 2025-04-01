@@ -15,10 +15,13 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete }) =>
   const { toast } = useToast();
   
   const handleProfileComplete = (profile: UserProfile) => {
-    // Use email as the ID for the user profile
+    // Use a default placeholder for the required email field since we're no longer collecting it
+    // In a real app, this would come from authentication
     const profileWithId = {
       ...profile,
-      id: profile.email
+      email: 'user@example.com',  // placeholder email
+      name: 'User',               // placeholder name
+      id: 'user@example.com'      // placeholder ID
     };
     
     // Save the profile
