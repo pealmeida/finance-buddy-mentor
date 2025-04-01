@@ -1,4 +1,3 @@
-
 export type RiskProfile = 'conservative' | 'moderate' | 'aggressive';
 
 export interface UserProfile {
@@ -11,8 +10,17 @@ export interface UserProfile {
   hasEmergencyFund: boolean;
   emergencyFundMonths?: number; // Added this property
   hasDebts: boolean;
+  debtDetails?: DebtDetail[]; // Added this property to store debt information
   financialGoals: FinancialGoal[];
   investments: Investment[];
+}
+
+export interface DebtDetail {
+  id: string;
+  type: 'creditCard' | 'personalLoan' | 'studentLoan' | 'other';
+  name: string;
+  amount: number;
+  interestRate: number;
 }
 
 export interface FinancialGoal {

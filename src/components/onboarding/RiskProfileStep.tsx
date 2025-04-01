@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { RiskProfile } from '@/types/finance';
 import { useOnboarding } from '@/context/OnboardingContext';
+import DebtDetailsForm from './DebtDetailsForm';
 
 const RiskProfileStep: React.FC = () => {
   const { profile, updateProfile } = useOnboarding();
@@ -94,13 +95,24 @@ const RiskProfileStep: React.FC = () => {
           )}
         </div>
         
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="debts" 
-            checked={profile.hasDebts} 
-            onCheckedChange={(checked) => updateProfile({ hasDebts: !!checked })}
-          />
-          <Label htmlFor="debts" className="text-base">I have high-interest debts (credit cards, personal loans)</Label>
+        <div>
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="debts" 
+              checked={profile.hasDebts} 
+              onCheckedChange={(checked) => {
+                updateProfile({ 
+                  hasDebts: !!checked,
+                  // Reset debt details if unchecking
+                  debtDetails: !checked ? [] : profile.debtDetails 
+                });
+              }}
+            />
+            <Label htmlFor="debts" className="text-base">I have high-interest debts (credit cards, personal loans)</Label>
+          </div>
+          
+          {/* Show debt details form when hasDebts is checked */}
+          {profile.hasDebts && <DebtDetailsForm />}
         </div>
       </div>
     </div>
