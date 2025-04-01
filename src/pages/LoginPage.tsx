@@ -6,49 +6,39 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, User } from 'lucide-react';
+import { Mail, Lock } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import Header from '@/components/Header';
 
-const SignupPage: React.FC = () => {
+const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        password,
-        options: {
-          data: {
-            name: name
-          }
-        }
+        password
       });
 
       if (error) {
         toast({
-          title: "Signup failed",
+          title: "Login failed",
           description: error.message,
           variant: "destructive"
         });
       } else {
-        toast({
-          title: "Account created",
-          description: "Please check your email for the confirmation link.",
-        });
         navigate('/onboarding');
       }
     } catch (error) {
       toast({
-        title: "Signup failed",
+        title: "Login failed",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive"
       });
@@ -63,27 +53,13 @@ const SignupPage: React.FC = () => {
       <div className="container max-w-md mx-auto px-4 py-16">
         <Card className="w-full shadow-lg">
           <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+            <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
             <CardDescription>
-              Enter your information to get started with Finance Buddy
+              Sign in to your Finance Buddy account
             </CardDescription>
           </CardHeader>
-          <form onSubmit={handleSignup}>
+          <form onSubmit={handleLogin}>
             <CardContent className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name">Full Name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="name"
-                    placeholder="John Doe"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                </div>
-              </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
@@ -100,7 +76,9 @@ const SignupPage: React.FC = () => {
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -111,7 +89,6 @@ const SignupPage: React.FC = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10"
                     required
-                    minLength={6}
                   />
                 </div>
               </div>
@@ -122,12 +99,12 @@ const SignupPage: React.FC = () => {
                 className="w-full bg-finance-blue hover:bg-finance-blue-dark"
                 disabled={loading}
               >
-                {loading ? "Creating account..." : "Create account"}
+                {loading ? "Signing in..." : "Sign in"}
               </Button>
               <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
-                <Link to="/login" className="text-finance-blue hover:underline">
-                  Sign in
+                Don't have an account?{" "}
+                <Link to="/signup" className="text-finance-blue hover:underline">
+                  Sign up
                 </Link>
               </div>
             </CardFooter>
@@ -138,4 +115,4 @@ const SignupPage: React.FC = () => {
   );
 };
 
-export default SignupPage;
+export default LoginPage;

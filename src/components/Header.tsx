@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete }) => {
   return (
     <header className="w-full py-4 px-6 md:px-10 flex items-center justify-between border-b border-slate-100 sticky top-0 z-50 bg-white/80 backdrop-blur-md">
       <div className="flex items-center gap-2">
-        <Link to={onboardingComplete ? "/dashboard" : "/signup"}>
+        <Link to={onboardingComplete ? "/dashboard" : "/login"}>
           <div className="h-10 w-10 rounded-full bg-gradient-to-br from-finance-blue to-finance-purple flex items-center justify-center">
             <span className="text-white font-semibold text-lg">FB</span>
           </div>
@@ -62,11 +62,13 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete }) => {
             </Button>
           </Link>
         ) : (
-          <Link to="/signup">
-            <Button className="bg-finance-blue hover:bg-finance-blue-dark text-white transition-all duration-300 shadow-button hover:shadow-button-hover">
-              Get Started
-            </Button>
-          </Link>
+          location.pathname !== '/login' && location.pathname !== '/signup' ? (
+            <Link to="/login">
+              <Button className="bg-finance-blue hover:bg-finance-blue-dark text-white transition-all duration-300 shadow-button hover:shadow-button-hover">
+                Sign In
+              </Button>
+            </Link>
+          ) : null
         )}
 
         {isMobile && onboardingComplete && (

@@ -7,10 +7,13 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { UserProfile } from "./types/finance";
 import Dashboard from "./pages/Dashboard";
+import OnboardingPage from "./pages/OnboardingPage";
 import SignupPage from "./pages/SignupPage";
+import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "./integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
@@ -48,33 +51,37 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Redirect root to dashboard if logged in, otherwise to signup */}
+            {/* Redirect root to dashboard if logged in, otherwise to login */}
             <Route 
               path="/" 
-              element={userProfile ? <Navigate to="/dashboard" /> : <Navigate to="/signup" />} 
+              element={userProfile ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} 
             />
             
-            {/* Signup page - redirect to dashboard if already onboarded */}
+            {/* Auth pages */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            
+            {/* Onboarding page - redirect to dashboard if already onboarded */}
             <Route 
-              path="/signup" 
+              path="/onboarding" 
               element={
                 userProfile ? 
                   <Navigate to="/dashboard" /> : 
-                  <SignupPage onProfileComplete={handleProfileComplete} />
+                  <OnboardingPage onProfileComplete={handleProfileComplete} />
               } 
             />
             
-            {/* Dashboard - protected route, redirect to signup if not onboarded */}
+            {/* Dashboard - protected route, redirect to onboarding if not onboarded */}
             <Route 
               path="/dashboard" 
               element={
                 userProfile ? 
                   <Dashboard userProfile={userProfile} /> : 
-                  <Navigate to="/signup" />
+                  <Navigate to="/onboarding" />
               } 
             />
             
-            {/* Profile page - protected route, redirect to signup if not onboarded */}
+            {/* Profile page - protected route, redirect to onboarding if not onboarded */}
             <Route 
               path="/profile" 
               element={
@@ -83,7 +90,7 @@ const App = () => {
                     userProfile={userProfile} 
                     onProfileUpdate={handleProfileUpdate}
                   /> : 
-                  <Navigate to="/signup" />
+                  <Navigate to="/onboarding" />
               } 
             />
             
