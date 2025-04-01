@@ -56,6 +56,12 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
           setUserId(session.user.id);
         } else {
           console.log('No authenticated session found');
+          // Show a toast to inform the user they need to be logged in
+          toast({
+            title: "Authentication Required",
+            description: "You need to be logged in to save your profile.",
+            variant: "destructive"
+          });
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
@@ -63,7 +69,7 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
     };
     
     checkAuth();
-  }, []);
+  }, [toast]);
 
   // Initialize onboarding context with existing profile data if in edit mode
   useEffect(() => {
@@ -116,18 +122,28 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
         return;
       }
 
-      // Get the session
+      // Check if user is authenticated
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError) {
-        throw new Error(sessionError.message);
+        throw new Error(`Authentication error: ${sessionError.message}`);
+      }
+      
+      if (!session || !session.user) {
+        toast({
+          title: "Authentication Required",
+          description: "You must be logged in to save your profile. Please log in and try again.",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
       }
 
       // Ensure we have all required properties with default values as needed
       const completeProfile: UserProfile = {
-        id: (session?.user?.id || existingProfile?.id || uuidv4()),
-        email: profile.email || (session?.user?.email || 'user@example.com'),
-        name: profile.name || (session?.user?.user_metadata?.name as string || 'User'),
+        id: session.user.id, // Always use the authenticated user's ID
+        email: profile.email || session.user.email || 'user@example.com',
+        name: profile.name || (session.user.user_metadata?.name as string || 'User'),
         age: profile.age || 0,
         monthlyIncome: profile.monthlyIncome || 0,
         riskProfile: validateRiskProfile(profile.riskProfile),
@@ -142,7 +158,6 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
       console.log('Completing onboarding with profile:', completeProfile);
       
       // Complete onboarding flow by calling the parent handler
-      // This will handle the Supabase saving in the parent component
       onComplete(completeProfile);
     } catch (error) {
       console.error("Error completing onboarding:", error);
