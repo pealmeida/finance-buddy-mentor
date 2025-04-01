@@ -1,18 +1,18 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { UserProfile } from '@/types/finance';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Checkbox } from '@/components/ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { DollarSign, Mail, Save, User } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Save } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+
+// Import refactored components
+import ProfileHeader from '@/components/profile/ProfileHeader';
+import PersonalInfoTab from '@/components/profile/PersonalInfoTab';
+import FinancialTab from '@/components/profile/FinancialTab';
+import GoalsTab from '@/components/profile/GoalsTab';
 
 interface ProfilePageProps {
   userProfile: UserProfile;
@@ -21,6 +21,7 @@ interface ProfilePageProps {
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate }) => {
   const [profile, setProfile] = useState<UserProfile>({...userProfile});
+  const [userName, setUserName] = useState<string>('');
   const { toast } = useToast();
   
   // Fetch current user email and name from Supabase auth
@@ -29,14 +30,29 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
-        const { email } = session.user;
+        const { email, user_metadata } = session.user;
         
-        // Update profile with the authenticated user's email
+        // Update profile with the authenticated user's email and name
         if (email) {
           setProfile(prev => ({
             ...prev,
             email
           }));
+        }
+        
+        // Set user name for display
+        if (user_metadata && user_metadata.name) {
+          setProfile(prev => ({
+            ...prev,
+            name: user_metadata.name
+          }));
+          setUserName(user_metadata.name);
+        } else if (profile.name) {
+          setUserName(profile.name);
+        } else if (email) {
+          // Use email as fallback if no name is available
+          const nameFromEmail = email.split('@')[0];
+          setUserName(nameFromEmail);
         }
       }
     };
@@ -49,6 +65,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
       ...prev,
       [field]: value
     }));
+    
+    // Update userName if name field changes
+    if (field === 'name') {
+      setUserName(value);
+    }
   };
   
   const handleSaveProfile = () => {
@@ -65,12 +86,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
       <Header onboardingComplete={true} />
       
       <div className="container max-w-4xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Profile Settings</h1>
-          <Link to="/dashboard">
-            <Button variant="outline">Back to Dashboard</Button>
-          </Link>
-        </div>
+        <ProfileHeader userName={userName} />
         
         <div className="bg-white rounded-xl shadow-sm p-8">
           <Tabs defaultValue="personal" className="space-y-8">
@@ -80,171 +96,16 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
               <TabsTrigger value="goals">Goals & Investments</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="personal" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Personal Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input 
-                        id="email" 
-                        type="email"
-                        value={profile.email} 
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        placeholder="johndoe@example.com"
-                        className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-finance-blue"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input 
-                        id="name" 
-                        value={profile.name} 
-                        onChange={(e) => handleInputChange('name', e.target.value)}
-                        placeholder="John Doe"
-                        className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-finance-blue"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="age">Age</Label>
-                    <Input 
-                      id="age" 
-                      type="number" 
-                      value={profile.age} 
-                      onChange={(e) => handleInputChange('age', parseInt(e.target.value) || 0)}
-                      placeholder="30"
-                      className="transition-all duration-300 focus:ring-2 focus:ring-finance-blue"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+            <TabsContent value="personal">
+              <PersonalInfoTab profile={profile} onInputChange={handleInputChange} />
             </TabsContent>
             
-            <TabsContent value="financial" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Financial Details</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="income">Monthly Income ($)</Label>
-                    <div className="relative">
-                      <DollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input 
-                        id="income" 
-                        type="number" 
-                        value={profile.monthlyIncome} 
-                        onChange={(e) => handleInputChange('monthlyIncome', parseInt(e.target.value) || 0)}
-                        placeholder="5000"
-                        className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-finance-blue"
-                      />
-                    </div>
-                  </div>
-                  
-                  <Separator className="my-4" />
-                  
-                  <div className="space-y-4">
-                    <Label>Risk Profile</Label>
-                    <RadioGroup 
-                      value={profile.riskProfile} 
-                      onValueChange={(value) => handleInputChange('riskProfile', value)}
-                      className="space-y-2"
-                    >
-                      <div className="flex items-start space-x-3 rounded-lg border p-3 hover:bg-gray-50">
-                        <RadioGroupItem value="conservative" id="conservative" className="mt-1" />
-                        <div>
-                          <Label htmlFor="conservative" className="font-medium">Conservative</Label>
-                          <p className="text-xs text-gray-500">Prioritize preserving capital</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-start space-x-3 rounded-lg border p-3 hover:bg-gray-50">
-                        <RadioGroupItem value="moderate" id="moderate" className="mt-1" />
-                        <div>
-                          <Label htmlFor="moderate" className="font-medium">Moderate</Label>
-                          <p className="text-xs text-gray-500">Balance growth and preservation</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-start space-x-3 rounded-lg border p-3 hover:bg-gray-50">
-                        <RadioGroupItem value="aggressive" id="aggressive" className="mt-1" />
-                        <div>
-                          <Label htmlFor="aggressive" className="font-medium">Aggressive</Label>
-                          <p className="text-xs text-gray-500">Maximize long-term growth</p>
-                        </div>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                  
-                  <Separator className="my-4" />
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="emergency" 
-                        checked={profile.hasEmergencyFund} 
-                        onCheckedChange={(checked) => handleInputChange('hasEmergencyFund', !!checked)}
-                      />
-                      <Label htmlFor="emergency">I have an emergency fund (3-6 months of expenses)</Label>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="debts" 
-                        checked={profile.hasDebts} 
-                        onCheckedChange={(checked) => handleInputChange('hasDebts', !!checked)}
-                      />
-                      <Label htmlFor="debts">I have high-interest debts (credit cards, personal loans)</Label>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            <TabsContent value="financial">
+              <FinancialTab profile={profile} onInputChange={handleInputChange} />
             </TabsContent>
             
-            <TabsContent value="goals" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Financial Goals</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-500 mb-4">
-                    View and manage your financial goals and investments.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    className="text-finance-blue border-finance-blue hover:bg-finance-blue hover:text-white"
-                  >
-                    Manage Goals
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Investment Portfolio</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-500 mb-4">
-                    View and manage your investment portfolio.
-                  </p>
-                  <Button 
-                    variant="outline"
-                    className="text-finance-blue border-finance-blue hover:bg-finance-blue hover:text-white"
-                  >
-                    Manage Investments
-                  </Button>
-                </CardContent>
-              </Card>
+            <TabsContent value="goals">
+              <GoalsTab />
             </TabsContent>
           </Tabs>
           
