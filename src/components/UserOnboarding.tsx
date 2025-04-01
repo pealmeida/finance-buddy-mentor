@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { UserProfile } from '@/types/finance';
 import { OnboardingProvider, useOnboarding } from '@/context/OnboardingContext';
 import StepIndicator from './onboarding/StepIndicator';
@@ -13,15 +13,25 @@ import OnboardingNavigation from './onboarding/OnboardingNavigation';
 
 interface UserOnboardingProps {
   onComplete: (profile: UserProfile) => void;
+  existingProfile?: UserProfile;
+  isEditMode?: boolean;
 }
 
 const TOTAL_STEPS = 5;
 
-const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete }) => {
+const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existingProfile, isEditMode }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const { profile } = useOnboarding();
+  const { profile, updateProfile } = useOnboarding();
 
+  // Initialize onboarding context with existing profile data if in edit mode
+  useEffect(() => {
+    if (isEditMode && existingProfile) {
+      updateProfile(existingProfile);
+    }
+  }, [isEditMode, existingProfile, updateProfile]);
+  
   // Check if there's a target step in the location state
   useEffect(() => {
     const state = location.state as { targetStep?: number } | undefined;
@@ -44,6 +54,10 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete }) => {
     }
   };
 
+  const handleCancel = () => {
+    navigate('/profile');
+  };
+
   return (
     <div className="w-full max-w-3xl mx-auto py-8 px-4 sm:px-6 animate-fade-in">
       <StepIndicator currentStep={step} totalSteps={TOTAL_STEPS} />
@@ -62,15 +76,17 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete }) => {
         onNext={handleNextStep}
         onPrevious={handlePrevStep}
         onComplete={() => onComplete(profile as UserProfile)}
+        onCancel={isEditMode ? handleCancel : undefined}
+        isEditMode={isEditMode}
       />
     </div>
   );
 };
 
-const UserOnboarding: React.FC<UserOnboardingProps> = ({ onComplete }) => {
+const UserOnboarding: React.FC<UserOnboardingProps> = ({ onComplete, existingProfile, isEditMode }) => {
   return (
     <OnboardingProvider>
-      <OnboardingContent onComplete={onComplete} />
+      <OnboardingContent onComplete={onComplete} existingProfile={existingProfile} isEditMode={isEditMode} />
     </OnboardingProvider>
   );
 };

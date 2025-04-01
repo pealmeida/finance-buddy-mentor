@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useOnboarding } from '@/context/OnboardingContext';
 
@@ -10,6 +10,8 @@ interface OnboardingNavigationProps {
   onNext: () => void;
   onPrevious: () => void;
   onComplete: () => void;
+  onCancel?: () => void;
+  isEditMode?: boolean;
 }
 
 const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({ 
@@ -17,7 +19,9 @@ const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
   totalSteps, 
   onNext, 
   onPrevious,
-  onComplete
+  onComplete,
+  onCancel,
+  isEditMode = false
 }) => {
   const { profile } = useOnboarding();
 
@@ -40,14 +44,21 @@ const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
           Previous
         </Button>
       ) : (
-        <div></div>
+        <div>
+          {isEditMode && onCancel && (
+            <Button variant="outline" onClick={onCancel} className="flex items-center gap-2 border-red-300 text-red-500 hover:bg-red-50">
+              <X className="h-4 w-4" />
+              Cancel
+            </Button>
+          )}
+        </div>
       )}
       
       <Button 
         onClick={handleNextClick}
         className="flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark text-white transition-all duration-300 shadow-button hover:shadow-button-hover"
       >
-        {!isLastStep ? 'Next' : 'Complete'}
+        {!isLastStep ? 'Next' : (isEditMode ? 'Save Changes' : 'Complete')}
         <ChevronRight className="h-4 w-4" />
       </Button>
     </div>

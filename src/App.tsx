@@ -61,13 +61,14 @@ const App = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             
-            {/* Onboarding page - redirect to dashboard if already onboarded */}
+            {/* Onboarding page - can be used for both initial setup and profile editing */}
             <Route 
               path="/onboarding" 
               element={
-                userProfile ? 
-                  <Navigate to="/dashboard" /> : 
-                  <OnboardingPage onProfileComplete={handleProfileComplete} />
+                <OnboardingPage 
+                  onProfileComplete={handleProfileComplete}
+                  userProfile={userProfile || undefined}
+                />
               } 
             />
             
