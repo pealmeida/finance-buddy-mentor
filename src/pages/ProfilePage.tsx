@@ -53,7 +53,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
               <div className="bg-white rounded-xl shadow-sm p-8 space-y-8">
                 {/* Personal Information Section */}
                 <section>
-                  <h2 className="text-2xl font-semibold mb-4">Personal Information</h2>
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-semibold mb-2">Personal Information</h2>
+                    <p className="text-gray-500">Update your basic profile details below. For more comprehensive changes, use the Edit Full Profile button.</p>
+                  </div>
                   <PersonalInfoTab profile={profile} onInputChange={handleInputChange} />
                 </section>
                 

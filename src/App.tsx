@@ -20,6 +20,7 @@ const queryClient = new QueryClient();
 
 function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Check if user profile exists in localStorage on app init
   useEffect(() => {
@@ -29,8 +30,14 @@ function App() {
         setUserProfile(JSON.parse(savedProfile));
       } catch (e) {
         console.error("Error parsing stored profile", e);
+        toast({
+          title: "Error loading profile",
+          description: "There was a problem loading your saved profile. Please log in again.",
+          variant: "destructive",
+        });
       }
     }
+    setIsLoading(false);
   }, []);
 
   const handleProfileComplete = (profile: UserProfile) => {
@@ -43,7 +50,23 @@ function App() {
     // Update profile in state and localStorage
     setUserProfile(updatedProfile);
     localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+    
+    toast({
+      title: "Profile updated",
+      description: "Your profile has been successfully updated.",
+    });
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="text-center">
+          <div className="h-12 w-12 border-4 border-t-finance-blue border-r-finance-blue border-b-gray-200 border-l-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
