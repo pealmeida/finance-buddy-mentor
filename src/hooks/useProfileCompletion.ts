@@ -66,8 +66,8 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
         duration: 3000,
       });
       
-      // Navigate to the appropriate page
-      navigate(isEditMode ? '/profile' : '/dashboard');
+      // Always navigate to the dashboard
+      navigate('/dashboard');
     } catch (err) {
       console.error("Error completing profile:", err);
       toast({

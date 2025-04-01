@@ -103,7 +103,8 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
   };
 
   const handleCancel = () => {
-    navigate('/profile');
+    // Always navigate to dashboard when canceling
+    navigate('/dashboard');
   };
   
   const handleComplete = async () => {
@@ -158,7 +159,10 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
       console.log('Completing onboarding with profile:', completeProfile);
       
       // Complete onboarding flow by calling the parent handler
-      onComplete(completeProfile);
+      await onComplete(completeProfile);
+      
+      // Always navigate to dashboard after completing, regardless of edit mode
+      navigate('/dashboard');
     } catch (error) {
       console.error("Error completing onboarding:", error);
       toast({
@@ -191,7 +195,7 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
         onNext={handleNextStep}
         onPrevious={handlePrevStep}
         onComplete={handleComplete}
-        onCancel={isEditMode ? handleCancel : undefined}
+        onCancel={handleCancel}
         isEditMode={isEditMode}
         isLoading={isLoading}
       />
