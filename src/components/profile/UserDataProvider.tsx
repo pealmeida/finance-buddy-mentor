@@ -23,7 +23,7 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
   onProfileUpdate
 }) => {
   const [profile, setProfile] = useState<UserProfile>({...userProfile});
-  const [userName, setUserName] = useState<string>('');
+  const [userName, setUserName] = useState<string>(userProfile.name || '');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -68,7 +68,7 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
                 ...prev,
                 name: user_metadata.name
               }));
-              setUserName(user_metadata.name);
+              setUserName(user_metadata.name as string);
             } else if (profile.name) {
               setUserName(profile.name);
             } else if (email) {

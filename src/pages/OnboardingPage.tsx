@@ -6,6 +6,7 @@ import UserOnboarding from '@/components/UserOnboarding';
 import { UserProfile } from '@/types/finance';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useSupabaseData } from '@/hooks/useSupabaseData';
 
 interface OnboardingPageProps {
   onProfileComplete: (profile: UserProfile) => void;
@@ -16,6 +17,7 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
   const navigate = useNavigate();
   const { toast } = useToast();
   const location = useLocation();
+  const { saveUserProfile } = useSupabaseData();
   const isEditMode = Boolean(userProfile);
   
   // Check if we're editing an existing profile or creating a new one
@@ -35,18 +37,37 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
         profileWithId = {
           ...profile,
           id: session.user.id,
-          email: session.user.email || profile.email
+          email: session.user.email || profile.email || 'user@example.com',
+          name: profile.name || session.user.user_metadata?.name || 'User',
+          age: profile.age || 0,
+          monthlyIncome: profile.monthlyIncome || 0,
+          riskProfile: profile.riskProfile || 'moderate',
+          hasEmergencyFund: profile.hasEmergencyFund || false,
+          hasDebts: profile.hasDebts || false,
+          financialGoals: profile.financialGoals || [],
+          investments: profile.investments || []
         };
+        
+        // Save profile to Supabase
+        await saveUserProfile(profileWithId);
       } else {
         // No auth session, use existing ID if available or placeholder
         profileWithId = {
           ...profile,
           id: isEditMode && userProfile?.id ? userProfile.id : 'user-id',
-          email: profile.email || (isEditMode && userProfile?.email ? userProfile.email : 'user@example.com')
+          email: profile.email || (isEditMode && userProfile?.email ? userProfile.email : 'user@example.com'),
+          name: profile.name || 'User',
+          age: profile.age || 0,
+          monthlyIncome: profile.monthlyIncome || 0,
+          riskProfile: profile.riskProfile || 'moderate',
+          hasEmergencyFund: profile.hasEmergencyFund || false,
+          hasDebts: profile.hasDebts || false,
+          financialGoals: profile.financialGoals || [],
+          investments: profile.investments || []
         };
       }
       
-      // Save the profile
+      // Pass the profile to parent component
       onProfileComplete(profileWithId);
       
       // Show success message

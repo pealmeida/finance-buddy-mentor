@@ -23,13 +23,15 @@ const SignupPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      // Sign up the user with Supabase auth
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            name: name
-          }
+            name: name,
+            // Add other metadata as needed
+          },
         }
       });
 
@@ -40,13 +42,18 @@ const SignupPage: React.FC = () => {
           variant: "destructive"
         });
       } else {
+        console.log('User signed up successfully:', data);
+        
         toast({
           title: "Account created",
-          description: "Please check your email for the confirmation link.",
+          description: "Your account has been created successfully. Please complete your profile.",
         });
+        
+        // Navigate to onboarding to complete profile setup
         navigate('/onboarding');
       }
     } catch (error) {
+      console.error('Unexpected error during signup:', error);
       toast({
         title: "Signup failed",
         description: "An unexpected error occurred. Please try again.",

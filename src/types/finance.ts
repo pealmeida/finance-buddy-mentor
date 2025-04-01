@@ -2,7 +2,7 @@
 export type RiskProfile = 'conservative' | 'moderate' | 'aggressive';
 
 export interface UserProfile {
-  id?: string;
+  id: string;
   email: string;
   name: string;
   age: number;

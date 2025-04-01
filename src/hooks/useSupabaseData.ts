@@ -5,7 +5,8 @@ import {
   UserProfile, 
   FinancialGoal, 
   Investment, 
-  DebtDetail 
+  DebtDetail,
+  RiskProfile
 } from '@/types/finance';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -71,6 +72,10 @@ export function useSupabaseData() {
         throw new Error(`Error fetching debt details: ${debtDetailsError.message}`);
       }
       
+      if (!profileData) {
+        return null;
+      }
+      
       // Transform goals data to match our app's structure
       const financialGoals: FinancialGoal[] = goalsData ? goalsData.map((goal: any) => ({
         id: goal.id,
@@ -99,20 +104,16 @@ export function useSupabaseData() {
         interestRate: debt.interest_rate
       })) : [];
       
-      if (!profileData) {
-        return null;
-      }
-      
       // Combine all data into a user profile object
       const userProfile: UserProfile = {
-        id: profileData.id,
-        email: profileData.email,
-        name: profileData.name,
-        age: profileData.age,
+        id: profileData?.id || userId,
+        email: profileData?.email || 'user@example.com',
+        name: profileData?.name || 'User',
+        age: profileData?.age || 0,
         monthlyIncome: financialProfileData?.monthly_income || 0,
-        riskProfile: (financialProfileData?.risk_profile as 'conservative' | 'moderate' | 'aggressive') || 'moderate',
+        riskProfile: (financialProfileData?.risk_profile as RiskProfile) || 'moderate',
         hasEmergencyFund: financialProfileData?.has_emergency_fund || false,
-        emergencyFundMonths: financialProfileData?.emergency_fund_months || 0,
+        emergencyFundMonths: financialProfileData?.emergency_fund_months,
         hasDebts: financialProfileData?.has_debts || false,
         debtDetails: debtDetails,
         financialGoals: financialGoals,
@@ -141,55 +142,33 @@ export function useSupabaseData() {
       
       if (!userId) throw new Error("User ID is required to save profile");
       
-      // Update basic profile
+      // Upsert basic profile (insert if not exists, update if exists)
       const { error: profileError } = await supabase
         .from('profiles')
-        .update({
+        .upsert({
+          id: userId,
           name: profile.name,
           email: profile.email,
           age: profile.age
-        })
-        .eq('id', userId);
+        });
         
       if (profileError) throw new Error(`Error updating profile: ${profileError.message}`);
       
-      // Check if financial profile exists
-      const { data: existingFinancialProfile } = await supabase
+      // Upsert financial profile
+      const { error: financialProfileError } = await supabase
         .from('financial_profiles')
-        .select('id')
-        .eq('id', userId)
-        .maybeSingle();
-      
-      // Update or insert financial profile
-      if (existingFinancialProfile) {
-        const { error: financialProfileError } = await supabase
-          .from('financial_profiles')
-          .update({
-            monthly_income: profile.monthlyIncome,
-            risk_profile: profile.riskProfile,
-            has_emergency_fund: profile.hasEmergencyFund,
-            emergency_fund_months: profile.emergencyFundMonths,
-            has_debts: profile.hasDebts
-          })
-          .eq('id', userId);
+        .upsert({
+          id: userId,
+          monthly_income: profile.monthlyIncome,
+          risk_profile: profile.riskProfile,
+          has_emergency_fund: profile.hasEmergencyFund,
+          emergency_fund_months: profile.emergencyFundMonths,
+          has_debts: profile.hasDebts
+        });
           
-        if (financialProfileError) throw new Error(`Error updating financial profile: ${financialProfileError.message}`);
-      } else {
-        const { error: financialProfileError } = await supabase
-          .from('financial_profiles')
-          .insert([{
-            id: userId,
-            monthly_income: profile.monthlyIncome,
-            risk_profile: profile.riskProfile,
-            has_emergency_fund: profile.hasEmergencyFund,
-            emergency_fund_months: profile.emergencyFundMonths,
-            has_debts: profile.hasDebts
-          }]);
-          
-        if (financialProfileError) throw new Error(`Error creating financial profile: ${financialProfileError.message}`);
-      }
+      if (financialProfileError) throw new Error(`Error updating financial profile: ${financialProfileError.message}`);
       
-      // Handle goals (more complex with create/update/delete)
+      // Handle financial goals (more complex with create/update/delete)
       if (profile.financialGoals && profile.financialGoals.length > 0) {
         // Get existing goals
         const { data: existingGoals, error: fetchGoalsError } = await supabase
