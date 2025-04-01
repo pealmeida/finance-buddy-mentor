@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useSupabaseData } from '@/hooks/useSupabaseData';
 
 interface UserDataProviderProps {
   children: (props: {
@@ -26,6 +27,7 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const { fetchUserProfile } = useSupabaseData();
   
   // Fetch current user email and name from Supabase auth
   useEffect(() => {
@@ -41,29 +43,39 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
         }
         
         if (session?.user) {
-          const { email, user_metadata } = session.user;
+          const { email, user_metadata, id } = session.user;
           
-          // Update profile with the authenticated user's email
-          if (email) {
+          // Get profile data from Supabase
+          const supabaseProfile = await fetchUserProfile(id);
+          
+          // If we have Supabase profile data, use it
+          if (supabaseProfile) {
+            setProfile(supabaseProfile);
+            setUserName(supabaseProfile.name);
+            // Update app-level profile state
+            onProfileUpdate(supabaseProfile);
+          } else {
+            // Fallback to localStorage data
             setProfile(prev => ({
               ...prev,
-              email
+              id,
+              email: email || prev.email
             }));
-          }
-          
-          // Set user name for display
-          if (user_metadata && user_metadata.name) {
-            setProfile(prev => ({
-              ...prev,
-              name: user_metadata.name
-            }));
-            setUserName(user_metadata.name);
-          } else if (profile.name) {
-            setUserName(profile.name);
-          } else if (email) {
-            // Use email as fallback if no name is available
-            const nameFromEmail = email.split('@')[0];
-            setUserName(nameFromEmail);
+            
+            // Set user name for display
+            if (user_metadata && user_metadata.name) {
+              setProfile(prev => ({
+                ...prev,
+                name: user_metadata.name
+              }));
+              setUserName(user_metadata.name);
+            } else if (profile.name) {
+              setUserName(profile.name);
+            } else if (email) {
+              // Use email as fallback if no name is available
+              const nameFromEmail = email.split('@')[0];
+              setUserName(nameFromEmail);
+            }
           }
         } else {
           throw new Error("No active session found.");

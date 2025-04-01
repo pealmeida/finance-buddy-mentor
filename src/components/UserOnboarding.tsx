@@ -10,6 +10,9 @@ import FinancialGoalsStep from './onboarding/FinancialGoalsStep';
 import InvestmentsStep from './onboarding/InvestmentsStep';
 import ReviewStep from './onboarding/ReviewStep';
 import OnboardingNavigation from './onboarding/OnboardingNavigation';
+import { supabase } from '@/integrations/supabase/client';
+import { useSupabaseData } from '@/hooks/useSupabaseData';
+import { useToast } from '@/components/ui/use-toast';
 
 interface UserOnboardingProps {
   onComplete: (profile: UserProfile) => void;
@@ -24,6 +27,21 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const { profile, updateProfile } = useOnboarding();
+  const { saveUserProfile } = useSupabaseData();
+  const { toast } = useToast();
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // Check for authenticated user
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUserId(session.user.id);
+      }
+    };
+    
+    checkAuth();
+  }, []);
 
   // Initialize onboarding context with existing profile data if in edit mode
   useEffect(() => {
@@ -57,6 +75,35 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
   const handleCancel = () => {
     navigate('/profile');
   };
+  
+  const handleComplete = async () => {
+    try {
+      // Make sure we have current user ID
+      if (userId && profile) {
+        // Ensure profile has the user ID
+        const profileWithId = {
+          ...profile,
+          id: userId
+        };
+        
+        // Save to Supabase
+        await saveUserProfile(profileWithId);
+        
+        // Complete onboarding flow
+        onComplete(profileWithId);
+      } else {
+        // Fallback for no authenticated user
+        onComplete(profile as UserProfile);
+      }
+    } catch (error) {
+      console.error("Error completing onboarding:", error);
+      toast({
+        title: "Error Saving Profile",
+        description: "There was a problem saving your profile. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto py-8 px-4 sm:px-6 animate-fade-in">
@@ -75,7 +122,7 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
         totalSteps={TOTAL_STEPS}
         onNext={handleNextStep}
         onPrevious={handlePrevStep}
-        onComplete={() => onComplete(profile as UserProfile)}
+        onComplete={handleComplete}
         onCancel={isEditMode ? handleCancel : undefined}
         isEditMode={isEditMode}
       />

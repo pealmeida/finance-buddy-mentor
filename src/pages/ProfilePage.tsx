@@ -10,6 +10,7 @@ import PersonalInfoTab from '@/components/profile/PersonalInfoTab';
 import UserDataProvider from '@/components/profile/UserDataProvider';
 import SaveButton from '@/components/profile/SaveButton';
 import { Check, X } from 'lucide-react';
+import { useSupabaseData } from '@/hooks/useSupabaseData';
 
 interface ProfilePageProps {
   userProfile: UserProfile;
@@ -18,15 +19,23 @@ interface ProfilePageProps {
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate }) => {
   const { toast } = useToast();
+  const { saveUserProfile } = useSupabaseData();
   
-  const handleSaveProfile = (profile: UserProfile) => {
+  const handleSaveProfile = async (profile: UserProfile) => {
     try {
-      onProfileUpdate(profile);
-      toast({
-        title: "Profile Updated",
-        description: "Your profile information has been saved.",
-        duration: 3000
-      });
+      // Save to Supabase
+      const success = await saveUserProfile(profile);
+      
+      if (success) {
+        // Update local state
+        onProfileUpdate(profile);
+        
+        toast({
+          title: "Profile Updated",
+          description: "Your profile information has been saved.",
+          duration: 3000
+        });
+      }
     } catch (error) {
       toast({
         title: "Error Saving Profile",

@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import UserOnboarding from '@/components/UserOnboarding';
 import { UserProfile } from '@/types/finance';
 import { useToast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface OnboardingPageProps {
   onProfileComplete: (profile: UserProfile) => void;
@@ -18,31 +19,56 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
   const isEditMode = Boolean(userProfile);
   
   // Check if we're editing an existing profile or creating a new one
-  const handleProfileComplete = (profile: UserProfile) => {
-    // Use a default placeholder for the required email field since we're no longer collecting it
-    // In a real app, this would come from authentication
-    const profileWithId = {
-      ...profile,
-      // Preserve existing id and email if in edit mode, otherwise use placeholders
-      email: isEditMode ? userProfile.email : 'user@example.com',
-      name: isEditMode ? (profile.name || userProfile.name) : 'User',
-      id: isEditMode ? userProfile.id : 'user@example.com'
-    };
-    
-    // Save the profile
-    onProfileComplete(profileWithId);
-    
-    // Show success message
-    toast({
-      title: isEditMode ? "Profile updated!" : "Profile completed!",
-      description: isEditMode 
-        ? "Your financial profile has been updated successfully."
-        : "Your financial profile has been set up successfully.",
-      duration: 3000,
-    });
-    
-    // Navigate to the appropriate page
-    navigate(isEditMode ? '/profile' : '/dashboard');
+  const handleProfileComplete = async (profile: UserProfile) => {
+    try {
+      // Check for authenticated user first
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      // Create updated profile with auth user info if available
+      let profileWithId = { ...profile };
+      
+      if (session?.user) {
+        profileWithId = {
+          ...profile,
+          id: session.user.id,
+          email: session.user.email || profile.email || 'user@example.com'
+        };
+      } else {
+        // No auth session, use existing ID if available or placeholder
+        profileWithId = {
+          ...profile,
+          id: isEditMode && userProfile?.id ? userProfile.id : 'user@example.com',
+          email: profile.email || (isEditMode ? userProfile?.email : 'user@example.com') || 'user@example.com'
+        };
+      }
+      
+      // Save the profile
+      onProfileComplete(profileWithId);
+      
+      // Show success message
+      toast({
+        title: isEditMode ? "Profile updated!" : "Profile completed!",
+        description: isEditMode 
+          ? "Your financial profile has been updated successfully."
+          : "Your financial profile has been set up successfully.",
+        duration: 3000,
+      });
+      
+      // Navigate to the appropriate page
+      navigate(isEditMode ? '/profile' : '/dashboard');
+    } catch (err) {
+      console.error("Error completing profile:", err);
+      toast({
+        title: "Error saving profile",
+        description: err instanceof Error ? err.message : "An unexpected error occurred",
+        variant: "destructive",
+        duration: 5000
+      });
+    }
   };
 
   return (

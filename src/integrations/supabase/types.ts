@@ -9,7 +9,200 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      debt_details: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          interest_rate: number
+          name: string
+          type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          interest_rate: number
+          name: string
+          type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          interest_rate?: number
+          name?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "debt_details_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_goals: {
+        Row: {
+          created_at: string | null
+          current_amount: number
+          id: string
+          name: string
+          priority: string
+          target_amount: number
+          target_date: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          current_amount?: number
+          id?: string
+          name: string
+          priority: string
+          target_amount: number
+          target_date: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          current_amount?: number
+          id?: string
+          name?: string
+          priority?: string
+          target_amount?: number
+          target_date?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_goals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_profiles: {
+        Row: {
+          created_at: string | null
+          emergency_fund_months: number | null
+          has_debts: boolean
+          has_emergency_fund: boolean
+          id: string
+          monthly_income: number
+          risk_profile: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          emergency_fund_months?: number | null
+          has_debts?: boolean
+          has_emergency_fund?: boolean
+          id: string
+          monthly_income?: number
+          risk_profile: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          emergency_fund_months?: number | null
+          has_debts?: boolean
+          has_emergency_fund?: boolean
+          id?: string
+          monthly_income?: number
+          risk_profile?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investments: {
+        Row: {
+          annual_return: number | null
+          created_at: string | null
+          id: string
+          name: string
+          type: string
+          updated_at: string | null
+          user_id: string
+          value: number
+        }
+        Insert: {
+          annual_return?: number | null
+          created_at?: string | null
+          id?: string
+          name: string
+          type: string
+          updated_at?: string | null
+          user_id: string
+          value: number
+        }
+        Update: {
+          annual_return?: number | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          age: number
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          age: number
+          created_at?: string | null
+          email: string
+          id: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          age?: number
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

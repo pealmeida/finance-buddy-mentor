@@ -14,6 +14,7 @@ import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "./integrations/supabase/client";
+import { useSupabaseData } from "./hooks/useSupabaseData";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -22,22 +23,92 @@ function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Check if user profile exists in localStorage on app init
+  // Check if user is authenticated and load their profile
   useEffect(() => {
-    const savedProfile = localStorage.getItem('userProfile');
-    if (savedProfile) {
+    const fetchProfile = async () => {
+      setIsLoading(true);
+      
       try {
-        setUserProfile(JSON.parse(savedProfile));
+        // Check for authenticated user
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          throw error;
+        }
+        
+        if (session?.user) {
+          // User is logged in, try to get their profile from Supabase
+          const { fetchUserProfile } = useSupabaseData();
+          const profile = await fetchUserProfile(session.user.id);
+          
+          if (profile) {
+            setUserProfile(profile);
+            // Still save in localStorage as fallback
+            localStorage.setItem('userProfile', JSON.stringify(profile));
+          } else {
+            // No profile in Supabase, check localStorage as fallback
+            const savedProfile = localStorage.getItem('userProfile');
+            if (savedProfile) {
+              try {
+                const parsedProfile = JSON.parse(savedProfile);
+                // Ensure the profile has the user's ID
+                parsedProfile.id = session.user.id;
+                setUserProfile(parsedProfile);
+              } catch (e) {
+                console.error("Error parsing stored profile", e);
+                toast({
+                  title: "Error loading profile",
+                  description: "There was a problem loading your saved profile. Please complete your profile again.",
+                  variant: "destructive",
+                });
+              }
+            }
+          }
+        } else {
+          // No authenticated user, check for localStorage fallback
+          const savedProfile = localStorage.getItem('userProfile');
+          if (savedProfile) {
+            try {
+              setUserProfile(JSON.parse(savedProfile));
+            } catch (e) {
+              console.error("Error parsing stored profile", e);
+            }
+          }
+        }
       } catch (e) {
-        console.error("Error parsing stored profile", e);
+        console.error("Error checking auth or loading profile:", e);
         toast({
           title: "Error loading profile",
-          description: "There was a problem loading your saved profile. Please log in again.",
+          description: "There was a problem loading your profile. Please try logging in again.",
           variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
-    }
-    setIsLoading(false);
+    };
+    
+    fetchProfile();
+    
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          const { fetchUserProfile } = useSupabaseData();
+          const profile = await fetchUserProfile(session.user.id);
+          if (profile) {
+            setUserProfile(profile);
+            localStorage.setItem('userProfile', JSON.stringify(profile));
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setUserProfile(null);
+          localStorage.removeItem('userProfile');
+        }
+      }
+    );
+    
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleProfileComplete = (profile: UserProfile) => {
