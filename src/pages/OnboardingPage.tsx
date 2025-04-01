@@ -34,24 +34,31 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
       let profileWithId: UserProfile = { ...profile };
       
       if (session?.user) {
+        console.log('Session user found, using their ID for the profile:', session.user.id);
         profileWithId = {
           ...profile,
           id: session.user.id,
           email: session.user.email || profile.email || 'user@example.com',
-          name: profile.name || session.user.user_metadata?.name || 'User',
+          name: profile.name || (session.user.user_metadata?.name as string) || 'User',
           age: profile.age || 0,
           monthlyIncome: profile.monthlyIncome || 0,
           riskProfile: profile.riskProfile || 'moderate',
           hasEmergencyFund: profile.hasEmergencyFund || false,
           hasDebts: profile.hasDebts || false,
           financialGoals: profile.financialGoals || [],
-          investments: profile.investments || []
+          investments: profile.investments || [],
+          debtDetails: profile.debtDetails || []
         };
         
         // Save profile to Supabase
-        await saveUserProfile(profileWithId);
+        const success = await saveUserProfile(profileWithId);
+        if (!success) {
+          throw new Error("Failed to save profile to database");
+        }
+        console.log('Profile saved to Supabase successfully');
       } else {
         // No auth session, use existing ID if available or placeholder
+        console.log('No session found, using local profile data');
         profileWithId = {
           ...profile,
           id: isEditMode && userProfile?.id ? userProfile.id : 'user-id',
@@ -63,7 +70,8 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
           hasEmergencyFund: profile.hasEmergencyFund || false,
           hasDebts: profile.hasDebts || false,
           financialGoals: profile.financialGoals || [],
-          investments: profile.investments || []
+          investments: profile.investments || [],
+          debtDetails: profile.debtDetails || []
         };
       }
       

@@ -1,6 +1,7 @@
 
 import { useSupabaseBase } from './useSupabaseBase';
 import { UserProfile, RiskProfile } from '@/types/finance';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Hook for fetching and managing user profile data
@@ -11,6 +12,7 @@ export function useUserProfile() {
   const fetchUserProfile = async (userId: string): Promise<UserProfile | null> => {
     try {
       setLoading(true);
+      console.log('Fetching profile for user:', userId);
       
       // Fetch basic profile
       const { data: profileData, error: profileError } = await supabase
@@ -34,16 +36,37 @@ export function useUserProfile() {
         throw new Error(`Error fetching financial profile: ${financialProfileError.message}`);
       }
       
+      // Create a new profile if it doesn't exist
       if (!profileData) {
-        return null;
+        toast({
+          title: "Profile not found",
+          description: "Creating a new profile for you",
+        });
+        
+        // Create a minimal profile with the user ID
+        const minimalProfile: UserProfile = {
+          id: userId,
+          email: 'user@example.com',
+          name: 'User',
+          age: 0,
+          monthlyIncome: 0,
+          riskProfile: 'moderate',
+          hasEmergencyFund: false,
+          hasDebts: false,
+          financialGoals: [],
+          investments: [],
+          debtDetails: [],
+        };
+        
+        return minimalProfile;
       }
       
       // Combine data from both tables into a user profile object
       const userProfile: Partial<UserProfile> = {
-        id: profileData?.id || userId,
-        email: profileData?.email || 'user@example.com',
-        name: profileData?.name || 'User',
-        age: profileData?.age || 0,
+        id: profileData.id || userId,
+        email: profileData.email || 'user@example.com',
+        name: profileData.name || 'User',
+        age: profileData.age || 0,
         monthlyIncome: financialProfileData?.monthly_income || 0,
         riskProfile: (financialProfileData?.risk_profile as RiskProfile) || 'moderate',
         hasEmergencyFund: financialProfileData?.has_emergency_fund || false,
@@ -55,6 +78,13 @@ export function useUserProfile() {
       const financialGoals = await fetchFinancialGoals(userId);
       const investments = await fetchInvestments(userId);
       const debtDetails = await fetchDebtDetails(userId);
+      
+      console.log('Profile data fetched successfully:', {
+        ...userProfile,
+        financialGoals,
+        investments,
+        debtDetails
+      });
       
       // Complete the user profile
       return {
@@ -93,6 +123,11 @@ export function useUserProfile() {
       })) : [];
     } catch (err) {
       console.error("Error fetching financial goals:", err);
+      toast({
+        title: "Warning",
+        description: "Could not load your financial goals. Please try again later.",
+        variant: "warning"
+      });
       return [];
     }
   };
@@ -118,6 +153,11 @@ export function useUserProfile() {
       })) : [];
     } catch (err) {
       console.error("Error fetching investments:", err);
+      toast({
+        title: "Warning",
+        description: "Could not load your investments. Please try again later.",
+        variant: "warning"
+      });
       return [];
     }
   };
@@ -143,6 +183,11 @@ export function useUserProfile() {
       })) : [];
     } catch (err) {
       console.error("Error fetching debt details:", err);
+      toast({
+        title: "Warning",
+        description: "Could not load your debt details. Please try again later.",
+        variant: "warning"
+      });
       return [];
     }
   };

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UserProfile } from '@/types/finance';
@@ -12,6 +13,7 @@ import OnboardingNavigation from './onboarding/OnboardingNavigation';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseData } from '@/hooks/useSupabaseData';
 import { useToast } from '@/components/ui/use-toast';
+import { v4 as uuidv4 } from 'uuid';
 
 interface UserOnboardingProps {
   onComplete: (profile: UserProfile) => void;
@@ -35,6 +37,7 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
+        console.log('Setting user ID:', session.user.id);
         setUserId(session.user.id);
       }
     };
@@ -45,6 +48,7 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
   // Initialize onboarding context with existing profile data if in edit mode
   useEffect(() => {
     if (isEditMode && existingProfile) {
+      console.log('Initializing onboarding with existing profile:', existingProfile);
       updateProfile(existingProfile);
     }
   }, [isEditMode, existingProfile, updateProfile]);
@@ -79,7 +83,7 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
     try {
       // Ensure we have all required properties with default values as needed
       const completeProfile: UserProfile = {
-        id: userId || (existingProfile?.id || 'user-id'),
+        id: userId || (existingProfile?.id || uuidv4()),
         email: profile?.email || 'user@example.com',
         name: profile?.name || 'User',
         age: profile?.age || 0,
@@ -93,11 +97,7 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
         emergencyFundMonths: profile?.emergencyFundMonths
       };
 
-      // Make sure we have current user ID
-      if (userId) {
-        // Save to Supabase if we have a user ID
-        await saveUserProfile(completeProfile);
-      }
+      console.log('Completing onboarding with profile:', completeProfile);
       
       // Complete onboarding flow
       onComplete(completeProfile);

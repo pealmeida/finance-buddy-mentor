@@ -50,8 +50,9 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
           
           // If we have Supabase profile data, use it
           if (supabaseProfile) {
+            console.log('Loaded profile from Supabase:', supabaseProfile);
             setProfile(supabaseProfile);
-            setUserName(supabaseProfile.name);
+            setUserName(supabaseProfile.name || (user_metadata?.name as string) || 'User');
             // Update app-level profile state
             onProfileUpdate(supabaseProfile);
           } else {
@@ -66,7 +67,7 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
             if (user_metadata && user_metadata.name) {
               setProfile(prev => ({
                 ...prev,
-                name: user_metadata.name
+                name: user_metadata.name as string
               }));
               setUserName(user_metadata.name as string);
             } else if (profile.name) {
@@ -78,7 +79,10 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
             }
           }
         } else {
-          throw new Error("No active session found.");
+          console.log('No active session found, using provided profile data');
+          // No active session, but continue with the provided profile data
+          setProfile(userProfile);
+          setUserName(userProfile.name || 'User');
         }
       } catch (err) {
         console.error("Error fetching user data:", err);
@@ -95,18 +99,22 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
     };
     
     fetchUserData();
-  }, []);
+  }, [userProfile]);
   
   const handleInputChange = (field: keyof UserProfile, value: any) => {
-    setProfile(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // Update userName if name field changes
-    if (field === 'name') {
-      setUserName(value);
-    }
+    setProfile(prev => {
+      const updatedProfile = {
+        ...prev,
+        [field]: value
+      };
+      
+      // Update userName if name field changes
+      if (field === 'name') {
+        setUserName(value);
+      }
+      
+      return updatedProfile;
+    });
   };
   
   if (loading) {

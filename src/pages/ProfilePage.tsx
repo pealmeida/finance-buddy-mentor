@@ -23,6 +23,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
   
   const handleSaveProfile = async (profile: UserProfile) => {
     try {
+      console.log('Saving profile from ProfilePage:', profile);
+      
       // Save to Supabase
       const success = await saveUserProfile(profile);
       
