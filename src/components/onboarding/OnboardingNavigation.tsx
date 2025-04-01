@@ -23,7 +23,6 @@ const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
 
   const isLastStep = currentStep === totalSteps;
   const isFirstStep = currentStep === 1;
-  const isNextDisabled = currentStep === 1 && !profile.email;
 
   const handleNextClick = () => {
     if (isLastStep) {
@@ -45,8 +44,7 @@ const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
       )}
       
       <Button 
-        onClick={handleNextClick} 
-        disabled={isNextDisabled}
+        onClick={handleNextClick}
         className="flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark text-white transition-all duration-300 shadow-button hover:shadow-button-hover"
       >
         {!isLastStep ? 'Next' : 'Complete'}
