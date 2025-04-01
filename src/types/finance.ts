@@ -3,6 +3,7 @@ export type RiskProfile = 'conservative' | 'moderate' | 'aggressive';
 
 export interface UserProfile {
   id?: string;
+  email: string; // Added email field that will be used as ID
   name: string;
   age: number;
   monthlyIncome: number;

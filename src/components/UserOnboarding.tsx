@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ArrowRight, CheckCircle, ChevronRight, DollarSign, LineChart, Percent, PiggyBank, Target } from 'lucide-react';
+import { ArrowRight, CheckCircle, ChevronRight, DollarSign, LineChart, Mail, Percent, PiggyBank, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +16,7 @@ interface UserOnboardingProps {
 const UserOnboarding: React.FC<UserOnboardingProps> = ({ onComplete }) => {
   const [step, setStep] = useState(1);
   const [profile, setProfile] = useState<Partial<UserProfile>>({
+    email: '',
     name: '',
     age: 0,
     monthlyIncome: 0,
@@ -145,6 +146,22 @@ const UserOnboarding: React.FC<UserOnboardingProps> = ({ onComplete }) => {
           <div>
             <h2 className="text-2xl font-semibold mb-6">Personal Information</h2>
             <div className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input 
+                    id="email" 
+                    type="email"
+                    value={profile.email || ''} 
+                    onChange={(e) => setProfile({...profile, email: e.target.value})}
+                    placeholder="johndoe@example.com"
+                    className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-finance-blue"
+                    required
+                  />
+                </div>
+              </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
                 <Input 
@@ -462,6 +479,10 @@ const UserOnboarding: React.FC<UserOnboardingProps> = ({ onComplete }) => {
                 <h3 className="font-medium">Personal Information</h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="flex justify-between py-1">
+                    <span className="text-gray-600">Email:</span>
+                    <span className="font-medium">{profile.email}</span>
+                  </p>
+                  <p className="flex justify-between py-1">
                     <span className="text-gray-600">Name:</span>
                     <span className="font-medium">{profile.name}</span>
                   </p>
@@ -548,6 +569,7 @@ const UserOnboarding: React.FC<UserOnboardingProps> = ({ onComplete }) => {
         
         <Button 
           onClick={handleNextStep} 
+          disabled={step === 1 && !profile.email}
           className="flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark text-white transition-all duration-300 shadow-button hover:shadow-button-hover"
         >
           {step < 5 ? 'Next' : 'Complete'}
