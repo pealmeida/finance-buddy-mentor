@@ -2,15 +2,13 @@
 import React from 'react';
 import Header from '@/components/Header';
 import UserOnboarding from '@/components/UserOnboarding';
-import Dashboard from '@/components/Dashboard';
 import { UserProfile } from '@/types/finance';
 
-interface IndexProps {
-  userProfile: UserProfile | null;
+interface SignupPageProps {
   onProfileComplete: (profile: UserProfile) => void;
 }
 
-const Index: React.FC<IndexProps> = ({ userProfile, onProfileComplete }) => {
+const SignupPage: React.FC<SignupPageProps> = ({ onProfileComplete }) => {
   const handleProfileComplete = (profile: UserProfile) => {
     // Use email as the ID for the user profile
     const profileWithId = {
@@ -22,15 +20,12 @@ const Index: React.FC<IndexProps> = ({ userProfile, onProfileComplete }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      <Header onboardingComplete={!!userProfile} />
-      
-      {!userProfile ? (
+      <Header onboardingComplete={false} />
+      <div className="container mx-auto px-4 py-8">
         <UserOnboarding onComplete={handleProfileComplete} />
-      ) : (
-        <Dashboard userProfile={userProfile} />
-      )}
+      </div>
     </div>
   );
 };
 
-export default Index;
+export default SignupPage;
