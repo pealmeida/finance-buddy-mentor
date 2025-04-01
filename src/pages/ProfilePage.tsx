@@ -7,8 +7,6 @@ import { useToast } from '@/components/ui/use-toast';
 // Import refactored components
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import PersonalInfoTab from '@/components/profile/PersonalInfoTab';
-import FinancialTab from '@/components/profile/FinancialTab';
-import GoalsTab from '@/components/profile/GoalsTab';
 import UserDataProvider from '@/components/profile/UserDataProvider';
 import SaveButton from '@/components/profile/SaveButton';
 
@@ -57,18 +55,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
                 <section>
                   <h2 className="text-2xl font-semibold mb-4">Personal Information</h2>
                   <PersonalInfoTab profile={profile} onInputChange={handleInputChange} />
-                </section>
-                
-                {/* Financial Profile Section */}
-                <section>
-                  <h2 className="text-2xl font-semibold mb-4">Financial Profile</h2>
-                  <FinancialTab profile={profile} onInputChange={handleInputChange} />
-                </section>
-                
-                {/* Goals & Investments Section */}
-                <section>
-                  <h2 className="text-2xl font-semibold mb-4">Goals & Investments</h2>
-                  <GoalsTab />
                 </section>
                 
                 <SaveButton 
