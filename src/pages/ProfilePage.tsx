@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { UserProfile } from '@/types/finance';
 import { Button } from '@/components/ui/button';
@@ -13,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ProfilePageProps {
   userProfile: UserProfile;
@@ -22,6 +22,27 @@ interface ProfilePageProps {
 const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate }) => {
   const [profile, setProfile] = useState<UserProfile>({...userProfile});
   const { toast } = useToast();
+  
+  // Fetch current user email and name from Supabase auth
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.user) {
+        const { email } = session.user;
+        
+        // Update profile with the authenticated user's email
+        if (email) {
+          setProfile(prev => ({
+            ...prev,
+            email
+          }));
+        }
+      }
+    };
+    
+    fetchUserData();
+  }, []);
   
   const handleInputChange = (field: keyof UserProfile, value: any) => {
     setProfile(prev => ({
