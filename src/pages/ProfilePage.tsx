@@ -2,7 +2,6 @@
 import React from 'react';
 import Header from '@/components/Header';
 import { UserProfile } from '@/types/finance';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 
 // Import refactored components
@@ -53,26 +52,24 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
             <>
               <ProfileHeader userName={userName} />
               
-              <div className="bg-white rounded-xl shadow-sm p-8">
-                <Tabs defaultValue="personal" className="space-y-8">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="personal">Personal Info</TabsTrigger>
-                    <TabsTrigger value="financial">Financial Profile</TabsTrigger>
-                    <TabsTrigger value="goals">Goals & Investments</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="personal">
-                    <PersonalInfoTab profile={profile} onInputChange={handleInputChange} />
-                  </TabsContent>
-                  
-                  <TabsContent value="financial">
-                    <FinancialTab profile={profile} onInputChange={handleInputChange} />
-                  </TabsContent>
-                  
-                  <TabsContent value="goals">
-                    <GoalsTab />
-                  </TabsContent>
-                </Tabs>
+              <div className="bg-white rounded-xl shadow-sm p-8 space-y-8">
+                {/* Personal Information Section */}
+                <section>
+                  <h2 className="text-2xl font-semibold mb-4">Personal Information</h2>
+                  <PersonalInfoTab profile={profile} onInputChange={handleInputChange} />
+                </section>
+                
+                {/* Financial Profile Section */}
+                <section>
+                  <h2 className="text-2xl font-semibold mb-4">Financial Profile</h2>
+                  <FinancialTab profile={profile} onInputChange={handleInputChange} />
+                </section>
+                
+                {/* Goals & Investments Section */}
+                <section>
+                  <h2 className="text-2xl font-semibold mb-4">Goals & Investments</h2>
+                  <GoalsTab />
+                </section>
                 
                 <SaveButton 
                   onSave={() => handleSaveProfile(profile)} 
