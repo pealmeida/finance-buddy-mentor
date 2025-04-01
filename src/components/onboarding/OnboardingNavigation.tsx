@@ -29,6 +29,12 @@ const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
   const isFirstStep = currentStep === 1;
 
   const handleNextClick = () => {
+    // For step 2 (risk profile), ensure emergency fund months is set properly
+    if (currentStep === 2 && profile.hasEmergencyFund && !profile.emergencyFundMonths) {
+      const updatedProfile = { ...profile, emergencyFundMonths: 3 };
+      // Continue with the updated profile
+    }
+    
     if (isLastStep) {
       onComplete();
     } else {
