@@ -9,6 +9,7 @@ import ProfileHeader from '@/components/profile/ProfileHeader';
 import PersonalInfoTab from '@/components/profile/PersonalInfoTab';
 import UserDataProvider from '@/components/profile/UserDataProvider';
 import SaveButton from '@/components/profile/SaveButton';
+import { Check, X } from 'lucide-react';
 
 interface ProfilePageProps {
   userProfile: UserProfile;
@@ -58,6 +59,38 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
                     <p className="text-gray-500">Update your basic profile details below. For more comprehensive changes, use the Edit Full Profile button.</p>
                   </div>
                   <PersonalInfoTab profile={profile} onInputChange={handleInputChange} />
+                  
+                  {/* Emergency Fund Information */}
+                  <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h3 className="font-semibold text-lg mb-2">Emergency Fund Status</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      {profile.hasEmergencyFund ? (
+                        <>
+                          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-green-100">
+                            <Check className="h-4 w-4 text-green-600" />
+                          </span>
+                          <span className="text-green-700">Emergency fund established</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-amber-100">
+                            <X className="h-4 w-4 text-amber-600" />
+                          </span>
+                          <span className="text-amber-700">No emergency fund established</span>
+                        </>
+                      )}
+                    </div>
+                    {profile.hasEmergencyFund && profile.emergencyFundMonths && (
+                      <p className="text-sm text-gray-600 pl-8">
+                        You have {profile.emergencyFundMonths} {profile.emergencyFundMonths === 1 ? 'month' : 'months'} of expenses saved.
+                      </p>
+                    )}
+                    {!profile.hasEmergencyFund && (
+                      <p className="text-sm text-gray-600 pl-8">
+                        It's recommended to save 3-6 months of living expenses for emergencies.
+                      </p>
+                    )}
+                  </div>
                 </section>
                 
                 <SaveButton 
