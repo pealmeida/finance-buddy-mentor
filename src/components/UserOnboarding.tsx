@@ -35,10 +35,16 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
   // Check for authenticated user
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        console.log('Setting user ID:', session.user.id);
-        setUserId(session.user.id);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          console.log('Setting user ID:', session.user.id);
+          setUserId(session.user.id);
+        } else {
+          console.log('No authenticated session found');
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
       }
     };
     
@@ -81,20 +87,29 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({ onComplete, existing
   
   const handleComplete = async () => {
     try {
+      if (!profile) {
+        toast({
+          title: "Error Saving Profile",
+          description: "Profile data is missing. Please complete all required fields.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       // Ensure we have all required properties with default values as needed
       const completeProfile: UserProfile = {
         id: userId || (existingProfile?.id || uuidv4()),
-        email: profile?.email || 'user@example.com',
-        name: profile?.name || 'User',
-        age: profile?.age || 0,
-        monthlyIncome: profile?.monthlyIncome || 0,
-        riskProfile: profile?.riskProfile || 'moderate',
-        hasEmergencyFund: profile?.hasEmergencyFund || false,
-        hasDebts: profile?.hasDebts || false,
-        financialGoals: profile?.financialGoals || [],
-        investments: profile?.investments || [],
-        debtDetails: profile?.debtDetails || [],
-        emergencyFundMonths: profile?.emergencyFundMonths
+        email: profile.email || 'user@example.com',
+        name: profile.name || 'User',
+        age: profile.age || 0,
+        monthlyIncome: profile.monthlyIncome || 0,
+        riskProfile: profile.riskProfile || 'moderate',
+        hasEmergencyFund: profile.hasEmergencyFund || false,
+        hasDebts: profile.hasDebts || false,
+        financialGoals: profile.financialGoals || [],
+        investments: profile.investments || [],
+        debtDetails: profile.debtDetails || [],
+        emergencyFundMonths: profile.emergencyFundMonths
       };
 
       console.log('Completing onboarding with profile:', completeProfile);

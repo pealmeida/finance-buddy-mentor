@@ -1,6 +1,7 @@
 
 import { useUserProfile } from './supabase/useUserProfile';
 import { useProfileSave } from './supabase/useProfileSave';
+import { UserProfile } from '@/types/finance';
 
 /**
  * Main hook that combines all Supabase data operations

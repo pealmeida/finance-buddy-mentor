@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import UserOnboarding from '@/components/UserOnboarding';
@@ -18,11 +18,14 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
   const { toast } = useToast();
   const location = useLocation();
   const { saveUserProfile } = useSupabaseData();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isEditMode = Boolean(userProfile);
   
   // Check if we're editing an existing profile or creating a new one
   const handleProfileComplete = async (profile: UserProfile) => {
     try {
+      setIsSubmitting(true);
+      
       // Check for authenticated user first
       const { data: { session }, error } = await supabase.auth.getSession();
       
@@ -40,14 +43,6 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
           id: session.user.id,
           email: session.user.email || profile.email || 'user@example.com',
           name: profile.name || (session.user.user_metadata?.name as string) || 'User',
-          age: profile.age || 0,
-          monthlyIncome: profile.monthlyIncome || 0,
-          riskProfile: profile.riskProfile || 'moderate',
-          hasEmergencyFund: profile.hasEmergencyFund || false,
-          hasDebts: profile.hasDebts || false,
-          financialGoals: profile.financialGoals || [],
-          investments: profile.investments || [],
-          debtDetails: profile.debtDetails || []
         };
         
         // Save profile to Supabase
@@ -61,17 +56,8 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
         console.log('No session found, using local profile data');
         profileWithId = {
           ...profile,
-          id: isEditMode && userProfile?.id ? userProfile.id : 'user-id',
+          id: (isEditMode && userProfile?.id) ? userProfile.id : 'user-id',
           email: profile.email || (isEditMode && userProfile?.email ? userProfile.email : 'user@example.com'),
-          name: profile.name || 'User',
-          age: profile.age || 0,
-          monthlyIncome: profile.monthlyIncome || 0,
-          riskProfile: profile.riskProfile || 'moderate',
-          hasEmergencyFund: profile.hasEmergencyFund || false,
-          hasDebts: profile.hasDebts || false,
-          financialGoals: profile.financialGoals || [],
-          investments: profile.investments || [],
-          debtDetails: profile.debtDetails || []
         };
       }
       
@@ -97,6 +83,8 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onProfileComplete, user
         variant: "destructive",
         duration: 5000
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
