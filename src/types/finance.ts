@@ -9,6 +9,7 @@ export interface UserProfile {
   monthlyIncome: number;
   riskProfile: RiskProfile;
   hasEmergencyFund: boolean;
+  emergencyFundMonths?: number; // Added this property
   hasDebts: boolean;
   financialGoals: FinancialGoal[];
   investments: Investment[];

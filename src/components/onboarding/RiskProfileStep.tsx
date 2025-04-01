@@ -12,8 +12,7 @@ const RiskProfileStep: React.FC = () => {
 
   const handleEmergencyFundMonthsChange = (value: number[]) => {
     updateProfile({ 
-      emergencyFundMonths: value[0],
-      hasEmergencyFund: value[0] > 0
+      emergencyFundMonths: value[0]
     });
   };
 
@@ -68,9 +67,11 @@ const RiskProfileStep: React.FC = () => {
               />
               <Label htmlFor="emergency" className="text-base">I have an emergency fund (3-6 months of expenses)</Label>
             </div>
-            <span className="font-medium text-sm text-gray-700">
-              {profile.emergencyFundMonths || 0} {profile.emergencyFundMonths === 1 ? 'month' : 'months'}
-            </span>
+            {profile.hasEmergencyFund && (
+              <span className="font-medium text-sm text-gray-700">
+                {profile.emergencyFundMonths || 0} {profile.emergencyFundMonths === 1 ? 'month' : 'months'}
+              </span>
+            )}
           </div>
           
           {profile.hasEmergencyFund && (
