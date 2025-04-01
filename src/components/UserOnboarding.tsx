@@ -1,18 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React from 'react';
 import { UserProfile } from '@/types/finance';
-import { OnboardingProvider, useOnboarding } from '@/context/OnboardingContext';
-import StepIndicator from './onboarding/StepIndicator';
-import PersonalInfoStep from './onboarding/PersonalInfoStep';
-import RiskProfileStep from './onboarding/RiskProfileStep';
-import FinancialGoalsStep from './onboarding/FinancialGoalsStep';
-import InvestmentsStep from './onboarding/InvestmentsStep';
-import ReviewStep from './onboarding/ReviewStep';
-import OnboardingNavigation from './onboarding/OnboardingNavigation';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
-import { v4 as uuidv4 } from 'uuid';
+import { OnboardingProvider } from '@/context/OnboardingContext';
+import OnboardingContent from './onboarding/OnboardingContent';
 
 interface UserOnboardingProps {
   onComplete: (profile: UserProfile) => void;
@@ -21,160 +11,12 @@ interface UserOnboardingProps {
   isSaving?: boolean;
 }
 
-const TOTAL_STEPS = 5;
-
-const OnboardingContent: React.FC<UserOnboardingProps> = ({ 
+const UserOnboarding: React.FC<UserOnboardingProps> = ({ 
   onComplete, 
   existingProfile, 
-  isEditMode,
-  isSaving = false 
+  isEditMode, 
+  isSaving 
 }) => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [step, setStep] = useState(1);
-  const { profile, updateProfile } = useOnboarding();
-  const { toast } = useToast();
-  const [userId, setUserId] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Check for authenticated user
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          console.log('Setting user ID:', session.user.id);
-          setUserId(session.user.id);
-        } else {
-          console.log('No authenticated session found');
-        }
-      } catch (error) {
-        console.error('Error checking authentication:', error);
-      }
-    };
-    
-    checkAuth();
-  }, []);
-
-  // Initialize onboarding context with existing profile data if in edit mode
-  useEffect(() => {
-    if (isEditMode && existingProfile) {
-      console.log('Initializing onboarding with existing profile:', existingProfile);
-      updateProfile(existingProfile);
-    }
-  }, [isEditMode, existingProfile, updateProfile]);
-  
-  // Check if there's a target step in the location state
-  useEffect(() => {
-    const state = location.state as { targetStep?: number } | undefined;
-    if (state && state.targetStep && state.targetStep <= TOTAL_STEPS) {
-      setStep(state.targetStep);
-    }
-  }, [location]);
-
-  const handleNextStep = () => {
-    if (step < TOTAL_STEPS) {
-      setStep(step + 1);
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const handlePrevStep = () => {
-    if (step > 1) {
-      setStep(step - 1);
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const handleCancel = () => {
-    navigate('/profile');
-  };
-  
-  const handleComplete = async () => {
-    if (isSubmitting) return; // Prevent duplicate submissions
-    
-    setIsSubmitting(true);
-    
-    try {
-      if (!profile) {
-        toast({
-          title: "Error Saving Profile",
-          description: "Profile data is missing. Please complete all required fields.",
-          variant: "destructive"
-        });
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Get the session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) {
-        throw new Error(sessionError.message);
-      }
-
-      // Ensure we have all required properties with default values as needed
-      const completeProfile: UserProfile = {
-        id: (session?.user?.id || existingProfile?.id || uuidv4()),
-        email: profile.email || (session?.user?.email || 'user@example.com'),
-        name: profile.name || (session?.user?.user_metadata?.name as string || 'User'),
-        age: profile.age || 0,
-        monthlyIncome: profile.monthlyIncome || 0,
-        riskProfile: profile.riskProfile || 'moderate',
-        hasEmergencyFund: profile.hasEmergencyFund || false,
-        hasDebts: profile.hasDebts || false,
-        financialGoals: profile.financialGoals || [],
-        investments: profile.investments || [],
-        debtDetails: profile.debtDetails || [],
-        emergencyFundMonths: profile.emergencyFundMonths
-      };
-
-      console.log('Completing onboarding with profile:', completeProfile);
-      
-      // Complete onboarding flow by calling the parent handler
-      // This will handle the Supabase saving in the parent component
-      onComplete(completeProfile);
-    } catch (error) {
-      console.error("Error completing onboarding:", error);
-      toast({
-        title: "Error Saving Profile",
-        description: error instanceof Error ? error.message : "There was a problem saving your profile. Please try again.",
-        variant: "destructive",
-      });
-      setIsSubmitting(false);
-    }
-  };
-
-  // Combine our internal isSubmitting state with any parent-provided isSaving state
-  const isLoading = isSubmitting || isSaving;
-
-  return (
-    <div className="w-full max-w-3xl mx-auto py-8 px-4 sm:px-6 animate-fade-in">
-      <StepIndicator currentStep={step} totalSteps={TOTAL_STEPS} />
-      
-      <div className="glass-panel rounded-2xl p-8 mb-8 animate-scale-in">
-        {step === 1 && <PersonalInfoStep />}
-        {step === 2 && <RiskProfileStep />}
-        {step === 3 && <FinancialGoalsStep />}
-        {step === 4 && <InvestmentsStep />}
-        {step === 5 && <ReviewStep />}
-      </div>
-      
-      <OnboardingNavigation 
-        currentStep={step}
-        totalSteps={TOTAL_STEPS}
-        onNext={handleNextStep}
-        onPrevious={handlePrevStep}
-        onComplete={handleComplete}
-        onCancel={isEditMode ? handleCancel : undefined}
-        isEditMode={isEditMode}
-        isLoading={isLoading}
-      />
-    </div>
-  );
-};
-
-const UserOnboarding: React.FC<UserOnboardingProps> = ({ onComplete, existingProfile, isEditMode, isSaving }) => {
   return (
     <OnboardingProvider>
       <OnboardingContent 
