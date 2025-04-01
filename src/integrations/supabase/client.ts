@@ -14,7 +14,7 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: typeof window !== 'undefined' ? localStorage : undefined,
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: false,  // Disable auto-detection of OAuth redirects
+    detectSessionInUrl: true, // Enable detection of OAuth redirects
     flowType: 'implicit'  // Use implicit flow for simpler auth handling
   }
 });

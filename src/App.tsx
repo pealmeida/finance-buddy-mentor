@@ -22,6 +22,7 @@ const queryClient = new QueryClient();
 function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   
   // Check if user is authenticated and load their profile
@@ -44,14 +45,21 @@ function App() {
                   
                   if (profile) {
                     console.log('Profile loaded after sign in:', profile);
+                    // Check if profile is complete enough to skip onboarding
+                    const profileIsComplete = 
+                      profile.monthlyIncome > 0 && 
+                      profile.age > 0 && 
+                      profile.riskProfile !== undefined;
+                    
+                    setIsProfileComplete(profileIsComplete);
                     setUserProfile(profile);
                     localStorage.setItem('userProfile', JSON.stringify(profile));
                   } else {
                     // If no profile exists yet, create a minimal one with auth data
                     const minimalProfile: UserProfile = {
                       id: session.user.id,
-                      email: session.user.email || 'user@example.com',
-                      name: session.user.user_metadata?.name || 'User',
+                      email: session.user.email || '',
+                      name: session.user.user_metadata?.name || '',
                       age: 0,
                       monthlyIncome: 0,
                       riskProfile: 'moderate',
@@ -62,6 +70,7 @@ function App() {
                       debtDetails: [],
                     };
                     console.log('Creating minimal profile:', minimalProfile);
+                    setIsProfileComplete(false);
                     setUserProfile(minimalProfile);
                     localStorage.setItem('userProfile', JSON.stringify(minimalProfile));
                   }
@@ -72,6 +81,7 @@ function App() {
             } else if (event === 'SIGNED_OUT') {
               console.log('User signed out, clearing profile');
               setUserProfile(null);
+              setIsProfileComplete(false);
               localStorage.removeItem('userProfile');
             }
           }
@@ -93,6 +103,13 @@ function App() {
           
           if (profile) {
             console.log('Existing profile loaded:', profile);
+            // Check if profile is complete enough to skip onboarding
+            const profileIsComplete = 
+              profile.monthlyIncome > 0 && 
+              profile.age > 0 && 
+              profile.riskProfile !== undefined;
+            
+            setIsProfileComplete(profileIsComplete);
             setUserProfile(profile);
             localStorage.setItem('userProfile', JSON.stringify(profile));
           } else {
@@ -104,6 +121,14 @@ function App() {
                 // Ensure the profile has the user's ID
                 parsedProfile.id = session.user.id;
                 console.log('Using local profile:', parsedProfile);
+                
+                // Check if profile is complete enough to skip onboarding
+                const profileIsComplete = 
+                  parsedProfile.monthlyIncome > 0 && 
+                  parsedProfile.age > 0 && 
+                  parsedProfile.riskProfile !== undefined;
+                
+                setIsProfileComplete(profileIsComplete);
                 setUserProfile(parsedProfile);
               } catch (e) {
                 console.error("Error parsing stored profile", e);
@@ -112,13 +137,14 @@ function App() {
                   description: "There was a problem loading your saved profile. Please complete your profile again.",
                   variant: "destructive",
                 });
+                setIsProfileComplete(false);
               }
             } else {
               // Create a minimal profile with auth data
               const minimalProfile: UserProfile = {
                 id: session.user.id,
-                email: session.user.email || 'user@example.com',
-                name: session.user.user_metadata?.name || 'User',
+                email: session.user.email || '',
+                name: session.user.user_metadata?.name || '',
                 age: 0,
                 monthlyIncome: 0,
                 riskProfile: 'moderate',
@@ -129,6 +155,7 @@ function App() {
                 debtDetails: [],
               };
               console.log('Creating minimal profile from session:', minimalProfile);
+              setIsProfileComplete(false);
               setUserProfile(minimalProfile);
               localStorage.setItem('userProfile', JSON.stringify(minimalProfile));
             }
@@ -141,13 +168,23 @@ function App() {
               const parsedProfile = JSON.parse(savedProfile);
               console.log('Using local profile (no auth):', parsedProfile);
               setUserProfile(parsedProfile);
+              
+              // Check if profile is complete
+              const profileIsComplete = 
+                parsedProfile.monthlyIncome > 0 && 
+                parsedProfile.age > 0 && 
+                parsedProfile.riskProfile !== undefined;
+              
+              setIsProfileComplete(profileIsComplete);
             } catch (e) {
               console.error("Error parsing stored profile", e);
               setUserProfile(null);
+              setIsProfileComplete(false);
             }
           } else {
             console.log('No profile found, user needs to sign in');
             setUserProfile(null);
+            setIsProfileComplete(false);
           }
         }
         
@@ -205,10 +242,18 @@ function App() {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Redirect root to dashboard if logged in, otherwise to login */}
+            {/* Redirect root to dashboard if logged in and profile is complete, 
+                to onboarding if logged in but profile incomplete, 
+                otherwise to login */}
             <Route 
               path="/" 
-              element={userProfile ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} 
+              element={
+                userProfile 
+                  ? (isProfileComplete 
+                      ? <Navigate to="/dashboard" /> 
+                      : <Navigate to="/onboarding" />)
+                  : <Navigate to="/login" />
+              } 
             />
             
             {/* Auth pages - accessible even when logged in */}
@@ -230,9 +275,11 @@ function App() {
             <Route 
               path="/dashboard" 
               element={
-                userProfile ? 
-                  <Dashboard userProfile={userProfile} /> : 
-                  <Navigate to="/onboarding" />
+                userProfile 
+                  ? (isProfileComplete 
+                      ? <Dashboard userProfile={userProfile} /> 
+                      : <Navigate to="/onboarding" />)
+                  : <Navigate to="/login" />
               } 
             />
             
@@ -240,12 +287,14 @@ function App() {
             <Route 
               path="/profile" 
               element={
-                userProfile ? 
-                  <ProfilePage 
-                    userProfile={userProfile} 
-                    onProfileUpdate={handleProfileUpdate}
-                  /> : 
-                  <Navigate to="/onboarding" />
+                userProfile 
+                  ? (isProfileComplete 
+                      ? <ProfilePage 
+                          userProfile={userProfile} 
+                          onProfileUpdate={handleProfileUpdate}
+                        /> 
+                      : <Navigate to="/onboarding" />)
+                  : <Navigate to="/login" />
               } 
             />
             

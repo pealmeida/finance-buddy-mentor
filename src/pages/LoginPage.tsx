@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Mail, Lock } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import Header from '@/components/Header';
+import { useSupabaseData } from '@/hooks/useSupabaseData';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,15 +17,16 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { fetchUserProfile } = useSupabaseData();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        password
+        password,
       });
 
       if (error) {
@@ -34,9 +36,29 @@ const LoginPage: React.FC = () => {
           variant: "destructive"
         });
       } else {
-        navigate('/onboarding');
+        toast({
+          title: "Login successful",
+          description: "You have successfully logged in.",
+        });
+        
+        // Check if this user has completed their profile setup
+        if (data.session) {
+          const userId = data.session.user.id;
+          const userProfile = await fetchUserProfile(userId);
+          
+          // Redirect based on profile completion status
+          if (userProfile && 
+              userProfile.monthlyIncome > 0 && 
+              userProfile.age > 0 && 
+              userProfile.riskProfile) {
+            navigate('/dashboard');
+          } else {
+            navigate('/onboarding');
+          }
+        }
       }
     } catch (error) {
+      console.error('Unexpected error during login:', error);
       toast({
         title: "Login failed",
         description: "An unexpected error occurred. Please try again.",
@@ -53,9 +75,9 @@ const LoginPage: React.FC = () => {
       <div className="container max-w-md mx-auto px-4 py-16">
         <Card className="w-full shadow-lg">
           <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+            <CardTitle className="text-2xl font-bold">Login to your account</CardTitle>
             <CardDescription>
-              Sign in to your Finance Buddy account
+              Enter your credentials to access your Finance Buddy account
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleLogin}>

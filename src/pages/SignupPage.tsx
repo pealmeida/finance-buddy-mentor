@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Mail, Lock, User } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import Header from '@/components/Header';
+import { useSupabaseData } from '@/hooks/useSupabaseData';
 
 const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -17,6 +18,7 @@ const SignupPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { fetchUserProfile } = useSupabaseData();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,23 +54,47 @@ const SignupPage: React.FC = () => {
         
         // Session should be created automatically after signUp
         if (data.session) {
+          // Check if this is a first-time user who needs to complete onboarding
+          const userId = data.session.user.id;
+          const userProfile = await fetchUserProfile(userId);
+          
           // Wait a moment to ensure the session is properly established
           setTimeout(() => {
-            // Navigate to onboarding to complete profile setup
-            navigate('/onboarding');
+            // If profile exists with complete data, go to dashboard, otherwise go to onboarding
+            if (userProfile && 
+                userProfile.monthlyIncome > 0 && 
+                userProfile.age > 0 && 
+                userProfile.riskProfile) {
+              navigate('/dashboard');
+            } else {
+              // Navigate to onboarding to complete profile setup
+              navigate('/onboarding');
+            }
           }, 500);
         } else {
           // If session is not automatically created, we may need to sign in
-          const { error: signInError } = await supabase.auth.signInWithPassword({
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
             email,
             password
           });
           
           if (signInError) {
             throw new Error(`Error signing in after signup: ${signInError.message}`);
-          } else {
-            // Navigate to onboarding page after successful sign in
-            navigate('/onboarding');
+          } else if (signInData.session) {
+            // Check if user has completed profile
+            const userId = signInData.session.user.id;
+            const userProfile = await fetchUserProfile(userId);
+            
+            // If profile exists with complete data, go to dashboard, otherwise go to onboarding
+            if (userProfile && 
+                userProfile.monthlyIncome > 0 && 
+                userProfile.age > 0 && 
+                userProfile.riskProfile) {
+              navigate('/dashboard');
+            } else {
+              // Navigate to onboarding to complete profile setup
+              navigate('/onboarding');
+            }
           }
         }
       }
