@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,10 +13,104 @@ import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "./integrations/supabase/client";
-import { useSupabaseData } from "./hooks/useSupabaseData";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
+
+// Helper function to get user profile from Supabase - outside of component
+const fetchUserProfileFromSupabase = async (userId: string) => {
+  try {
+    // Fetch basic profile
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle();
+    
+    if (profileError) {
+      throw new Error(`Error fetching profile: ${profileError.message}`);
+    }
+    
+    // Fetch financial profile
+    const { data: financialProfileData, error: financialProfileError } = await supabase
+      .from('financial_profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle();
+      
+    if (financialProfileError && financialProfileError.code !== 'PGRST116') {
+      throw new Error(`Error fetching financial profile: ${financialProfileError.message}`);
+    }
+    
+    // Create a new profile if it doesn't exist
+    if (!profileData) {
+      return null;
+    }
+    
+    // Fetch the related data
+    const { data: goalsData } = await supabase
+      .from('financial_goals')
+      .select('*')
+      .eq('user_id', userId);
+      
+    const { data: investmentsData } = await supabase
+      .from('investments')
+      .select('*')
+      .eq('user_id', userId);
+      
+    const { data: debtDetailsData } = await supabase
+      .from('debt_details')
+      .select('*')
+      .eq('user_id', userId);
+    
+    // Transform goals data
+    const financialGoals = goalsData ? goalsData.map((goal: any) => ({
+      id: goal.id,
+      name: goal.name,
+      targetAmount: goal.target_amount,
+      currentAmount: goal.current_amount,
+      targetDate: new Date(goal.target_date),
+      priority: goal.priority as 'low' | 'medium' | 'high'
+    })) : [];
+    
+    // Transform investments data
+    const investments = investmentsData ? investmentsData.map((investment: any) => ({
+      id: investment.id,
+      type: investment.type as 'stocks' | 'bonds' | 'realEstate' | 'cash' | 'crypto' | 'other',
+      name: investment.name,
+      value: investment.value,
+      annualReturn: investment.annual_return
+    })) : [];
+    
+    // Transform debt details data
+    const debtDetails = debtDetailsData ? debtDetailsData.map((debt: any) => ({
+      id: debt.id,
+      type: debt.type as 'creditCard' | 'personalLoan' | 'studentLoan' | 'other',
+      name: debt.name,
+      amount: debt.amount,
+      interestRate: debt.interest_rate
+    })) : [];
+    
+    // Combine data from both tables into a user profile object
+    return {
+      id: profileData.id || userId,
+      email: profileData.email || 'user@example.com',
+      name: profileData.name || 'User',
+      age: profileData.age || 0,
+      monthlyIncome: financialProfileData?.monthly_income || 0,
+      riskProfile: financialProfileData?.risk_profile || 'moderate',
+      hasEmergencyFund: financialProfileData?.has_emergency_fund || false,
+      emergencyFundMonths: financialProfileData?.emergency_fund_months,
+      hasDebts: financialProfileData?.has_debts || false,
+      financialGoals,
+      investments,
+      debtDetails,
+    };
+  } catch (err) {
+    console.error("Error fetching user profile:", err);
+    return null;
+  }
+};
 
 function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -40,8 +133,7 @@ function App() {
               try {
                 // Allow a small delay to ensure the database has been updated
                 setTimeout(async () => {
-                  const { fetchUserProfile } = useSupabaseData();
-                  const profile = await fetchUserProfile(session.user.id);
+                  const profile = await fetchUserProfileFromSupabase(session.user.id);
                   
                   if (profile) {
                     console.log('Profile loaded after sign in:', profile);
@@ -98,8 +190,7 @@ function App() {
           console.log('Existing session found for user:', session.user.id);
           
           // Try to get their profile from Supabase
-          const { fetchUserProfile } = useSupabaseData();
-          const profile = await fetchUserProfile(session.user.id);
+          const profile = await fetchUserProfileFromSupabase(session.user.id);
           
           if (profile) {
             console.log('Existing profile loaded:', profile);

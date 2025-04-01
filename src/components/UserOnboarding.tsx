@@ -11,7 +11,6 @@ import InvestmentsStep from './onboarding/InvestmentsStep';
 import ReviewStep from './onboarding/ReviewStep';
 import OnboardingNavigation from './onboarding/OnboardingNavigation';
 import { supabase } from '@/integrations/supabase/client';
-import { useSupabaseData } from '@/hooks/useSupabaseData';
 import { useToast } from '@/components/ui/use-toast';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -34,7 +33,6 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const { profile, updateProfile } = useOnboarding();
-  const { saveUserProfile } = useSupabaseData();
   const { toast } = useToast();
   const [userId, setUserId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -133,18 +131,8 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({
 
       console.log('Completing onboarding with profile:', completeProfile);
       
-      // Save to Supabase if authenticated
-      if (session?.user) {
-        console.log('Saving profile to Supabase for user:', session.user.id);
-        const success = await saveUserProfile(completeProfile);
-        
-        if (!success) {
-          throw new Error("Failed to save profile to database");
-        }
-        console.log('Profile saved successfully');
-      }
-      
-      // Complete onboarding flow
+      // Complete onboarding flow by calling the parent handler
+      // This will handle the Supabase saving in the parent component
       onComplete(completeProfile);
     } catch (error) {
       console.error("Error completing onboarding:", error);
@@ -153,7 +141,6 @@ const OnboardingContent: React.FC<UserOnboardingProps> = ({
         description: error instanceof Error ? error.message : "There was a problem saving your profile. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };

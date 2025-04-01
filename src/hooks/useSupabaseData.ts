@@ -5,6 +5,7 @@ import { UserProfile } from '@/types/finance';
 
 /**
  * Main hook that combines all Supabase data operations
+ * IMPORTANT: This hook must only be used inside React functional components
  */
 export function useSupabaseData() {
   const { loading: profileLoading, fetchUserProfile } = useUserProfile();
