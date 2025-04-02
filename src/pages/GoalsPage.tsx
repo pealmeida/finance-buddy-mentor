@@ -1,13 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
-import { UserProfile, FinancialGoal } from '@/types/finance';
-import { useProfileData } from '@/hooks/useProfileData';
+import { UserProfile } from '@/types/finance';
 import GoalsManagement from '@/components/goals/GoalsManagement';
 import { useToast } from '@/components/ui/use-toast';
-import ProfileLoadingState from '@/components/profile/ProfileLoadingState';
-import ProfileErrorState from '@/components/profile/ProfileErrorState';
 
 interface GoalsPageProps {
   userProfile: UserProfile;
@@ -15,39 +12,16 @@ interface GoalsPageProps {
 }
 
 const GoalsPage: React.FC<GoalsPageProps> = ({ userProfile, onProfileUpdate }) => {
-  const {
-    profile,
-    loading,
-    error,
-    handleInputChange
-  } = useProfileData(userProfile);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Update the parent app state when profile changes
-    if (profile && !loading) {
-      onProfileUpdate(profile);
-    }
-  }, [profile, loading, onProfileUpdate]);
-
-  if (loading) {
-    return (
-      <>
-        <Header onboardingComplete={true} />
-        <ProfileLoadingState />
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <Header onboardingComplete={true} />
-        <ProfileErrorState error={error} />
-      </>
-    );
-  }
+  const handleGoalsChange = (updatedGoals) => {
+    const updatedProfile = {
+      ...userProfile,
+      financialGoals: updatedGoals
+    };
+    onProfileUpdate(updatedProfile);
+  };
 
   const handleGoBack = () => {
     navigate('/dashboard');
@@ -69,8 +43,8 @@ const GoalsPage: React.FC<GoalsPageProps> = ({ userProfile, onProfileUpdate }) =
         
         <div className="bg-white shadow-md rounded-lg p-6">
           <GoalsManagement 
-            goals={profile.financialGoals} 
-            onGoalsChange={(updatedGoals) => handleInputChange('financialGoals', updatedGoals)} 
+            goals={userProfile.financialGoals}
+            onGoalsChange={handleGoalsChange}
           />
         </div>
       </div>

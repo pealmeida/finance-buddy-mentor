@@ -7,16 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Loader2 } from 'lucide-react';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { format, parseISO, parse } from 'date-fns';
+import { format } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
 
 interface GoalFormProps {
   goal: FinancialGoal | null;
@@ -26,45 +18,41 @@ interface GoalFormProps {
 }
 
 const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving }) => {
-  const form = useForm<FinancialGoal>({
-    defaultValues: goal || {
-      id: '',
-      name: '',
-      targetAmount: 0,
-      currentAmount: 0,
-      targetDate: new Date(),
-      priority: 'medium'
-    }
+  const isNewGoal = !goal || !goal.id;
+  
+  const defaultValues = {
+    id: goal?.id || uuidv4(),
+    name: goal?.name || '',
+    targetAmount: goal?.targetAmount || 0,
+    currentAmount: goal?.currentAmount || 0,
+    targetDate: goal?.targetDate instanceof Date 
+      ? format(goal.targetDate, 'yyyy-MM-dd')
+      : typeof goal?.targetDate === 'string' 
+        ? format(new Date(goal.targetDate), 'yyyy-MM-dd')
+        : format(new Date(), 'yyyy-MM-dd'),
+    priority: goal?.priority || 'medium' as 'low' | 'medium' | 'high'
+  };
+
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+    defaultValues
   });
 
-  const { register, handleSubmit, watch, formState: { errors } } = form;
-
-  const onSubmit = (data: FinancialGoal) => {
-    // Ensure the date is a Date object
-    let formattedDate = data.targetDate;
-    if (typeof data.targetDate === 'string') {
-      try {
-        formattedDate = new Date(data.targetDate);
-        if (isNaN(formattedDate.getTime())) {
-          throw new Error('Invalid date');
-        }
-      } catch (e) {
-        // If parsing fails, use current date
-        formattedDate = new Date();
-      }
-    }
-    
-    onSave({
+  const onSubmit = (data: any) => {
+    const formattedGoal: FinancialGoal = {
       ...data,
-      id: goal?.id || '',
-      targetDate: formattedDate
-    });
+      id: isNewGoal ? uuidv4() : goal!.id,
+      targetAmount: Number(data.targetAmount),
+      currentAmount: Number(data.currentAmount),
+      targetDate: new Date(data.targetDate)
+    };
+    
+    onSave(formattedGoal);
   };
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">
-        {goal && goal.id ? 'Edit Goal' : 'Create New Goal'}
+        {isNewGoal ? 'Create New Goal' : 'Edit Goal'}
       </h2>
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -75,7 +63,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving })
             placeholder="e.g., Emergency Fund, Down Payment, Retirement"
             {...register("name", { required: "Goal name is required" })}
           />
-          {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+          {errors.name && <p className="text-red-500 text-sm">{errors.name.message as string}</p>}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -90,7 +78,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving })
                 min: { value: 1, message: "Amount must be positive" }
               })}
             />
-            {errors.targetAmount && <p className="text-red-500 text-sm">{errors.targetAmount.message}</p>}
+            {errors.targetAmount && <p className="text-red-500 text-sm">{errors.targetAmount.message as string}</p>}
           </div>
           
           <div className="space-y-2">
@@ -104,7 +92,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving })
                 min: { value: 0, message: "Amount cannot be negative" }
               })}
             />
-            {errors.currentAmount && <p className="text-red-500 text-sm">{errors.currentAmount.message}</p>}
+            {errors.currentAmount && <p className="text-red-500 text-sm">{errors.currentAmount.message as string}</p>}
           </div>
         </div>
         
@@ -114,23 +102,16 @@ const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving })
             id="targetDate"
             type="date"
             {...register("targetDate", { required: "Target date is required" })}
-            defaultValue={
-              goal?.targetDate instanceof Date 
-                ? format(goal.targetDate, 'yyyy-MM-dd')
-                : typeof goal?.targetDate === 'string' 
-                  ? format(new Date(goal.targetDate), 'yyyy-MM-dd')
-                  : format(new Date(), 'yyyy-MM-dd')
-            }
           />
-          {errors.targetDate && <p className="text-red-500 text-sm">{errors.targetDate.message}</p>}
+          {errors.targetDate && <p className="text-red-500 text-sm">{errors.targetDate.message as string}</p>}
         </div>
         
         <div className="space-y-3">
           <Label>Priority</Label>
           <div className="flex flex-col space-y-2">
             <RadioGroup
-              defaultValue={goal?.priority || "medium"}
-              onValueChange={(value) => form.setValue('priority', value as 'low' | 'medium' | 'high')}
+              defaultValue={defaultValues.priority}
+              onValueChange={(value) => setValue('priority', value as 'low' | 'medium' | 'high')}
               className="space-y-2"
             >
               <div className="flex items-center space-x-2">
