@@ -39,10 +39,10 @@ export function useOnboardingFlow({
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          console.log('Setting user ID:', session.user.id);
-          setUserId(session.user.id);
+        const { data } = await supabase.auth.getSession();
+        if (data?.session?.user) {
+          console.log('Setting user ID:', data.session.user.id);
+          setUserId(data.session.user.id);
         } else {
           console.log('No authenticated session found');
           // Show a toast to inform the user they need to be logged in
@@ -94,13 +94,13 @@ export function useOnboardingFlow({
     
     try {
       // Check if user is authenticated
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const { data, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError) {
         throw new Error(`Authentication error: ${sessionError.message}`);
       }
       
-      if (!session || !session.user) {
+      if (!data.session || !data.session.user) {
         toast({
           title: "Authentication Required",
           description: "You must be logged in to save your profile. Please log in and try again.",
@@ -112,9 +112,9 @@ export function useOnboardingFlow({
 
       // Ensure we have all required properties with default values as needed
       const completeProfile: UserProfile = {
-        id: profile.id || session.user.id, // Use profile id if available, otherwise use session id
-        email: profile.email || session.user.email || 'user@example.com',
-        name: profile.name || (session.user.user_metadata?.name as string || 'User'),
+        id: profile.id || data.session.user.id, // Use profile id if available, otherwise use session id
+        email: profile.email || data.session.user.email || 'user@example.com',
+        name: profile.name || (data.session.user.user_metadata?.name as string || 'User'),
         age: profile.age || 0,
         monthlyIncome: profile.monthlyIncome || 0,
         riskProfile: validateRiskProfile(profile.riskProfile),

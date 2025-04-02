@@ -15,7 +15,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userName }) => {
   const { toast } = useToast();
 
   const handleEditFullProfile = () => {
-    navigate('/onboarding', { state: { isEditMode: true } });
+    navigate('/full-profile', { state: { isEditMode: true } });
   };
 
   const handleLogout = async () => {

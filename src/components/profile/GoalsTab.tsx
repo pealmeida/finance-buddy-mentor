@@ -20,7 +20,7 @@ const GoalsTab: React.FC<GoalsTabProps> = ({ profile }) => {
   };
 
   const handleInvestmentsRedirect = () => {
-    navigate('/onboarding', { state: { targetStep: 4 } }); // Investments step
+    navigate('/full-profile', { state: { targetStep: 4 } }); // Investments step
   };
   
   return (

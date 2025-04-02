@@ -3,7 +3,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { UserProfile } from '@/types/finance';
 import Dashboard from '@/pages/Dashboard';
-import OnboardingPage from '@/pages/OnboardingPage';
+import FullProfilePage from '@/pages/FullProfilePage';
 import SignupPage from '@/pages/SignupPage';
 import LoginPage from '@/pages/LoginPage';
 import ProfilePage from '@/pages/ProfilePage';
@@ -26,7 +26,7 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
   return (
     <Routes>
       {/* Redirect root to dashboard if logged in and profile is complete, 
-          to onboarding if logged in but profile incomplete, 
+          to full profile if logged in but profile incomplete, 
           otherwise to login */}
       <Route 
         path="/" 
@@ -34,7 +34,7 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
           userProfile 
             ? (isProfileComplete 
                 ? <Navigate to="/dashboard" /> 
-                : <Navigate to="/onboarding" />)
+                : <Navigate to="/full-profile" />)
             : <Navigate to="/login" />
         } 
       />
@@ -43,30 +43,30 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       
-      {/* Onboarding page - can be used for both initial setup and profile editing */}
+      {/* Full Profile page - can be used for both initial setup and profile editing */}
       <Route 
-        path="/onboarding" 
+        path="/full-profile" 
         element={
-          <OnboardingPage 
+          <FullProfilePage 
             onProfileComplete={onProfileComplete}
             userProfile={userProfile || undefined}
           />
         } 
       />
       
-      {/* Dashboard - protected route, redirect to onboarding if not onboarded */}
+      {/* Dashboard - protected route, redirect to full-profile if not onboarded */}
       <Route 
         path="/dashboard" 
         element={
           userProfile 
             ? (isProfileComplete 
                 ? <Dashboard userProfile={userProfile} /> 
-                : <Navigate to="/onboarding" />)
+                : <Navigate to="/full-profile" />)
             : <Navigate to="/login" />
         } 
       />
       
-      {/* Profile page - protected route, redirect to onboarding if not onboarded */}
+      {/* Profile page - protected route, redirect to full-profile if not onboarded */}
       <Route 
         path="/profile" 
         element={
@@ -76,7 +76,7 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
                     userProfile={userProfile} 
                     onProfileUpdate={onProfileUpdate}
                   /> 
-                : <Navigate to="/onboarding" />)
+                : <Navigate to="/full-profile" />)
             : <Navigate to="/login" />
         } 
       />
@@ -91,7 +91,7 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
                     userProfile={userProfile} 
                     onProfileUpdate={onProfileUpdate}
                   /> 
-                : <Navigate to="/onboarding" />)
+                : <Navigate to="/full-profile" />)
             : <Navigate to="/login" />
         } 
       />
