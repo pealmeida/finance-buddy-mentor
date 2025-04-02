@@ -13,7 +13,7 @@ export const useAuthSessionCheck = () => {
   const checkingRef = useRef<boolean>(false);
   const checkAttemptsRef = useRef<number>(0);
   const MAX_CHECK_ATTEMPTS = 3;
-  const CHECK_COOLDOWN = 10000; // 10 seconds between checks
+  const CHECK_COOLDOWN = 30000; // Increased to 30 seconds between checks
   
   // Check if auth session is valid and refresh token if needed
   const checkAndRefreshSession = useCallback(async (force = false) => {
@@ -24,7 +24,7 @@ export const useAuthSessionCheck = () => {
     }
     
     const now = Date.now();
-    // Don't check more often than every 10 seconds unless forced
+    // Don't check more often than every CHECK_COOLDOWN milliseconds unless forced
     if (!force && now - lastCheckTime.current < CHECK_COOLDOWN && lastCheckTime.current !== 0) {
       console.log(`Auth was checked recently (${Math.round((now - lastCheckTime.current) / 1000)}s ago), using cached result`);
       return !error;
@@ -35,7 +35,7 @@ export const useAuthSessionCheck = () => {
       console.log(`Max check attempts (${MAX_CHECK_ATTEMPTS}) reached, cooling down`);
       setTimeout(() => {
         checkAttemptsRef.current = 0;
-      }, 30000); // Reset after 30 seconds
+      }, 60000); // Reset after 60 seconds
       return false;
     }
     
@@ -57,25 +57,6 @@ export const useAuthSessionCheck = () => {
       if (!data.session) {
         console.log("No active session found");
         throw new Error("Authentication required to access monthly savings");
-      }
-      
-      // Session exists but check if token needs refresh
-      if (data.session) {
-        const expiresAt = data.session.expires_at;
-        const currentTime = Math.floor(Date.now() / 1000);
-        
-        // If token expires in less than 10 minutes, refresh it
-        if (expiresAt && expiresAt - currentTime < 600) {
-          console.log("Token expiring soon, refreshing...");
-          const { error: refreshError } = await supabase.auth.refreshSession();
-          
-          if (refreshError) {
-            console.error("Token refresh error:", refreshError);
-            throw new Error("Failed to refresh authentication. Please log in again.");
-          } else {
-            console.log("Token refreshed successfully");
-          }
-        }
       }
       
       // Success - reset error state and check attempts
@@ -118,16 +99,12 @@ export const useAuthSessionCheck = () => {
     // Initial auth check
     checkAndRefreshSession(true);
     
-    // Set up refresh interval every 5 minutes (300000ms)
-    const refreshInterval = setInterval(() => {
-      // Only check if we haven't checked recently
-      const now = Date.now();
-      if (now - lastCheckTime.current >= 60000) { // At least 1 minute since last check
-        checkAndRefreshSession();
-      }
-    }, 300000); // 5 minutes
+    // No refresh interval - removed to prevent potential loops
+    // We'll only check auth when explicitly called now
     
-    return () => clearInterval(refreshInterval);
+    return () => {
+      // Nothing to clean up now
+    };
   }, [checkAndRefreshSession]);
 
   return {

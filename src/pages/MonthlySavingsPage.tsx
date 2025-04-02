@@ -24,7 +24,7 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   const { handleProfileComplete, isSubmitting } = useProfileCompletion(onProfileUpdate);
   const [loading, setLoading] = useState(true);
   const initialCheckDone = useRef<boolean>(false);
-  const [debugInfo, setDebugInfo] = useState<string>('Starting authentication check...');
+  const [debugInfo, setDebugInfo] = useState<string>('Initializing page...');
   const { checkingAuth, error, setError, checkAndRefreshSession } = useAuthSessionCheck();
   
   // Initial auth check - using useCallback to prevent recreating this function on every render
@@ -74,13 +74,17 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
     }
   }, [userProfile, navigate, toast, checkAndRefreshSession, setError]);
   
-  // Run auth check only once on mount or when dependencies change
+  // Run auth check only once when component mounts
   useEffect(() => {
-    // Only run if loading is true and we haven't done the initial check
-    if (loading && !initialCheckDone.current) {
+    if (!initialCheckDone.current) {
       initialAuthCheck();
     }
-  }, [initialAuthCheck, loading]);
+    
+    return () => {
+      // Clean up by marking the check as not done when component unmounts
+      initialCheckDone.current = false;
+    };
+  }, [initialAuthCheck]);
   
   const handleSave = useCallback((updatedProfile: UserProfile) => {
     try {
@@ -108,19 +112,9 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
     
     // Allow a small delay before the check
     setTimeout(async () => {
-      const isAuthenticated = await checkAndRefreshSession(true);
-      
-      if (isAuthenticated) {
-        setLoading(false);
-        setDebugInfo('Authentication check passed after retry');
-      } else {
-        setDebugInfo('Authentication check failed after retry, redirecting');
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
-      }
-    }, 500);
-  }, [checkAndRefreshSession, navigate, setError]);
+      await initialAuthCheck();
+    }, 1000);
+  }, [initialAuthCheck, setError]);
 
   // Show loading state
   if (loading || checkingAuth) {

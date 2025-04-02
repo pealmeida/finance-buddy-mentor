@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { UserProfile } from '@/types/finance';
 import { useMonthlySavingsState } from '@/hooks/useMonthlySavingsState';
 import MonthlySavingsHeader from './MonthlySavingsHeader';
@@ -19,6 +19,9 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   onSave,
   isSaving = false
 }) => {
+  // Track if we've already done an initial refresh
+  const hasRefreshed = useRef(false);
+  
   // Initialize the state hook even if profile is not valid
   // This allows us to handle the auth check within the hook
   const {
@@ -37,12 +40,18 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     setEditingMonth
   } = useMonthlySavingsState(profile, onSave, isSaving);
 
-  // Effect to trigger a refresh when profile ID changes
+  // Effect to trigger a refresh when profile ID changes, but only once
   useEffect(() => {
-    if (profile?.id && authChecked) {
-      refreshData();
+    if (profile?.id && authChecked && !hasRefreshed.current && !loadingData) {
+      hasRefreshed.current = true;
+      // No need to call refreshData() here - let the initial load in the hook handle it
     }
-  }, [profile?.id, authChecked, refreshData]);
+    
+    return () => {
+      // Reset the flag when component unmounts
+      hasRefreshed.current = false;
+    };
+  }, [profile?.id, authChecked, loadingData]);
 
   // Display authentication error if profile is invalid and auth check is complete
   if (authChecked && (!profile || !profile.id)) {
@@ -89,6 +98,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
         onSaveAmount={handleSaveAmount}
         onCancelEdit={() => setEditingMonth(null)}
         error={error}
+        onRefresh={refreshData}
       />
     </div>
   );

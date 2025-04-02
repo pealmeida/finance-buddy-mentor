@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { UserProfile, MonthlyAmount, MonthlySavings as MonthlySavingsType } from '@/types/finance';
 import { MONTHS } from '@/constants/months';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
@@ -23,6 +23,8 @@ export const useMonthlySavingsData = (
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);
   const [fetchAttempts, setFetchAttempts] = useState(0);
   const MAX_FETCH_ATTEMPTS = 3;
+  const dataFetchingRef = useRef<boolean>(false);
+  const effectRunRef = useRef<boolean>(false);
 
   // Initialize empty data for all months
   const initializeEmptyData = useCallback(() => {
@@ -37,20 +39,40 @@ export const useMonthlySavingsData = (
   useEffect(() => {
     let isMounted = true;
     
-    if (!authChecked || !profile?.id) return;
+    // Skip if we don't have auth or profile yet
+    if (!authChecked || !profile?.id) {
+      if (loadingData) {
+        setLoadingData(false); // Stop loader if we can't proceed
+      }
+      return;
+    }
 
+    // Skip if this effect has already run for the current selection
+    if (effectRunRef.current) {
+      return;
+    }
+
+    // Mark this effect as having run
+    effectRunRef.current = true;
+    
     const fetchData = async () => {
+      // Don't run concurrent fetch operations
+      if (dataFetchingRef.current) {
+        console.log("Data fetch already in progress, skipping");
+        return;
+      }
+      
       // Reset state at the beginning of the fetch
       if (isMounted) {
+        dataFetchingRef.current = true;
         setLoadingData(true);
         setError(null);
       }
       
       try {
-        // Refresh auth token before fetching data
-        await checkAndRefreshAuth();
-        
+        // We won't check auth again to avoid potential loop
         console.log(`Fetching monthly savings for user ${profile.id} and year ${selectedYear}`);
+        
         // Try to fetch data from Supabase
         const savedData = await fetchMonthlySavings(profile.id, selectedYear);
         
@@ -65,26 +87,6 @@ export const useMonthlySavingsData = (
         if (savedData && savedData.data) {
           console.log("Setting savings data from fetch:", savedData.data);
           setSavingsData(savedData.data);
-          
-          // Update profile with fetched data if needed
-          if (profile.monthlySavings?.year !== selectedYear || 
-              !profile.monthlySavings?.data || 
-              JSON.stringify(savedData.data) !== JSON.stringify(profile.monthlySavings.data)) {
-            
-            const updatedMonthlySavings: MonthlySavingsType = {
-              id: savedData.id,
-              userId: profile.id,
-              year: selectedYear,
-              data: savedData.data
-            };
-            
-            const updatedProfile = {
-              ...profile,
-              monthlySavings: updatedMonthlySavings
-            };
-            
-            onSave(updatedProfile);
-          }
         } else {
           console.log("No saved data found, initializing empty data");
           initializeEmptyData();
@@ -104,7 +106,7 @@ export const useMonthlySavingsData = (
             if (isMounted) {
               fetchData();
             }
-          }, 1000);
+          }, 3000); // Longer delay between retries
           
           return;
         }
@@ -119,43 +121,47 @@ export const useMonthlySavingsData = (
       } finally {
         if (isMounted) {
           setLoadingData(false);
+          dataFetchingRef.current = false;
         }
       }
     };
     
     fetchData();
     
-    // Set up auto-refresh every 5 minutes
-    const refreshTimer = setInterval(() => {
-      if (Date.now() - lastFetchTime >= 300000) { // 5 minutes
-        fetchData();
-      }
-    }, 60000); // Check every minute
+    // No auto-refresh to reduce chance of loops
     
     return () => {
       isMounted = false;
-      clearInterval(refreshTimer);
+      effectRunRef.current = false;
     };
-  }, [profile?.id, selectedYear, authChecked, fetchMonthlySavings, initializeEmptyData, onSave, profile, toast, lastFetchTime, fetchAttempts, checkAndRefreshAuth]);
+  }, [profile?.id, selectedYear, authChecked, fetchMonthlySavings, initializeEmptyData, onSave, toast, loadingData]);
 
+  // Manual refresh function that can be called by user action
   const refreshData = useCallback(async () => {
-    if (!profile?.id) return;
+    if (!profile?.id || dataFetchingRef.current) return;
     
-    // Refresh auth token before fetching data
-    const isAuthenticated = await checkAndRefreshAuth();
-    if (!isAuthenticated) {
-      toast({
-        title: "Authentication Error",
-        description: "Your session has expired. Please log in again.",
-        variant: "destructive"
-      });
-      return;
-    }
+    // Reset the effect flag to allow a fresh fetch
+    effectRunRef.current = false;
     
+    // Reset to initial state
     setLoadingData(true);
     setError(null);
+    dataFetchingRef.current = true;
     
     try {
+      // Verify auth before proceeding
+      const isAuthenticated = await checkAndRefreshAuth();
+      if (!isAuthenticated) {
+        toast({
+          title: "Authentication Error",
+          description: "Your session has expired. Please log in again.",
+          variant: "destructive"
+        });
+        setLoadingData(false);
+        dataFetchingRef.current = false;
+        return;
+      }
+      
       const savedData = await fetchMonthlySavings(profile.id, selectedYear);
       setLastFetchTime(Date.now());
       
@@ -182,6 +188,7 @@ export const useMonthlySavingsData = (
       });
     } finally {
       setLoadingData(false);
+      dataFetchingRef.current = false;
     }
   }, [checkAndRefreshAuth, fetchMonthlySavings, initializeEmptyData, profile?.id, selectedYear, toast]);
 
