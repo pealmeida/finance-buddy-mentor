@@ -8,6 +8,7 @@ import { Json } from '@/integrations/supabase/types';
 export function useMonthlySavings() {
   const { supabase, loading: baseLoading, setLoading, handleError } = useSupabaseBase();
   const [loading, setLocalLoading] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   
   /**
    * Fetch monthly savings for a user and year
@@ -17,13 +18,26 @@ export function useMonthlySavings() {
    */
   const fetchMonthlySavings = async (
     userId: string, 
-    year: number
+    year: number,
+    maxRetries = 2
   ): Promise<MonthlySavings | null> => {
     try {
       setLocalLoading(true);
       setLoading(true);
 
       console.log(`Fetching monthly savings for user ${userId} and year ${year}`);
+      
+      // First check the session is valid before fetching data
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        console.log("No active session found, trying to refresh token...");
+        const { error: refreshError } = await supabase.auth.refreshSession();
+        
+        if (refreshError) {
+          console.error("Failed to refresh auth token:", refreshError);
+          throw new Error("Authentication required. Please log in again.");
+        }
+      }
       
       // Fetch monthly savings for the given user and year
       const { data, error } = await supabase
@@ -35,8 +49,22 @@ export function useMonthlySavings() {
 
       if (error) {
         console.error("Database error when fetching monthly savings:", error);
+        
+        // If it's a network error and we haven't exceeded max retries, try again
+        if (error.message?.includes("Failed to fetch") && retryCount < maxRetries) {
+          setRetryCount(prev => prev + 1);
+          console.log(`Retrying fetch (${retryCount + 1}/${maxRetries})...`);
+          
+          // Wait a bit before retrying
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return fetchMonthlySavings(userId, year, maxRetries);
+        }
+        
         throw error;
       }
+
+      // Reset retry count on success
+      setRetryCount(0);
 
       // If no data found, return null
       if (!data) {
@@ -71,7 +99,8 @@ export function useMonthlySavings() {
    * @returns Boolean indicating success
    */
   const saveMonthlySavings = async (
-    monthlySavings: MonthlySavings
+    monthlySavings: MonthlySavings,
+    maxRetries = 2
   ): Promise<boolean> => {
     try {
       setLocalLoading(true);
@@ -83,6 +112,18 @@ export function useMonthlySavings() {
       }
 
       console.log("Attempting to save monthly savings:", monthlySavings);
+
+      // Check authentication before saving
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        console.log("No active session found, trying to refresh token...");
+        const { error: refreshError } = await supabase.auth.refreshSession();
+        
+        if (refreshError) {
+          console.error("Failed to refresh auth token:", refreshError);
+          throw new Error("Authentication required. Please log in again.");
+        }
+      }
 
       // Use a raw upsert operation with explicit conflict target
       const { error } = await supabase
@@ -99,9 +140,23 @@ export function useMonthlySavings() {
 
       if (error) {
         console.error("Database error when saving monthly savings:", error);
+        
+        // If it's a network error and we haven't exceeded max retries, try again
+        if (error.message?.includes("Failed to fetch") && retryCount < maxRetries) {
+          setRetryCount(prev => prev + 1);
+          console.log(`Retrying save (${retryCount + 1}/${maxRetries})...`);
+          
+          // Wait a bit before retrying
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return saveMonthlySavings(monthlySavings, maxRetries);
+        }
+        
         throw error;
       }
 
+      // Reset retry count on success
+      setRetryCount(0);
+      
       console.log("Monthly savings saved successfully");
       return true;
     } catch (err) {

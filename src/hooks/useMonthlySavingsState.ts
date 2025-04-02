@@ -1,10 +1,10 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { UserProfile, MonthlyAmount, MonthlySavings as MonthlySavingsType } from '@/types/finance';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 import { useToast } from '@/components/ui/use-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { MONTHS } from '@/constants/months';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useMonthlySavingsState = (
   profile: UserProfile,
@@ -21,6 +21,8 @@ export const useMonthlySavingsState = (
   const [error, setError] = useState<string | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);
+  const [fetchAttempts, setFetchAttempts] = useState(0);
+  const MAX_FETCH_ATTEMPTS = 3;
 
   // Initialize savings data from profile or create empty data
   const initializeEmptyData = useCallback(() => {
@@ -32,17 +34,68 @@ export const useMonthlySavingsState = (
     setSavingsData(initialData);
   }, []);
 
+  // Check authentication status and refresh token if needed
+  const checkAndRefreshAuth = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error("Auth session error:", error);
+        return false;
+      }
+      
+      // If session exists but expires soon, refresh it
+      if (data.session) {
+        const expiresAt = data.session.expires_at;
+        const currentTime = Math.floor(Date.now() / 1000);
+        
+        // If token expires in less than 10 minutes, refresh it
+        if (expiresAt && expiresAt - currentTime < 600) {
+          console.log("Token expiring soon, refreshing...");
+          const { error: refreshError } = await supabase.auth.refreshSession();
+          
+          if (refreshError) {
+            console.error("Error refreshing token:", refreshError);
+            return false;
+          }
+        }
+        
+        return true;
+      }
+      
+      return false;
+    } catch (err) {
+      console.error("Auth check error:", err);
+      return false;
+    }
+  }, []);
+
   // Authentication check
   useEffect(() => {
-    if (!profile?.id) {
-      setError("Authentication required. Please log in.");
+    const checkAuth = async () => {
+      if (!profile?.id) {
+        setError("Authentication required. Please log in.");
+        setAuthChecked(true);
+        setLoadingData(false);
+        initializeEmptyData();
+        return;
+      }
+      
+      const isAuthenticated = await checkAndRefreshAuth();
+      
+      if (!isAuthenticated) {
+        setError("Authentication session expired. Please log in again.");
+        setAuthChecked(true);
+        setLoadingData(false);
+        initializeEmptyData();
+        return;
+      }
+      
       setAuthChecked(true);
-      setLoadingData(false);
-      initializeEmptyData();
-    } else {
-      setAuthChecked(true);
-    }
-  }, [profile?.id, initializeEmptyData]);
+    };
+    
+    checkAuth();
+  }, [profile?.id, initializeEmptyData, checkAndRefreshAuth]);
 
   // Fetch data when year changes or auth is confirmed
   useEffect(() => {
@@ -58,6 +111,9 @@ export const useMonthlySavingsState = (
       }
       
       try {
+        // Refresh auth token before fetching data
+        await checkAndRefreshAuth();
+        
         console.log(`Fetching monthly savings for user ${profile.id} and year ${selectedYear}`);
         // Try to fetch data from Supabase
         const savedData = await fetchMonthlySavings(profile.id, selectedYear);
@@ -68,6 +124,7 @@ export const useMonthlySavingsState = (
         if (!isMounted) return;
         
         setLastFetchTime(fetchTime);
+        setFetchAttempts(0); // Reset attempt counter on success
         
         if (savedData && savedData.data) {
           console.log("Setting savings data from fetch:", savedData.data);
@@ -100,10 +157,26 @@ export const useMonthlySavingsState = (
         if (!isMounted) return;
         
         console.error("Error fetching savings data:", err);
+        
+        // Increment fetch attempts and try again if under max attempts
+        if (fetchAttempts < MAX_FETCH_ATTEMPTS) {
+          console.log(`Fetch attempt ${fetchAttempts + 1}/${MAX_FETCH_ATTEMPTS} failed, retrying...`);
+          setFetchAttempts(prev => prev + 1);
+          
+          // Retry after a short delay
+          setTimeout(() => {
+            if (isMounted) {
+              fetchData();
+            }
+          }, 1000);
+          
+          return;
+        }
+        
         setError(err instanceof Error ? err.message : "An unknown error occurred");
         toast({
           title: "Error",
-          description: "Failed to load savings data. Please try again.",
+          description: "Failed to load savings data. Please try refreshing the page.",
           variant: "destructive"
         });
         initializeEmptyData();
@@ -127,7 +200,7 @@ export const useMonthlySavingsState = (
       isMounted = false;
       clearInterval(refreshTimer);
     };
-  }, [profile?.id, selectedYear, authChecked, fetchMonthlySavings, initializeEmptyData, onSave, profile, toast, lastFetchTime]);
+  }, [profile?.id, selectedYear, authChecked, fetchMonthlySavings, initializeEmptyData, onSave, profile, toast, lastFetchTime, fetchAttempts, checkAndRefreshAuth]);
 
   const handleSaveAmount = (month: number, amount: number) => {
     // Create a new array rather than mutating the existing one
@@ -154,6 +227,17 @@ export const useMonthlySavingsState = (
         toast({
           title: "Not Logged In",
           description: "Please log in to save your data.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Refresh auth token before saving
+      const isAuthenticated = await checkAndRefreshAuth();
+      if (!isAuthenticated) {
+        toast({
+          title: "Authentication Error",
+          description: "Your session has expired. Please log in again.",
           variant: "destructive"
         });
         return;
@@ -214,27 +298,49 @@ export const useMonthlySavingsState = (
   const refreshData = useCallback(async () => {
     if (!profile?.id) return;
     
+    // Refresh auth token before fetching data
+    const isAuthenticated = await checkAndRefreshAuth();
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication Error",
+        description: "Your session has expired. Please log in again.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setLoadingData(true);
+    setError(null);
+    
     try {
       const savedData = await fetchMonthlySavings(profile.id, selectedYear);
       setLastFetchTime(Date.now());
       
       if (savedData && savedData.data) {
         setSavingsData(savedData.data);
+        toast({
+          title: "Data Refreshed",
+          description: "Your savings data has been refreshed successfully."
+        });
       } else {
         initializeEmptyData();
+        toast({
+          title: "No Data Found",
+          description: "No savings data was found for the selected year."
+        });
       }
     } catch (err) {
       console.error("Error refreshing data:", err);
+      setError(err instanceof Error ? err.message : "An unknown error occurred");
       toast({
         title: "Error",
-        description: "Failed to refresh savings data.",
+        description: "Failed to refresh savings data. Please try again.",
         variant: "destructive"
       });
     } finally {
       setLoadingData(false);
     }
-  }, [fetchMonthlySavings, initializeEmptyData, profile?.id, selectedYear, toast]);
+  }, [checkAndRefreshAuth, fetchMonthlySavings, initializeEmptyData, profile?.id, selectedYear, toast]);
 
   return {
     selectedYear,

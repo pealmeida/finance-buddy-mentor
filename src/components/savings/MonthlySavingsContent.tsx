@@ -5,8 +5,9 @@ import MonthlySavingsChart from './MonthlySavingsChart';
 import MonthlySavingsForm from './MonthlySavingsForm';
 import MonthlyCard from './MonthlyCard';
 import { MONTHS } from '@/constants/months';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 interface MonthlySavingsContentProps {
   loadingData: boolean;
@@ -15,6 +16,7 @@ interface MonthlySavingsContentProps {
   onEditMonth: (month: number) => void;
   onSaveAmount: (month: number, amount: number) => void;
   onCancelEdit: () => void;
+  onRefresh?: () => void;
   error?: string | null;
 }
 
@@ -25,6 +27,7 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
   onEditMonth,
   onSaveAmount,
   onCancelEdit,
+  onRefresh,
   error
 }) => {
   if (loadingData) {
@@ -40,11 +43,24 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
 
   if (error) {
     return (
-      <div className="p-8 bg-white rounded-lg shadow-md">
+      <div className="p-8 bg-white rounded-lg shadow-md space-y-4">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>Error loading data: {error}</AlertDescription>
         </Alert>
+        
+        {onRefresh && (
+          <div className="flex justify-center">
+            <Button 
+              onClick={onRefresh} 
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Retry Loading Data
+            </Button>
+          </div>
+        )}
       </div>
     );
   }
@@ -52,8 +68,19 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
   // Make sure savingsData exists and has items
   if (!Array.isArray(savingsData) || savingsData.length === 0) {
     return (
-      <div className="p-8 bg-white rounded-lg shadow-md flex justify-center items-center h-64">
+      <div className="p-8 bg-white rounded-lg shadow-md flex flex-col justify-center items-center h-64 space-y-4">
         <p className="text-gray-500">No savings data available for the selected year.</p>
+        
+        {onRefresh && (
+          <Button 
+            onClick={onRefresh} 
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+        )}
       </div>
     );
   }
