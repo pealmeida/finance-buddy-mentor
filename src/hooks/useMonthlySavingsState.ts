@@ -20,6 +20,7 @@ export const useMonthlySavingsState = (
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
 
   // Initialize savings data from profile or create empty data
   const initializeEmptyData = useCallback(() => {
@@ -45,25 +46,38 @@ export const useMonthlySavingsState = (
 
   // Fetch data when year changes or auth is confirmed
   useEffect(() => {
+    let isMounted = true;
+    
     if (!authChecked || !profile?.id) return;
 
     const fetchData = async () => {
       // Reset state at the beginning of the fetch
-      setLoadingData(true);
-      setError(null);
+      if (isMounted) {
+        setLoadingData(true);
+        setError(null);
+      }
       
       try {
         console.log(`Fetching monthly savings for user ${profile.id} and year ${selectedYear}`);
         // Try to fetch data from Supabase
         const savedData = await fetchMonthlySavings(profile.id, selectedYear);
         
+        // Store the fetch time to track data freshness
+        const fetchTime = Date.now();
+        
+        if (!isMounted) return;
+        
+        setLastFetchTime(fetchTime);
+        
         if (savedData && savedData.data) {
           console.log("Setting savings data from fetch:", savedData.data);
           setSavingsData(savedData.data);
           
           // Update profile with fetched data if needed
-          const existingData = profile.monthlySavings?.data || [];
-          if (JSON.stringify(savedData.data) !== JSON.stringify(existingData)) {
+          if (profile.monthlySavings?.year !== selectedYear || 
+              !profile.monthlySavings?.data || 
+              JSON.stringify(savedData.data) !== JSON.stringify(profile.monthlySavings.data)) {
+            
             const updatedMonthlySavings: MonthlySavingsType = {
               id: savedData.id,
               userId: profile.id,
@@ -83,6 +97,8 @@ export const useMonthlySavingsState = (
           initializeEmptyData();
         }
       } catch (err) {
+        if (!isMounted) return;
+        
         console.error("Error fetching savings data:", err);
         setError(err instanceof Error ? err.message : "An unknown error occurred");
         toast({
@@ -92,12 +108,26 @@ export const useMonthlySavingsState = (
         });
         initializeEmptyData();
       } finally {
-        setLoadingData(false);
+        if (isMounted) {
+          setLoadingData(false);
+        }
       }
     };
     
     fetchData();
-  }, [profile?.id, selectedYear, authChecked, fetchMonthlySavings, initializeEmptyData, onSave, profile, toast]);
+    
+    // Set up auto-refresh every 5 minutes
+    const refreshTimer = setInterval(() => {
+      if (Date.now() - lastFetchTime >= 300000) { // 5 minutes
+        fetchData();
+      }
+    }, 60000); // Check every minute
+    
+    return () => {
+      isMounted = false;
+      clearInterval(refreshTimer);
+    };
+  }, [profile?.id, selectedYear, authChecked, fetchMonthlySavings, initializeEmptyData, onSave, profile, toast, lastFetchTime]);
 
   const handleSaveAmount = (month: number, amount: number) => {
     // Create a new array rather than mutating the existing one
@@ -147,6 +177,7 @@ export const useMonthlySavingsState = (
       
       if (success) {
         console.log("Monthly savings saved successfully");
+        setLastFetchTime(Date.now());  // Update fetch time after successful save
         
         // Update local state
         const updatedProfile = {
@@ -180,6 +211,31 @@ export const useMonthlySavingsState = (
     // The data fetching will be triggered by the useEffect
   };
 
+  const refreshData = useCallback(async () => {
+    if (!profile?.id) return;
+    
+    setLoadingData(true);
+    try {
+      const savedData = await fetchMonthlySavings(profile.id, selectedYear);
+      setLastFetchTime(Date.now());
+      
+      if (savedData && savedData.data) {
+        setSavingsData(savedData.data);
+      } else {
+        initializeEmptyData();
+      }
+    } catch (err) {
+      console.error("Error refreshing data:", err);
+      toast({
+        title: "Error",
+        description: "Failed to refresh savings data.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingData(false);
+    }
+  }, [fetchMonthlySavings, initializeEmptyData, profile?.id, selectedYear, toast]);
+
   return {
     selectedYear,
     savingsData,
@@ -192,6 +248,7 @@ export const useMonthlySavingsState = (
     handleEditMonth,
     handleSaveAll,
     handleYearChange,
+    refreshData,
     setEditingMonth
   };
 };

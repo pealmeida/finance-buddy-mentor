@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { UserProfile } from '@/types/finance';
 import { useMonthlySavingsState } from '@/hooks/useMonthlySavingsState';
 import MonthlySavingsHeader from './MonthlySavingsHeader';
 import MonthlySavingsContent from './MonthlySavingsContent';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 interface MonthlySavingsProps {
   profile: UserProfile;
@@ -32,8 +33,16 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     handleEditMonth,
     handleSaveAll,
     handleYearChange,
+    refreshData,
     setEditingMonth
   } = useMonthlySavingsState(profile, onSave, isSaving);
+
+  // Effect to trigger a refresh when profile ID changes
+  useEffect(() => {
+    if (profile?.id && authChecked) {
+      refreshData();
+    }
+  }, [profile?.id, authChecked, refreshData]);
 
   // Display authentication error if profile is invalid and auth check is complete
   if (authChecked && (!profile || !profile.id)) {
@@ -51,13 +60,26 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
 
   return (
     <div className="space-y-6">
-      <MonthlySavingsHeader
-        selectedYear={selectedYear}
-        onYearChange={handleYearChange}
-        onSaveAll={handleSaveAll}
-        disabled={isSaving || savingsLoading || loadingData || !profile?.id}
-        isSaving={isSaving || savingsLoading}
-      />
+      <div className="flex justify-between items-center">
+        <MonthlySavingsHeader
+          selectedYear={selectedYear}
+          onYearChange={handleYearChange}
+          onSaveAll={handleSaveAll}
+          disabled={isSaving || savingsLoading || loadingData || !profile?.id}
+          isSaving={isSaving || savingsLoading}
+        />
+        
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={refreshData}
+          disabled={loadingData || !profile?.id}
+          className="flex items-center gap-1"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Refresh
+        </Button>
+      </div>
       
       <MonthlySavingsContent
         loadingData={loadingData}

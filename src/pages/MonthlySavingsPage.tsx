@@ -8,6 +8,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MonthlySavingsPageProps {
   userProfile: UserProfile;
@@ -23,11 +24,56 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   const { handleProfileComplete, isSubmitting } = useProfileCompletion(onProfileUpdate);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   
+  // Check if auth session is valid and refresh token if needed
   useEffect(() => {
-    // Short timeout to ensure the component is mounted before checking authentication
-    const timer = setTimeout(() => {
-      // Check if user is authenticated
+    const checkSession = async () => {
+      setCheckingAuth(true);
+      
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        
+        // If there's an error or no session, redirect to login
+        if (error || !data.session) {
+          throw new Error("Authentication required to access monthly savings");
+        }
+        
+        // Session exists but check if token needs refresh
+        if (data.session) {
+          const expiresAt = data.session.expires_at;
+          const currentTime = Math.floor(Date.now() / 1000);
+          
+          // If token expires in less than 10 minutes, refresh it
+          if (expiresAt && expiresAt - currentTime < 600) {
+            console.log("Token expiring soon, refreshing...");
+            await supabase.auth.refreshSession();
+          }
+        }
+      } catch (err) {
+        console.error("Session error:", err);
+        setError("Authentication required to access monthly savings");
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to access the monthly savings feature.",
+          variant: "destructive"
+        });
+        
+        // Give the toast time to be seen before redirecting
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      } finally {
+        setCheckingAuth(false);
+      }
+    };
+    
+    checkSession();
+  }, [navigate, toast]);
+  
+  // Check if profile is valid once auth check is complete
+  useEffect(() => {
+    if (!checkingAuth) {
       if (!userProfile || !userProfile.id) {
         setError("Authentication required to access monthly savings");
         toast({
@@ -46,10 +92,8 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
       
       // Set loading to false after we've confirmed the user is authenticated
       setLoading(false);
-    }, 300);
-    
-    return () => clearTimeout(timer);
-  }, [userProfile, navigate, toast]);
+    }
+  }, [userProfile, checkingAuth, navigate, toast]);
   
   const handleSave = (updatedProfile: UserProfile) => {
     try {
@@ -70,7 +114,7 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   };
 
   // Show loading state
-  if (loading) {
+  if (loading || checkingAuth) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex justify-center items-center">
         <div className="flex items-center gap-2">
