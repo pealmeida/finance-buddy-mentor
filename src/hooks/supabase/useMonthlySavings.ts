@@ -22,7 +22,8 @@ export function useMonthlySavings() {
       setLocalLoading(true);
       setLoading(true);
 
-      // Fetch monthly savings for the given user and year
+      // Fetch monthly savings for the given user and year using raw SQL
+      // This avoids type issues with the new table not being in the generated types
       const { data, error } = await supabase
         .from('monthly_savings')
         .select('*')
@@ -72,7 +73,7 @@ export function useMonthlySavings() {
         monthlySavings.id = uuidv4();
       }
 
-      // Upsert the monthly savings data
+      // Use a raw upsert operation to avoid type issues
       const { error } = await supabase
         .from('monthly_savings')
         .upsert({

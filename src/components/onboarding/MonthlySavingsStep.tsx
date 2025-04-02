@@ -10,7 +10,7 @@ const MonthlySavingsStep: React.FC = () => {
   const handleSave = (updatedProfile: UserProfile) => {
     if (updatedProfile.monthlySavings) {
       updateProfile({
-        ...profile,
+        ...profile as UserProfile,
         monthlySavings: updatedProfile.monthlySavings
       });
     }
