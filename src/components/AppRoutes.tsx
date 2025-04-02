@@ -11,6 +11,7 @@ import SignupPage from '@/pages/SignupPage';
 import NotFound from '@/pages/NotFound';
 import { UserProfile } from '@/types/finance';
 import MonthlySavingsPage from '@/pages/MonthlySavingsPage';
+import InvestmentsPage from '@/pages/InvestmentsPage';
 
 interface AppRoutesProps {
   userProfile: UserProfile | null;
@@ -56,6 +57,10 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
       
       <Route path="/monthly-savings" element={
         authRedirect || <MonthlySavingsPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
+      } />
+      
+      <Route path="/investments" element={
+        authRedirect || <InvestmentsPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
       } />
       
       <Route path="/" element={<Navigate to={homeRedirectPath} replace />} />
