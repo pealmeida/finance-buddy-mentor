@@ -1,4 +1,3 @@
-
 export type RiskProfile = 'conservative' | 'moderate' | 'aggressive';
 
 export interface UserProfile {
@@ -14,6 +13,19 @@ export interface UserProfile {
   debtDetails?: DebtDetail[];
   financialGoals: FinancialGoal[];
   investments: Investment[];
+  monthlySavings?: MonthlySavings;
+}
+
+export interface MonthlySavings {
+  id: string;
+  userId: string;
+  year: number;
+  data: MonthlyAmount[];
+}
+
+export interface MonthlyAmount {
+  month: number; // 1-12 representing Jan-Dec
+  amount: number;
 }
 
 export interface DebtDetail {

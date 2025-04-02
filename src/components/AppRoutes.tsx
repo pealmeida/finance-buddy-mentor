@@ -1,20 +1,21 @@
-
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { UserProfile } from '@/types/finance';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Dashboard from '@/pages/Dashboard';
+import OnboardingPage from '@/pages/OnboardingPage';
 import FullProfilePage from '@/pages/FullProfilePage';
-import SignupPage from '@/pages/SignupPage';
-import LoginPage from '@/pages/LoginPage';
 import ProfilePage from '@/pages/ProfilePage';
 import GoalsPage from '@/pages/GoalsPage';
+import LoginPage from '@/pages/LoginPage';
+import SignupPage from '@/pages/SignupPage';
 import NotFound from '@/pages/NotFound';
+import { UserProfile } from '@/types/finance';
+import MonthlySavingsPage from '@/pages/MonthlySavingsPage';
 
 interface AppRoutesProps {
   userProfile: UserProfile | null;
   isProfileComplete: boolean;
   onProfileComplete: (profile: UserProfile) => void;
-  onProfileUpdate: (updatedProfile: UserProfile) => void;
+  onProfileUpdate: (profile: UserProfile) => void;
 }
 
 const AppRoutes: React.FC<AppRoutesProps> = ({
@@ -23,80 +24,40 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
   onProfileComplete,
   onProfileUpdate
 }) => {
+  const authRedirect = !userProfile ? <Navigate to="/login" replace /> : null;
+  const completeRedirect = userProfile && !isProfileComplete ? <Navigate to="/onboarding" replace /> : null;
+  const homeRedirectPath = userProfile ? '/dashboard' : '/login';
+  
   return (
     <Routes>
-      {/* Redirect root to dashboard if logged in and profile is complete, 
-          to full profile if logged in but profile incomplete, 
-          otherwise to login */}
-      <Route 
-        path="/" 
-        element={
-          userProfile 
-            ? (isProfileComplete 
-                ? <Navigate to="/dashboard" /> 
-                : <Navigate to="/full-profile" />)
-            : <Navigate to="/login" />
-        } 
-      />
-      
-      {/* Auth pages - accessible even when logged in */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       
-      {/* Full Profile page - can be used for both initial setup and profile editing */}
-      <Route 
-        path="/full-profile" 
-        element={
-          <FullProfilePage 
-            onProfileComplete={onProfileComplete}
-            userProfile={userProfile || undefined}
-          />
-        } 
-      />
+      <Route path="/dashboard" element={
+        authRedirect || <Dashboard userProfile={userProfile as UserProfile} />
+      } />
       
-      {/* Dashboard - protected route, redirect to full-profile if not onboarded */}
-      <Route 
-        path="/dashboard" 
-        element={
-          userProfile 
-            ? (isProfileComplete 
-                ? <Dashboard userProfile={userProfile} /> 
-                : <Navigate to="/full-profile" />)
-            : <Navigate to="/login" />
-        } 
-      />
+      <Route path="/onboarding" element={
+        completeRedirect || <OnboardingPage onProfileComplete={onProfileComplete} userProfile={userProfile as UserProfile} />
+      } />
       
-      {/* Profile page - protected route, redirect to full-profile if not onboarded */}
-      <Route 
-        path="/profile" 
-        element={
-          userProfile 
-            ? (isProfileComplete 
-                ? <ProfilePage 
-                    userProfile={userProfile} 
-                    onProfileUpdate={onProfileUpdate}
-                  /> 
-                : <Navigate to="/full-profile" />)
-            : <Navigate to="/login" />
-        } 
-      />
+      <Route path="/full-profile" element={
+        authRedirect || <FullProfilePage onProfileComplete={onProfileComplete} userProfile={userProfile as UserProfile} />
+      } />
       
-      {/* Financial Goals page - protected route */}
-      <Route 
-        path="/goals" 
-        element={
-          userProfile 
-            ? (isProfileComplete 
-                ? <GoalsPage 
-                    userProfile={userProfile} 
-                    onProfileUpdate={onProfileUpdate}
-                  /> 
-                : <Navigate to="/full-profile" />)
-            : <Navigate to="/login" />
-        } 
-      />
+      <Route path="/profile" element={
+        authRedirect || <ProfilePage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
+      } />
       
-      {/* Catch-all for non-matching routes */}
+      <Route path="/goals" element={
+        authRedirect || <GoalsPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
+      } />
+      
+      <Route path="/monthly-savings" element={
+        authRedirect || <MonthlySavingsPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
+      } />
+      
+      <Route path="/" element={<Navigate to={homeRedirectPath} replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

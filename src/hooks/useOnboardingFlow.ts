@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UserProfile, RiskProfile } from '@/types/finance';
@@ -33,7 +32,7 @@ export function useOnboardingFlow({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const totalSteps = 5;
+  const totalSteps = 6; // Updated from 5 to 6 to include monthly savings step
 
   // Check for authenticated user
   useEffect(() => {
@@ -123,7 +122,8 @@ export function useOnboardingFlow({
         financialGoals: profile.financialGoals || [],
         investments: profile.investments || [],
         debtDetails: profile.debtDetails || [],
-        emergencyFundMonths: profile.emergencyFundMonths
+        emergencyFundMonths: profile.emergencyFundMonths,
+        monthlySavings: profile.monthlySavings
       };
 
       console.log('Completing onboarding with profile:', completeProfile);
