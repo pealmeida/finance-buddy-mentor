@@ -1,14 +1,11 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React from 'react';
 import Header from '@/components/Header';
 import { UserProfile } from '@/types/finance';
+import { useSimpleAuthCheck } from '@/hooks/useSimpleAuthCheck';
+import MonthlySavings from '@/components/savings/MonthlySavings';
 import { useProfileCompletion } from '@/hooks/useProfileCompletion';
-import { useNavigate } from 'react-router-dom';
-import { useAuthSessionCheck } from '@/hooks/savings/useAuthSessionCheck';
-import MonthlySavingsLoading from '@/components/savings/page/MonthlySavingsLoading';
-import MonthlySavingsError from '@/components/savings/page/MonthlySavingsError';
-import MonthlySavingsContent from '@/components/savings/page/MonthlySavingsContent';
-import { useToast } from '@/components/ui/use-toast';
+import { Loader2 } from 'lucide-react';
 
 interface MonthlySavingsPageProps {
   userProfile: UserProfile;
@@ -19,126 +16,42 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   userProfile,
   onProfileUpdate
 }) => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck();
   const { handleProfileComplete, isSubmitting } = useProfileCompletion(onProfileUpdate);
-  const [loading, setLoading] = useState(true);
-  const initialCheckDone = useRef<boolean>(false);
-  const [debugInfo, setDebugInfo] = useState<string>('Initializing page...');
-  const { checkingAuth, error, setError, checkAndRefreshSession } = useAuthSessionCheck();
-  
-  // Initial auth check - using useCallback to prevent recreating this function on every render
-  const initialAuthCheck = useCallback(async () => {
-    if (initialCheckDone.current) {
-      return;
-    }
-    
-    try {
-      setDebugInfo(`Performing initial auth check for user ${userProfile?.id || 'unknown'}`);
-      const isAuthenticated = await checkAndRefreshSession(true);
-      initialCheckDone.current = true;
-      
-      if (!isAuthenticated) {
-        setDebugInfo('Authentication check failed, preparing to redirect');
-        // Give the toast time to be seen before redirecting
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-        return;
-      }
-      
-      // Check if profile is valid
-      if (!userProfile || !userProfile.id) {
-        setDebugInfo('User profile not available');
-        setError("User profile not available");
-        toast({
-          title: "Profile Error",
-          description: "Unable to load your profile. Please try logging in again.",
-          variant: "destructive"
-        });
-        
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-        return;
-      }
-      
-      // Set loading to false after we've confirmed the user is authenticated
-      setDebugInfo('Authentication check passed, loading content');
-      setLoading(false);
-    } catch (err) {
-      console.error("Auth check error:", err);
-      setDebugInfo(`Auth check error: ${err instanceof Error ? err.message : 'Unknown error'}`);
-      setError("Authentication error occurred");
-      setLoading(false);
-    }
-  }, [userProfile, navigate, toast, checkAndRefreshSession, setError]);
-  
-  // Run auth check only once when component mounts
-  useEffect(() => {
-    if (!initialCheckDone.current) {
-      initialAuthCheck();
-    }
-    
-    return () => {
-      // Clean up by marking the check as not done when component unmounts
-      initialCheckDone.current = false;
-    };
-  }, [initialAuthCheck]);
-  
-  const handleSave = useCallback((updatedProfile: UserProfile) => {
-    try {
-      if (!updatedProfile || !updatedProfile.id) {
-        throw new Error("Cannot save: Profile is not valid");
-      }
-      
-      handleProfileComplete(updatedProfile);
-    } catch (err) {
-      console.error("Error saving profile:", err);
-      setError("Failed to save profile data");
-      toast({
-        title: "Save Error",
-        description: "Failed to save your profile data. Please try again.",
-        variant: "destructive"
-      });
-    }
-  }, [handleProfileComplete, setError, toast]);
 
-  const handleRetry = useCallback(async () => {
-    setError(null);
-    setLoading(true);
-    setDebugInfo('Retrying authentication check...');
-    initialCheckDone.current = false; // Reset the check flag
-    
-    // Allow a small delay before the check
-    setTimeout(async () => {
-      await initialAuthCheck();
-    }, 1000);
-  }, [initialAuthCheck, setError]);
+  const handleSave = (updatedProfile: UserProfile) => {
+    handleProfileComplete(updatedProfile);
+  };
 
-  // Show loading state
-  if (loading || checkingAuth) {
-    return <MonthlySavingsLoading debugInfo={debugInfo} />;
-  }
-
-  // Show error state
-  if (error) {
+  if (authLoading) {
     return (
-      <>
-        <Header onboardingComplete={true} />
-        <MonthlySavingsError error={error} onRetry={handleRetry} />
-      </>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex justify-center items-center">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+          <p className="text-blue-700 font-medium">Checking authentication...</p>
+        </div>
+      </div>
     );
   }
 
   return (
     <>
       <Header onboardingComplete={true} />
-      <MonthlySavingsContent 
-        userProfile={userProfile} 
-        onProfileUpdate={handleSave}
-        isSubmitting={isSubmitting}
-      />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-5xl mx-auto">
+            <h1 className="text-3xl font-bold mb-8">Monthly Savings</h1>
+            
+            <div className="glass-panel rounded-2xl p-8">
+              <MonthlySavings 
+                profile={userProfile} 
+                onSave={handleSave}
+                isSaving={isSubmitting}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

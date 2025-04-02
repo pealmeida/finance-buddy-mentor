@@ -8,42 +8,44 @@ import { MONTHS } from '@/constants/months';
 
 interface MonthlySavingsFormProps {
   month: number;
-  initialAmount: number;
+  amount: number;
   onSave: (month: number, amount: number) => void;
   onCancel: () => void;
 }
 
 const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
   month,
-  initialAmount,
+  amount,
   onSave,
   onCancel
 }) => {
-  const [amount, setAmount] = useState(initialAmount);
+  const [value, setValue] = useState(amount);
   const [error, setError] = useState('');
   
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
     
-    if (e.target.value === '') {
-      setAmount(0);
+    if (inputValue === '') {
+      setValue(0);
       setError('');
-    } else if (isNaN(value)) {
+      return;
+    }
+    
+    const numValue = parseFloat(inputValue);
+    
+    if (isNaN(numValue)) {
       setError('Please enter a valid number');
-    } else if (value < 0) {
+    } else if (numValue < 0) {
       setError('Amount cannot be negative');
     } else {
-      setAmount(value);
+      setValue(numValue);
       setError('');
     }
   };
   
-  const handleSave = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!error) {
-      onSave(month, amount);
-    }
+    if (!error) onSave(month, value);
   };
   
   return (
@@ -52,7 +54,7 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
         Edit Savings for {MONTHS[month - 1]}
       </h3>
       
-      <form onSubmit={handleSave}>
+      <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div>
             <Label htmlFor="amount">Savings Amount ($)</Label>
@@ -61,8 +63,8 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
               <Input
                 id="amount"
                 type="number"
-                value={amount}
-                onChange={handleAmountChange}
+                value={value}
+                onChange={handleChange}
                 className="pl-7"
                 placeholder="0.00"
                 min="0"

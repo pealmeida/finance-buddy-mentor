@@ -5,18 +5,14 @@ import { MonthlyAmount } from '@/types/finance';
 interface MonthlyCardProps {
   item: MonthlyAmount;
   monthName: string;
-  onEditMonth: (month: number) => void;
+  onEdit: (month: number) => void;
 }
 
-const MonthlyCard: React.FC<MonthlyCardProps> = ({
-  item,
-  monthName,
-  onEditMonth
-}) => {
+const MonthlyCard: React.FC<MonthlyCardProps> = ({ item, monthName, onEdit }) => {
   return (
     <div 
       className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer border"
-      onClick={() => onEditMonth(item.month)}
+      onClick={() => onEdit(item.month)}
     >
       <div className="flex justify-between items-center">
         <div className="font-medium">{monthName}</div>
@@ -28,4 +24,4 @@ const MonthlyCard: React.FC<MonthlyCardProps> = ({
   );
 };
 
-export default MonthlyCard;
+export default React.memo(MonthlyCard);

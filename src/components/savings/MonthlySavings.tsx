@@ -1,16 +1,19 @@
 
-import React, { useEffect, useRef } from 'react';
-import { UserProfile } from '@/types/finance';
-import { useMonthlySavingsState } from '@/hooks/useMonthlySavingsState';
-import MonthlySavingsHeader from './MonthlySavingsHeader';
-import MonthlySavingsContent from './MonthlySavingsContent';
-import { AlertCircle, RefreshCw } from 'lucide-react';
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { UserProfile, MonthlyAmount } from '@/types/finance';
+import { useMonthlySavingsData } from '@/hooks/useMonthlySavingsData';
+import { MONTHS } from '@/constants/months';
+import { Button } from '@/components/ui/button';
+import { Loader2, RefreshCw, Save } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import YearSelector from './YearSelector';
+import MonthlySavingsChart from './MonthlySavingsChart';
+import MonthlySavingsForm from './MonthlySavingsForm';
+import MonthlyCard from './MonthlyCard';
 
 interface MonthlySavingsProps {
   profile: UserProfile;
-  onSave: (updatedProfile: UserProfile) => void;
+  onSave?: (updatedProfile: UserProfile) => void;
   isSaving?: boolean;
 }
 
@@ -19,87 +22,145 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   onSave,
   isSaving = false
 }) => {
-  // Track if we've already done an initial refresh
-  const hasRefreshed = useRef(false);
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [editingMonth, setEditingMonth] = useState<number | null>(null);
   
-  // Initialize the state hook even if profile is not valid
-  // This allows us to handle the auth check within the hook
   const {
-    selectedYear,
-    savingsData,
-    editingMonth,
-    loadingData,
-    savingsLoading,
+    savings,
+    isLoading,
     error,
-    authChecked,
-    handleSaveAmount,
-    handleEditMonth,
-    handleSaveAll,
-    handleYearChange,
-    refreshData,
-    setEditingMonth
-  } = useMonthlySavingsState(profile, onSave, isSaving);
+    updateMonthAmount,
+    saveSavings,
+    fetchSavings
+  } = useMonthlySavingsData(profile?.id, selectedYear);
 
-  // Effect to trigger a refresh when profile ID changes, but only once
-  useEffect(() => {
-    if (profile?.id && authChecked && !hasRefreshed.current && !loadingData) {
-      hasRefreshed.current = true;
-      // No need to call refreshData() here - let the initial load in the hook handle it
-    }
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+    setEditingMonth(null);
+  };
+
+  const handleEditMonth = (month: number) => {
+    setEditingMonth(month);
+  };
+
+  const handleSaveAmount = (month: number, amount: number) => {
+    updateMonthAmount(month, amount);
+    setEditingMonth(null);
+  };
+
+  const handleSaveAll = async () => {
+    const success = await saveSavings();
     
-    return () => {
-      // Reset the flag when component unmounts
-      hasRefreshed.current = false;
-    };
-  }, [profile?.id, authChecked, loadingData]);
+    if (success && onSave) {
+      onSave({
+        ...profile,
+        monthlySavings: {
+          id: profile.monthlySavings?.id || '',
+          userId: profile.id,
+          year: selectedYear,
+          data: savings
+        }
+      });
+    }
+  };
 
-  // Display authentication error if profile is invalid and auth check is complete
-  if (authChecked && (!profile || !profile.id)) {
+  if (!profile || !profile.id) {
     return (
-      <div className="p-6 bg-white rounded-lg shadow-md">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            User profile is not available. Please log in to view your savings data.
-          </AlertDescription>
-        </Alert>
-      </div>
+      <Alert variant="destructive">
+        <AlertDescription>
+          User profile is not available. Please log in to view your savings data.
+        </AlertDescription>
+      </Alert>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <MonthlySavingsHeader
-          selectedYear={selectedYear}
-          onYearChange={handleYearChange}
-          onSaveAll={handleSaveAll}
-          disabled={isSaving || savingsLoading || loadingData || !profile?.id}
-          isSaving={isSaving || savingsLoading}
-        />
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-semibold">Monthly Savings</h2>
+          <p className="text-gray-600">
+            Track your monthly savings to visualize your progress throughout the year.
+          </p>
+        </div>
         
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={refreshData}
-          disabled={loadingData || !profile?.id}
-          className="flex items-center gap-1"
-        >
-          <RefreshCw className="h-4 w-4" />
-          Refresh
-        </Button>
+        <div className="flex items-center gap-4">
+          <YearSelector
+            selectedYear={selectedYear}
+            onYearChange={handleYearChange}
+            disabled={isLoading || isSaving}
+          />
+          
+          <Button
+            onClick={handleSaveAll}
+            disabled={isLoading || isSaving}
+            className="flex items-center gap-2"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                Save All
+              </>
+            )}
+          </Button>
+          
+          <Button
+            variant="outline"
+            onClick={fetchSavings}
+            disabled={isLoading}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            {isLoading ? 'Loading...' : 'Refresh'}
+          </Button>
+        </div>
       </div>
       
-      <MonthlySavingsContent
-        loadingData={loadingData}
-        savingsData={savingsData || []}
-        editingMonth={editingMonth}
-        onEditMonth={handleEditMonth}
-        onSaveAmount={handleSaveAmount}
-        onCancelEdit={() => setEditingMonth(null)}
-        error={error}
-        onRefresh={refreshData}
-      />
+      {error ? (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      ) : isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+          <span className="ml-2">Loading savings data...</span>
+        </div>
+      ) : (
+        <>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <MonthlySavingsChart 
+              data={savings} 
+              onSelectMonth={handleEditMonth} 
+            />
+          </div>
+          
+          {editingMonth !== null && (
+            <MonthlySavingsForm
+              month={editingMonth}
+              amount={savings.find(item => item.month === editingMonth)?.amount || 0}
+              onSave={handleSaveAmount}
+              onCancel={() => setEditingMonth(null)}
+            />
+          )}
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {savings.map(item => (
+              <MonthlyCard
+                key={item.month}
+                item={item}
+                monthName={MONTHS[item.month - 1]}
+                onEdit={handleEditMonth}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -1,87 +1,75 @@
 
 import React from 'react';
 import { MonthlyAmount } from '@/types/finance';
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent
-} from '@/components/ui/chart';
-import { 
-  Bar, 
-  BarChart, 
-  CartesianGrid, 
-  Legend, 
-  ResponsiveContainer, 
-  Tooltip, 
-  XAxis, 
-  YAxis 
-} from 'recharts';
 import { MONTHS_SHORT } from '@/constants/months';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
 interface MonthlySavingsChartProps {
   data: MonthlyAmount[];
-  onEditMonth: (month: number) => void;
+  onSelectMonth: (month: number) => void;
 }
 
-const MonthlySavingsChart: React.FC<MonthlySavingsChartProps> = ({ data, onEditMonth }) => {
-  const formattedData = data.map(item => ({
+const MonthlySavingsChart: React.FC<MonthlySavingsChartProps> = ({ 
+  data, 
+  onSelectMonth 
+}) => {
+  const chartData = data.map(item => ({
     name: MONTHS_SHORT[item.month - 1],
     month: item.month,
     amount: item.amount
   }));
-
-  const chartConfig = {
-    savings: {
-      label: "Savings",
-      color: "#4f46e5"
-    }
-  };
-
+  
   const handleBarClick = (data: any) => {
-    if (data && data.month) {
-      onEditMonth(data.month);
+    if (data && data.activePayload && data.activePayload[0]) {
+      const clickedData = data.activePayload[0].payload;
+      onSelectMonth(clickedData.month);
     }
   };
 
   return (
-    <ChartContainer
-      config={chartConfig}
-      className="aspect-[4/2] w-full"
-    >
-      <BarChart data={formattedData}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-        <XAxis
-          dataKey="name"
-          tickLine={false}
-          axisLine={false}
-          padding={{ left: 20, right: 20 }}
-        />
-        <YAxis
-          tickLine={false}
-          axisLine={false}
-          width={80}
-          tickFormatter={(value) => `$${value}`}
-        />
-        <ChartTooltip
-          content={
-            <ChartTooltipContent
-              labelFormatter={(label) => `Month: ${label}`}
-              formatter={(value) => [`$${value}`]}
-            />
-          }
-        />
-        <Legend />
-        <Bar
-          dataKey="amount"
-          name="Savings"
-          fill="var(--color-savings)"
-          radius={[4, 4, 0, 0]}
+    <div className="w-full h-80">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={chartData}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           onClick={handleBarClick}
-          style={{ cursor: 'pointer' }}
-        />
-      </BarChart>
-    </ChartContainer>
+        >
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis 
+            dataKey="name" 
+            tick={{ fill: '#6b7280' }}
+            axisLine={{ stroke: '#e5e7eb' }}
+          />
+          <YAxis 
+            tickFormatter={(value) => `$${value}`}
+            tick={{ fill: '#6b7280' }}
+            axisLine={{ stroke: '#e5e7eb' }}
+          />
+          <Tooltip 
+            formatter={(value) => [`$${value}`, 'Amount']}
+            labelFormatter={(label) => `Month: ${label}`}
+          />
+          <Legend />
+          <Bar 
+            dataKey="amount" 
+            name="Savings" 
+            fill="#4f46e5" 
+            radius={[4, 4, 0, 0]}
+            style={{ cursor: 'pointer' }}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
-export default MonthlySavingsChart;
+export default React.memo(MonthlySavingsChart);

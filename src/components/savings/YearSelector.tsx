@@ -1,36 +1,41 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface YearSelectorProps {
   selectedYear: number;
   onYearChange: (year: number) => void;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 const YearSelector: React.FC<YearSelectorProps> = ({
   selectedYear,
   onYearChange,
-  disabled
+  disabled = false
 }) => {
   return (
-    <div className="flex gap-2">
+    <div className="flex items-center gap-2">
       <Button 
         variant="outline" 
+        size="icon"
         onClick={() => onYearChange(selectedYear - 1)}
         disabled={disabled}
       >
-        Previous Year
+        <ChevronLeft size={16} />
       </Button>
-      <div className="flex items-center justify-center bg-background border rounded-md px-4 font-medium">
+      
+      <div className="min-w-12 text-center font-medium">
         {selectedYear}
       </div>
+      
       <Button 
         variant="outline" 
+        size="icon"
         onClick={() => onYearChange(selectedYear + 1)}
         disabled={disabled}
       >
-        Next Year
+        <ChevronRight size={16} />
       </Button>
     </div>
   );
