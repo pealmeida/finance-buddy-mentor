@@ -50,7 +50,7 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
   }
   
   // Make sure savingsData exists and has items
-  if (!savingsData || savingsData.length === 0) {
+  if (!Array.isArray(savingsData) || savingsData.length === 0) {
     return (
       <div className="p-8 bg-white rounded-lg shadow-md flex justify-center items-center h-64">
         <p className="text-gray-500">No savings data available for the selected year.</p>

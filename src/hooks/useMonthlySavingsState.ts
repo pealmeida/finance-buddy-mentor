@@ -17,34 +17,37 @@ export const useMonthlySavingsState = (
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [savingsData, setSavingsData] = useState<MonthlyAmount[]>([]);
   const [editingMonth, setEditingMonth] = useState<number | null>(null);
-  const [loadingData, setLoadingData] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Initialize savings data from profile or create empty data
   useEffect(() => {
     const fetchData = async () => {
-      // If user is not logged in or doesn't have an ID yet, initialize with empty data
-      if (!profile || !profile.id) {
+      // Reset state at the beginning of the fetch
+      setLoadingData(true);
+      setError(null);
+      
+      // Safety check for profile
+      if (!profile?.id) {
         console.log("No profile ID available, initializing empty data");
         initializeEmptyData();
         setError("Authentication required. Please log in.");
+        setLoadingData(false);
         return;
       }
-      
-      setLoadingData(true);
-      setError(null);
       
       try {
         console.log(`Attempting to fetch monthly savings for user ${profile.id} and year ${selectedYear}`);
         // Try to fetch data from Supabase
         const savedData = await fetchMonthlySavings(profile.id, selectedYear);
         
-        if (savedData) {
+        if (savedData && savedData.data) {
           console.log("Setting savings data from fetch:", savedData.data);
           setSavingsData(savedData.data);
           
           // Update profile with fetched data
-          if (JSON.stringify(savedData.data) !== JSON.stringify(profile.monthlySavings?.data)) {
+          const existingData = profile.monthlySavings?.data || [];
+          if (JSON.stringify(savedData.data) !== JSON.stringify(existingData)) {
             const updatedMonthlySavings: MonthlySavingsType = {
               id: savedData.id,
               userId: profile.id,
@@ -90,6 +93,7 @@ export const useMonthlySavingsState = (
   };
 
   const handleSaveAmount = (month: number, amount: number) => {
+    // Create a new array rather than mutating the existing one
     const updatedData = savingsData.map(item => 
       item.month === month ? { ...item, amount } : item
     );
@@ -119,6 +123,7 @@ export const useMonthlySavingsState = (
       }
       
       console.log("Starting save process for monthly savings");
+      // Use existing ID or generate a new one
       const monthlySavingsId = profile.monthlySavings?.id || uuidv4();
       
       const updatedSavings: MonthlySavingsType = {
@@ -162,9 +167,10 @@ export const useMonthlySavingsState = (
     }
   };
 
-  const handleYearChange = async (year: number) => {
+  const handleYearChange = (year: number) => {
     setSelectedYear(year);
     setEditingMonth(null);
+    // Note: The data fetching will be triggered by the useEffect
   };
 
   return {

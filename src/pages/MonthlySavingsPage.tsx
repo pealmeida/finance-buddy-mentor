@@ -33,8 +33,13 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
         description: "Please log in to access the monthly savings feature.",
         variant: "destructive"
       });
-      navigate("/login");
-      return;
+      
+      // Give the toast time to be seen before redirecting
+      const timer = setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+      
+      return () => clearTimeout(timer);
     }
     
     // Set loading to false after we've confirmed the user is authenticated
@@ -43,6 +48,10 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   
   const handleSave = (updatedProfile: UserProfile) => {
     try {
+      if (!updatedProfile || !updatedProfile.id) {
+        throw new Error("Cannot save: Profile is not valid");
+      }
+      
       handleProfileComplete(updatedProfile, true);
     } catch (err) {
       console.error("Error saving profile:", err);

@@ -18,7 +18,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   onSave,
   isSaving = false
 }) => {
-  // Ensure profile has an ID before proceeding
+  // Strong authentication check before proceeding
   if (!profile || !profile.id) {
     return (
       <div className="p-6 bg-white rounded-lg shadow-md">
@@ -58,7 +58,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
       
       <MonthlySavingsContent
         loadingData={loadingData}
-        savingsData={savingsData}
+        savingsData={savingsData || []}
         editingMonth={editingMonth}
         onEditMonth={handleEditMonth}
         onSaveAmount={handleSaveAmount}
