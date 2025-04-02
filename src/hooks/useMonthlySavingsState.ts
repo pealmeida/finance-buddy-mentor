@@ -4,11 +4,7 @@ import { UserProfile, MonthlyAmount, MonthlySavings as MonthlySavingsType } from
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 import { useToast } from '@/components/ui/use-toast';
 import { v4 as uuidv4 } from 'uuid';
-
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
+import { MONTHS } from '@/constants/months';
 
 export const useMonthlySavingsState = (
   profile: UserProfile,
@@ -163,13 +159,11 @@ export const useMonthlySavingsState = (
   };
 
   return {
-    MONTHS,
     selectedYear,
     savingsData,
     editingMonth,
     loadingData,
     savingsLoading,
-    isSaving,
     handleSaveAmount,
     handleEditMonth,
     handleSaveAll,
