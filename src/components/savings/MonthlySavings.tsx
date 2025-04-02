@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { UserProfile, MonthlySavings as MonthlySavingsType, MonthlyAmount } from '@/types/finance';
-import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import MonthlySavingsChart from './MonthlySavingsChart';
 import MonthlySavingsForm from './MonthlySavingsForm';
+import YearSelector from './YearSelector';
+import SaveAllButton from './SaveAllButton';
+import MonthlyCard from './MonthlyCard';
 import { v4 as uuidv4 } from 'uuid';
-import { CircleDollarSign, Save } from 'lucide-react';
+import { CircleDollarSign } from 'lucide-react';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 
 interface MonthlySavingsProps {
@@ -183,40 +185,17 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
           Monthly Savings
         </h2>
         <div className="flex gap-4 items-center">
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={() => handleYearChange(selectedYear - 1)}
-              disabled={isSaving || savingsLoading || loadingData}
-            >
-              Previous Year
-            </Button>
-            <div className="flex items-center justify-center bg-background border rounded-md px-4 font-medium">
-              {selectedYear}
-            </div>
-            <Button 
-              variant="outline" 
-              onClick={() => handleYearChange(selectedYear + 1)}
-              disabled={isSaving || savingsLoading || loadingData}
-            >
-              Next Year
-            </Button>
-          </div>
-          
-          <Button 
-            onClick={handleSaveAll} 
-            className="flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark"
+          <YearSelector
+            selectedYear={selectedYear}
+            onYearChange={handleYearChange}
             disabled={isSaving || savingsLoading || loadingData}
-          >
-            {isSaving || savingsLoading ? (
-              <>Saving...</>
-            ) : (
-              <>
-                <Save size={16} />
-                Save All
-              </>
-            )}
-          </Button>
+          />
+          
+          <SaveAllButton
+            onSave={handleSaveAll}
+            disabled={isSaving || savingsLoading || loadingData}
+            isSaving={isSaving || savingsLoading}
+          />
         </div>
       </div>
       
@@ -248,18 +227,12 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
         {savingsData.map((item) => (
-          <div 
+          <MonthlyCard
             key={item.month}
-            className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer border"
-            onClick={() => handleEditMonth(item.month)}
-          >
-            <div className="flex justify-between items-center">
-              <div className="font-medium">{MONTHS[item.month - 1]}</div>
-              <div className={`text-lg font-bold ${item.amount > 0 ? 'text-green-600' : 'text-gray-500'}`}>
-                ${item.amount.toLocaleString()}
-              </div>
-            </div>
-          </div>
+            item={item}
+            monthName={MONTHS[item.month - 1]}
+            onEditMonth={handleEditMonth}
+          />
         ))}
       </div>
     </div>
