@@ -44,7 +44,7 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
         <div className="flex h-16 justify-between">
           <div className="flex">
             <div className="flex flex-shrink-0 items-center">
-              <Link to="/" className="text-xl font-bold text-blue-600">FinTrack</Link>
+              <Link to="/" className="text-xl font-bold text-blue-600">Finance Buddy</Link>
             </div>
             
             {/* Desktop navigation */}
