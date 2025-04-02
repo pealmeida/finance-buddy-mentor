@@ -7,6 +7,7 @@ import OnboardingPage from '@/pages/OnboardingPage';
 import SignupPage from '@/pages/SignupPage';
 import LoginPage from '@/pages/LoginPage';
 import ProfilePage from '@/pages/ProfilePage';
+import GoalsPage from '@/pages/GoalsPage';
 import NotFound from '@/pages/NotFound';
 
 interface AppRoutesProps {
@@ -72,6 +73,21 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
           userProfile 
             ? (isProfileComplete 
                 ? <ProfilePage 
+                    userProfile={userProfile} 
+                    onProfileUpdate={onProfileUpdate}
+                  /> 
+                : <Navigate to="/onboarding" />)
+            : <Navigate to="/login" />
+        } 
+      />
+      
+      {/* Financial Goals page - protected route */}
+      <Route 
+        path="/goals" 
+        element={
+          userProfile 
+            ? (isProfileComplete 
+                ? <GoalsPage 
                     userProfile={userProfile} 
                     onProfileUpdate={onProfileUpdate}
                   /> 

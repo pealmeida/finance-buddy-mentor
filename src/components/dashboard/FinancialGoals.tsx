@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Target, ChevronRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Target, ChevronRight, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { UserProfile } from '@/types/finance';
@@ -11,6 +11,12 @@ interface FinancialGoalsProps {
 }
 
 const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
+  const navigate = useNavigate();
+  
+  const handleAddGoal = () => {
+    navigate('/goals');
+  };
+  
   return (
     <div className="glass-panel rounded-2xl p-6">
       <div className="flex items-center justify-between mb-4">
@@ -59,7 +65,9 @@ const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
           <Button 
             variant="outline" 
             className="mt-4 text-finance-blue border-finance-blue hover:bg-finance-blue hover:text-white transition-all duration-300"
+            onClick={handleAddGoal}
           >
+            <Plus className="h-4 w-4 mr-2" />
             Add a Goal
           </Button>
         </div>
