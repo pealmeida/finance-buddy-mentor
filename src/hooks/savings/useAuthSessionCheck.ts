@@ -7,13 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 export const useAuthSessionCheck = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [checkingAuth, setCheckingAuth] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const lastCheckTime = useRef<number>(0);
   const checkingRef = useRef<boolean>(false);
   const checkAttemptsRef = useRef<number>(0);
   const MAX_CHECK_ATTEMPTS = 3;
-  const CHECK_COOLDOWN = 30000; // Increased to 30 seconds between checks
+  const CHECK_COOLDOWN = 60000; // 60 seconds between checks
   
   // Check if auth session is valid and refresh token if needed
   const checkAndRefreshSession = useCallback(async (force = false) => {
@@ -33,9 +33,16 @@ export const useAuthSessionCheck = () => {
     // Limit number of consecutive check attempts
     if (checkAttemptsRef.current >= MAX_CHECK_ATTEMPTS) {
       console.log(`Max check attempts (${MAX_CHECK_ATTEMPTS}) reached, cooling down`);
+      toast({
+        title: "Too many authentication checks",
+        description: "Please try again later or log in again",
+        variant: "destructive"
+      });
+      
+      // Reset after 2 minutes
       setTimeout(() => {
         checkAttemptsRef.current = 0;
-      }, 60000); // Reset after 60 seconds
+      }, 120000);
       return false;
     }
     
@@ -56,7 +63,7 @@ export const useAuthSessionCheck = () => {
       
       if (!data.session) {
         console.log("No active session found");
-        throw new Error("Authentication required to access monthly savings");
+        throw new Error("Authentication required");
       }
       
       // Success - reset error state and check attempts
@@ -65,26 +72,28 @@ export const useAuthSessionCheck = () => {
       return true;
     } catch (err) {
       console.error("Session check error:", err);
-      setError(err instanceof Error ? err.message : "Authentication required to access monthly savings");
+      const errorMessage = err instanceof Error ? err.message : "Authentication required";
+      setError(errorMessage);
       
       if (checkAttemptsRef.current >= MAX_CHECK_ATTEMPTS) {
         toast({
           title: "Authentication Required",
-          description: "Multiple authentication attempts failed. Please log in again.",
+          description: "Please log in to continue",
           variant: "destructive"
         });
         
         // Navigate to login after repeated failures
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+        navigate("/login");
       } else if (checkAttemptsRef.current === 1) {
         // Only show toast on first attempt
         toast({
           title: "Authentication Required",
-          description: "Please log in to access the monthly savings feature.",
+          description: "Please log in to access this feature",
           variant: "destructive"
         });
+        
+        // Navigate to login
+        navigate("/login");
       }
       
       return false;
@@ -94,17 +103,10 @@ export const useAuthSessionCheck = () => {
     }
   }, [toast, navigate, error]);
   
-  // Set up refresh interval - less frequent to avoid hammering the server
+  // Initial auth check on mount
   useEffect(() => {
     // Initial auth check
     checkAndRefreshSession(true);
-    
-    // No refresh interval - removed to prevent potential loops
-    // We'll only check auth when explicitly called now
-    
-    return () => {
-      // Nothing to clean up now
-    };
   }, [checkAndRefreshSession]);
 
   return {

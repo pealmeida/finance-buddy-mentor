@@ -1,6 +1,15 @@
 
 import { UserProfile } from '@/types/finance';
-import { validateRiskProfile } from '@/utils/auth/profileValidation';
+
+/**
+ * Validate risk profile from a potentially invalid value 
+ */
+const validateRiskProfile = (profile: string | undefined) => {
+  if (profile === 'conservative' || profile === 'moderate' || profile === 'aggressive') {
+    return profile;
+  }
+  return 'moderate'; // Default to moderate if invalid value
+};
 
 /**
  * Loads user profile from localStorage when no active session exists

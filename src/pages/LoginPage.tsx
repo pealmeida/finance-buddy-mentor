@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Mail, Lock } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import Header from '@/components/Header';
-import { useSupabaseData } from '@/hooks/useSupabaseData';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -17,10 +16,19 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { fetchUserProfile } = useSupabaseData();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        title: "Missing fields",
+        description: "Please enter both email and password",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -30,32 +38,21 @@ const LoginPage: React.FC = () => {
       });
 
       if (error) {
+        console.error("Login error:", error.message);
         toast({
           title: "Login failed",
           description: error.message,
           variant: "destructive"
         });
       } else {
+        console.log("Login successful, redirecting to dashboard");
         toast({
           title: "Login successful",
           description: "You have successfully logged in.",
         });
         
-        // Check if this user has completed their profile setup
-        if (data.session) {
-          const userId = data.session.user.id;
-          const userProfile = await fetchUserProfile(userId);
-          
-          // Redirect based on profile completion status
-          if (userProfile && 
-              userProfile.monthlyIncome > 0 && 
-              userProfile.age > 0 && 
-              userProfile.riskProfile) {
-            navigate('/dashboard');
-          } else {
-            navigate('/onboarding');
-          }
-        }
+        // Simple redirect to dashboard, profile checking will happen there
+        navigate('/dashboard');
       }
     } catch (error) {
       console.error('Unexpected error during login:', error);
