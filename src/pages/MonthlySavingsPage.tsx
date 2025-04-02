@@ -43,7 +43,17 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   }, [userProfile, navigate, toast]);
   
   const handleSave = (updatedProfile: UserProfile) => {
-    handleProfileComplete(updatedProfile, true);
+    try {
+      handleProfileComplete(updatedProfile, true);
+    } catch (err) {
+      console.error("Error saving profile:", err);
+      setError("Failed to save profile data");
+      toast({
+        title: "Save Error",
+        description: "Failed to save your profile data. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (loading) {

@@ -153,6 +153,7 @@ export const useMonthlySavingsState = (
       }
     } catch (err) {
       console.error("Error saving savings data:", err);
+      setError(err instanceof Error ? err.message : "An unknown error occurred");
       toast({
         title: "Error",
         description: "There was a problem saving your savings data. Please try again.",
