@@ -22,7 +22,21 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
   userProfile, 
   onProfileUpdate
 }) => {
-  const [profile, setProfile] = useState<UserProfile>({...userProfile});
+  // Ensure we start with a complete UserProfile by providing default values for all required fields
+  const [profile, setProfile] = useState<UserProfile>({
+    ...userProfile,
+    id: userProfile.id,
+    email: userProfile.email || '',
+    name: userProfile.name || '',
+    age: userProfile.age || 0,
+    monthlyIncome: userProfile.monthlyIncome || 0,
+    riskProfile: userProfile.riskProfile || 'moderate',
+    hasEmergencyFund: userProfile.hasEmergencyFund || false,
+    hasDebts: userProfile.hasDebts || false,
+    financialGoals: userProfile.financialGoals || [],
+    investments: userProfile.investments || [],
+    debtDetails: userProfile.debtDetails || []
+  });
   const [userName, setUserName] = useState<string>(userProfile.name || '');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,32 +65,35 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
           // If we have Supabase profile data, use it
           if (supabaseProfile) {
             console.log('Loaded profile from Supabase:', supabaseProfile);
-            setProfile(supabaseProfile);
-            setUserName(supabaseProfile.name || (user_metadata?.name as string) || 'User');
+            // Ensure we have all required fields with defaults if needed
+            const completeProfile: UserProfile = {
+              ...supabaseProfile,
+              id: supabaseProfile.id || id,
+              email: supabaseProfile.email || email || '',
+              name: supabaseProfile.name || (user_metadata?.name as string) || 'User',
+              age: supabaseProfile.age || 0,
+              monthlyIncome: supabaseProfile.monthlyIncome || 0,
+              riskProfile: supabaseProfile.riskProfile || 'moderate',
+              hasEmergencyFund: supabaseProfile.hasEmergencyFund || false,
+              hasDebts: supabaseProfile.hasDebts || false,
+              financialGoals: supabaseProfile.financialGoals || [],
+              investments: supabaseProfile.investments || [],
+              debtDetails: supabaseProfile.debtDetails || []
+            };
+            setProfile(completeProfile);
+            setUserName(completeProfile.name);
             // Update app-level profile state
-            onProfileUpdate(supabaseProfile);
+            onProfileUpdate(completeProfile);
           } else {
-            // Fallback to localStorage data
-            setProfile(prev => ({
-              ...prev,
+            // Fallback to localStorage data with session user data
+            const updatedProfile: UserProfile = {
+              ...profile,
               id,
-              email: email || prev.email
-            }));
-            
-            // Set user name for display
-            if (user_metadata && user_metadata.name) {
-              setProfile(prev => ({
-                ...prev,
-                name: user_metadata.name as string
-              }));
-              setUserName(user_metadata.name as string);
-            } else if (profile.name) {
-              setUserName(profile.name);
-            } else if (email) {
-              // Use email as fallback if no name is available
-              const nameFromEmail = email.split('@')[0];
-              setUserName(nameFromEmail);
-            }
+              email: email || profile.email || '',
+              name: (user_metadata?.name as string) || profile.name || 'User',
+            };
+            setProfile(updatedProfile);
+            setUserName(updatedProfile.name);
           }
         } else {
           console.log('No active session found, using provided profile data');
