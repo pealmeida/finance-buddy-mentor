@@ -90,14 +90,14 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
       <div className="p-4 bg-white rounded-lg shadow-md">
         <MonthlySavingsChart 
           data={savingsData} 
-          onEditMonth={onEditMonth} 
+          onSelectMonth={onEditMonth} 
         />
       </div>
       
       {editingMonth !== null && (
         <MonthlySavingsForm
           month={editingMonth}
-          initialAmount={savingsData.find(item => item.month === editingMonth)?.amount || 0}
+          amount={savingsData.find(item => item.month === editingMonth)?.amount || 0}
           onSave={onSaveAmount}
           onCancel={onCancelEdit}
         />
@@ -109,7 +109,7 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
             key={item.month}
             item={item}
             monthName={MONTHS[item.month - 1]}
-            onEditMonth={onEditMonth}
+            onEdit={onEditMonth}
           />
         ))}
       </div>

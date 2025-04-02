@@ -5,6 +5,7 @@ import { MONTHS } from '@/constants/months';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { v4 as uuidv4 } from 'uuid';
+import { Json } from '@/integrations/supabase/types';
 
 export const useMonthlySavingsData = (userId: string | undefined, year: number) => {
   const [savings, setSavings] = useState<MonthlyAmount[]>([]);
@@ -78,20 +79,16 @@ export const useMonthlySavingsData = (userId: string | undefined, year: number) 
     try {
       setIsLoading(true);
       
-      const savingsData: MonthlySavings = {
-        id: uuidv4(),
-        userId,
-        year,
-        data: savings
-      };
+      // Cast the savings array to Json type for Supabase
+      const savingsData = savings as unknown as Json;
       
       const { error: saveError } = await supabase
         .from('monthly_savings')
         .upsert({
-          id: savingsData.id,
+          id: uuidv4(),
           user_id: userId,
           year,
-          data: savings
+          data: savingsData
         }, {
           onConflict: 'user_id,year'
         });
