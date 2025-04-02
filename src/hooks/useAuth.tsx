@@ -110,7 +110,7 @@ const fetchUserProfileFromSupabase = async (userId: string) => {
   }
 };
 
-export function useAuth() {
+export const useAuth = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isProfileComplete, setIsProfileComplete] = useState(false);
@@ -328,4 +328,4 @@ export function useAuth() {
     handleProfileComplete,
     handleProfileUpdate
   };
-}
+};
