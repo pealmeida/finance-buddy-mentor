@@ -27,8 +27,10 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = false }) => {
     <header className="bg-white border-b shadow-sm py-4">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold text-finance-blue flex items-center">
-          <CircleDollarSign className="h-8 w-8 mr-2" />
-          FinWise
+          <CircleDollarSign className="h-8 w-8 mr-2 text-finance-blue" />
+          <span className="bg-gradient-to-r from-finance-blue to-finance-blue-dark bg-clip-text text-transparent">
+            FinWise
+          </span>
         </Link>
         
         <nav className="hidden md:flex items-center space-x-1">
