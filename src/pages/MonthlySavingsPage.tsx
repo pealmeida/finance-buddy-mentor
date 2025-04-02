@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Header from '@/components/Header';
 import { UserProfile } from '@/types/finance';
 import { useProfileCompletion } from '@/hooks/useProfileCompletion';
@@ -23,14 +23,23 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   const navigate = useNavigate();
   const { handleProfileComplete, isSubmitting } = useProfileCompletion(onProfileUpdate);
   const [loading, setLoading] = useState(true);
+  const initialCheckDone = useRef<boolean>(false);
+  const [debugInfo, setDebugInfo] = useState<string>('Starting authentication check...');
   const { checkingAuth, error, setError, checkAndRefreshSession } = useAuthSessionCheck();
   
   // Initial auth check - using useCallback to prevent recreating this function on every render
   const initialAuthCheck = useCallback(async () => {
+    if (initialCheckDone.current) {
+      return;
+    }
+    
     try {
-      const isAuthenticated = await checkAndRefreshSession();
+      setDebugInfo(`Performing initial auth check for user ${userProfile?.id || 'unknown'}`);
+      const isAuthenticated = await checkAndRefreshSession(true);
+      initialCheckDone.current = true;
       
       if (!isAuthenticated) {
+        setDebugInfo('Authentication check failed, preparing to redirect');
         // Give the toast time to be seen before redirecting
         setTimeout(() => {
           navigate("/login");
@@ -40,6 +49,7 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
       
       // Check if profile is valid
       if (!userProfile || !userProfile.id) {
+        setDebugInfo('User profile not available');
         setError("User profile not available");
         toast({
           title: "Profile Error",
@@ -54,9 +64,11 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
       }
       
       // Set loading to false after we've confirmed the user is authenticated
+      setDebugInfo('Authentication check passed, loading content');
       setLoading(false);
     } catch (err) {
       console.error("Auth check error:", err);
+      setDebugInfo(`Auth check error: ${err instanceof Error ? err.message : 'Unknown error'}`);
       setError("Authentication error occurred");
       setLoading(false);
     }
@@ -64,8 +76,8 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   
   // Run auth check only once on mount or when dependencies change
   useEffect(() => {
-    // Only run if loading is true to prevent multiple checks
-    if (loading) {
+    // Only run if loading is true and we haven't done the initial check
+    if (loading && !initialCheckDone.current) {
       initialAuthCheck();
     }
   }, [initialAuthCheck, loading]);
@@ -91,21 +103,28 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   const handleRetry = useCallback(async () => {
     setError(null);
     setLoading(true);
+    setDebugInfo('Retrying authentication check...');
+    initialCheckDone.current = false; // Reset the check flag
     
-    const isAuthenticated = await checkAndRefreshSession();
-    
-    if (isAuthenticated) {
-      setLoading(false);
-    } else {
-      setTimeout(() => {
-        navigate("/login");
-      }, 1000);
-    }
+    // Allow a small delay before the check
+    setTimeout(async () => {
+      const isAuthenticated = await checkAndRefreshSession(true);
+      
+      if (isAuthenticated) {
+        setLoading(false);
+        setDebugInfo('Authentication check passed after retry');
+      } else {
+        setDebugInfo('Authentication check failed after retry, redirecting');
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
+      }
+    }, 500);
   }, [checkAndRefreshSession, navigate, setError]);
 
   // Show loading state
   if (loading || checkingAuth) {
-    return <MonthlySavingsLoading />;
+    return <MonthlySavingsLoading debugInfo={debugInfo} />;
   }
 
   // Show error state
