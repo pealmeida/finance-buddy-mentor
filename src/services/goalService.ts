@@ -16,6 +16,7 @@ export const fetchUserGoals = async (): Promise<FinancialGoal[]> => {
     }
     
     const userId = sessionData.session.user.id;
+    console.log('Fetching goals for user:', userId);
     
     const { data, error } = await supabase
       .from('financial_goals')
@@ -23,6 +24,8 @@ export const fetchUserGoals = async (): Promise<FinancialGoal[]> => {
       .eq('user_id', userId);
     
     if (error) throw error;
+    
+    console.log('Fetched goals:', data);
     
     return data.map(goal => ({
       id: goal.id,
@@ -51,13 +54,14 @@ export const createGoal = async (goal: Omit<FinancialGoal, 'id'>): Promise<Finan
     }
     
     const userId = sessionData.session.user.id;
+    console.log('Creating goal for user:', userId, 'with data:', goal);
     
     const newGoal = {
       id: uuidv4(),
       ...goal
     };
     
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('financial_goals')
       .insert({
         id: newGoal.id,
@@ -69,9 +73,16 @@ export const createGoal = async (goal: Omit<FinancialGoal, 'id'>): Promise<Finan
           ? newGoal.targetDate.toISOString().split('T')[0] 
           : new Date(newGoal.targetDate).toISOString().split('T')[0],
         priority: newGoal.priority
-      });
+      })
+      .select()
+      .single();
     
-    if (error) throw error;
+    if (error) {
+      console.error('Database error creating goal:', error);
+      throw error;
+    }
+    
+    console.log('Created goal:', data);
     
     return newGoal;
   } catch (error) {
@@ -93,8 +104,9 @@ export const updateGoal = async (goal: FinancialGoal): Promise<FinancialGoal> =>
     }
     
     const userId = sessionData.session.user.id;
+    console.log('Updating goal for user:', userId, 'with data:', goal);
     
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('financial_goals')
       .update({
         name: goal.name,
@@ -106,9 +118,16 @@ export const updateGoal = async (goal: FinancialGoal): Promise<FinancialGoal> =>
         priority: goal.priority
       })
       .eq('id', goal.id)
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .select()
+      .single();
     
-    if (error) throw error;
+    if (error) {
+      console.error('Database error updating goal:', error);
+      throw error;
+    }
+    
+    console.log('Updated goal:', data);
     
     return goal;
   } catch (error) {
@@ -130,6 +149,7 @@ export const deleteGoal = async (goalId: string): Promise<void> => {
     }
     
     const userId = sessionData.session.user.id;
+    console.log('Deleting goal:', goalId, 'for user:', userId);
     
     const { error } = await supabase
       .from('financial_goals')
@@ -137,7 +157,12 @@ export const deleteGoal = async (goalId: string): Promise<void> => {
       .eq('id', goalId)
       .eq('user_id', userId);
     
-    if (error) throw error;
+    if (error) {
+      console.error('Database error deleting goal:', error);
+      throw error;
+    }
+    
+    console.log('Goal deleted successfully:', goalId);
   } catch (error) {
     console.error('Error deleting goal:', error);
     throw error;

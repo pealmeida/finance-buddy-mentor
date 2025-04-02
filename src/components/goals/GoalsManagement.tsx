@@ -21,12 +21,14 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
   // Update parent component's state when goals change
   useEffect(() => {
     if (goals) {
+      console.log('Goals updated in GoalsManagement:', goals);
       onGoalsChange(goals);
     }
   }, [goals, onGoalsChange]);
 
   // Ensure goals are loaded when component mounts
   useEffect(() => {
+    console.log('Component mounted, loading goals...');
     refreshGoals();
   }, [refreshGoals]);
 
@@ -43,15 +45,19 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
   const handleSaveGoal = async (goal: FinancialGoal) => {
     try {
       setIsSaving(true);
+      console.log('Saving goal:', goal);
+      
       if (editingGoal) {
+        console.log('Editing existing goal');
         await editGoal(goal);
       } else {
+        console.log('Adding new goal');
         await addGoal(goal);
       }
+      
       setIsFormOpen(false);
       setEditingGoal(null);
     } catch (err) {
-      // Error is handled in the useGoals hook
       console.error("Error saving goal:", err);
     } finally {
       setIsSaving(false);
@@ -60,9 +66,9 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
 
   const handleDeleteGoal = async (goalId: string) => {
     try {
+      console.log('Deleting goal:', goalId);
       await removeGoal(goalId);
     } catch (err) {
-      // Error is handled in the useGoals hook
       console.error("Error deleting goal:", err);
     }
   };

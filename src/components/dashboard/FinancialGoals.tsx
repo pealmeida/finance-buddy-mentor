@@ -23,7 +23,9 @@ const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
     const loadGoals = async () => {
       try {
         setLoading(true);
+        console.log('Dashboard: Loading goals for user:', userProfile.id);
         const fetchedGoals = await fetchUserGoals();
+        console.log('Dashboard: Fetched goals:', fetchedGoals);
         setGoals(fetchedGoals);
       } catch (err) {
         console.error("Error loading goals for dashboard:", err);
@@ -36,7 +38,7 @@ const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
     };
     
     loadGoals();
-  }, [userProfile.id]);
+  }, [userProfile.id, userProfile.financialGoals]);
   
   const handleAddGoal = () => {
     navigate('/goals');

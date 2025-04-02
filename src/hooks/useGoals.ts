@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { FinancialGoal } from '@/types/finance';
 import { useToast } from '@/components/ui/use-toast';
 import { 
@@ -15,16 +15,15 @@ export const useGoals = () => {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadGoals();
-  }, []);
-
-  const loadGoals = async () => {
+  const loadGoals = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
+      console.log('Loading goals...');
       const fetchedGoals = await fetchUserGoals();
+      console.log('Loaded goals:', fetchedGoals);
       setGoals(fetchedGoals);
+      return fetchedGoals;
     } catch (err) {
       console.error('Failed to load goals:', err);
       setError(err instanceof Error ? err.message : 'Failed to load financial goals');
@@ -33,13 +32,15 @@ export const useGoals = () => {
         description: 'Failed to load your financial goals. Please try again.',
         variant: 'destructive'
       });
+      return [];
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
   const addGoal = async (newGoalData: Omit<FinancialGoal, 'id'>) => {
     try {
+      console.log('Adding new goal:', newGoalData);
       const newGoal = await createGoal(newGoalData);
       setGoals(prev => [...prev, newGoal]);
       toast({
@@ -60,6 +61,7 @@ export const useGoals = () => {
 
   const editGoal = async (updatedGoal: FinancialGoal) => {
     try {
+      console.log('Editing goal:', updatedGoal);
       await updateGoal(updatedGoal);
       setGoals(prev => prev.map(g => g.id === updatedGoal.id ? updatedGoal : g));
       toast({
@@ -79,6 +81,7 @@ export const useGoals = () => {
 
   const removeGoal = async (goalId: string) => {
     try {
+      console.log('Removing goal:', goalId);
       await deleteGoal(goalId);
       setGoals(prev => prev.filter(g => g.id !== goalId));
       toast({

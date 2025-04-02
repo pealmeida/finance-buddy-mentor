@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 
 interface GoalFormProps {
@@ -20,24 +20,37 @@ interface GoalFormProps {
 const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving }) => {
   const isNewGoal = !goal || !goal.id;
   
+  // Format date for the form input
+  let defaultDate: string;
+  if (goal?.targetDate) {
+    const date = goal.targetDate instanceof Date 
+      ? goal.targetDate 
+      : new Date(goal.targetDate);
+    
+    defaultDate = isValid(date) 
+      ? format(date, 'yyyy-MM-dd')
+      : format(new Date(), 'yyyy-MM-dd');
+  } else {
+    defaultDate = format(new Date(), 'yyyy-MM-dd');
+  }
+  
   const defaultValues = {
-    id: goal?.id || uuidv4(),
+    id: goal?.id || '',
     name: goal?.name || '',
     targetAmount: goal?.targetAmount || 0,
     currentAmount: goal?.currentAmount || 0,
-    targetDate: goal?.targetDate instanceof Date 
-      ? format(goal.targetDate, 'yyyy-MM-dd')
-      : typeof goal?.targetDate === 'string' 
-        ? format(new Date(goal.targetDate), 'yyyy-MM-dd')
-        : format(new Date(), 'yyyy-MM-dd'),
+    targetDate: defaultDate,
     priority: goal?.priority || 'medium' as 'low' | 'medium' | 'high'
   };
+
+  console.log('GoalForm defaultValues:', defaultValues);
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
     defaultValues
   });
 
   const onSubmit = (data: any) => {
+    console.log('Form submitted with data:', data);
     const formattedGoal: FinancialGoal = {
       ...data,
       id: isNewGoal ? uuidv4() : goal!.id,
@@ -46,6 +59,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving })
       targetDate: new Date(data.targetDate)
     };
     
+    console.log('Formatted goal for save:', formattedGoal);
     onSave(formattedGoal);
   };
 
