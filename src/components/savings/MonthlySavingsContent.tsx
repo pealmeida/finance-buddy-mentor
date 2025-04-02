@@ -6,6 +6,7 @@ import MonthlySavingsForm from './MonthlySavingsForm';
 import MonthlyCard from './MonthlyCard';
 import { MONTHS } from '@/constants/months';
 import { AlertCircle, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface MonthlySavingsContentProps {
   loadingData: boolean;
@@ -39,11 +40,11 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
 
   if (error) {
     return (
-      <div className="p-8 bg-white rounded-lg shadow-md flex justify-center items-center h-64">
-        <div className="flex items-center gap-2 text-red-500">
-          <AlertCircle className="h-6 w-6" />
-          <p>Error loading data: {error}</p>
-        </div>
+      <div className="p-8 bg-white rounded-lg shadow-md">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>Error loading data: {error}</AlertDescription>
+        </Alert>
       </div>
     );
   }

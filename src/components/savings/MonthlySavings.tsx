@@ -4,6 +4,8 @@ import { UserProfile } from '@/types/finance';
 import { useMonthlySavingsState } from '@/hooks/useMonthlySavingsState';
 import MonthlySavingsHeader from './MonthlySavingsHeader';
 import MonthlySavingsContent from './MonthlySavingsContent';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface MonthlySavingsProps {
   profile: UserProfile;
@@ -20,7 +22,12 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   if (!profile || !profile.id) {
     return (
       <div className="p-6 bg-white rounded-lg shadow-md">
-        <p className="text-red-500">User profile is not available. Please log in.</p>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            User profile is not available. Please log in to view your savings data.
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }

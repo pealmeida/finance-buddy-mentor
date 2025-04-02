@@ -4,7 +4,6 @@ import Header from '@/components/Header';
 import { UserProfile } from '@/types/finance';
 import { useProfileCompletion } from '@/hooks/useProfileCompletion';
 import MonthlySavings from '@/components/savings/MonthlySavings';
-import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, AlertCircle } from 'lucide-react';
