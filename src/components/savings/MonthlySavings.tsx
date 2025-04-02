@@ -7,6 +7,7 @@ import MonthlySavingsChart from './MonthlySavingsChart';
 import MonthlySavingsForm from './MonthlySavingsForm';
 import { v4 as uuidv4 } from 'uuid';
 import { CircleDollarSign, Save } from 'lucide-react';
+import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 
 interface MonthlySavingsProps {
   profile: UserProfile;
@@ -25,24 +26,73 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   isSaving = false
 }) => {
   const { toast } = useToast();
+  const { fetchMonthlySavings, saveMonthlySavings, loading: savingsLoading } = useMonthlySavings();
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [savingsData, setSavingsData] = useState<MonthlyAmount[]>([]);
   const [editingMonth, setEditingMonth] = useState<number | null>(null);
+  const [loadingData, setLoadingData] = useState(false);
 
   // Initialize savings data from profile or create empty data
   useEffect(() => {
-    if (profile.monthlySavings && profile.monthlySavings.year === selectedYear) {
-      setSavingsData(profile.monthlySavings.data);
-    } else {
-      // Initialize empty data for all months
-      const initialData: MonthlyAmount[] = MONTHS.map((_, index) => ({
-        month: index + 1,
-        amount: 0
-      }));
-      setSavingsData(initialData);
-    }
-  }, [profile.monthlySavings, selectedYear]);
+    const fetchData = async () => {
+      // If user is not logged in or doesn't have an ID yet, initialize with empty data
+      if (!profile.id) {
+        initializeEmptyData();
+        return;
+      }
+      
+      setLoadingData(true);
+      try {
+        // Try to fetch data from Supabase
+        const savedData = await fetchMonthlySavings(profile.id, selectedYear);
+        
+        if (savedData) {
+          setSavingsData(savedData.data);
+          
+          // Update profile with fetched data
+          if (JSON.stringify(savedData.data) !== JSON.stringify(profile.monthlySavings?.data)) {
+            const updatedMonthlySavings: MonthlySavingsType = {
+              id: savedData.id,
+              userId: profile.id,
+              year: selectedYear,
+              data: savedData.data
+            };
+            
+            const updatedProfile = {
+              ...profile,
+              monthlySavings: updatedMonthlySavings
+            };
+            
+            onSave(updatedProfile);
+          }
+        } else {
+          initializeEmptyData();
+        }
+      } catch (err) {
+        console.error("Error fetching savings data:", err);
+        toast({
+          title: "Error",
+          description: "Failed to load savings data. Please try again.",
+          variant: "destructive"
+        });
+        initializeEmptyData();
+      } finally {
+        setLoadingData(false);
+      }
+    };
+    
+    fetchData();
+  }, [profile.id, selectedYear]);
+
+  const initializeEmptyData = () => {
+    // Initialize empty data for all months
+    const initialData: MonthlyAmount[] = MONTHS.map((_, index) => ({
+      month: index + 1,
+      amount: 0
+    }));
+    setSavingsData(initialData);
+  };
 
   const handleSaveAmount = (month: number, amount: number) => {
     const updatedData = savingsData.map(item => 
@@ -62,26 +112,45 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     setEditingMonth(month);
   };
 
-  const handleSaveAll = () => {
+  const handleSaveAll = async () => {
     try {
+      if (!profile.id) {
+        toast({
+          title: "Not Logged In",
+          description: "Please log in to save your data.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      const monthlySavingsId = profile.monthlySavings?.id || uuidv4();
+      
       const updatedSavings: MonthlySavingsType = {
-        id: profile.monthlySavings?.id || uuidv4(),
+        id: monthlySavingsId,
         userId: profile.id,
         year: selectedYear,
         data: savingsData
       };
       
-      const updatedProfile = {
-        ...profile,
-        monthlySavings: updatedSavings
-      };
+      // Save to Supabase
+      const success = await saveMonthlySavings(updatedSavings);
       
-      onSave(updatedProfile);
-      
-      toast({
-        title: "Savings Saved",
-        description: `Your savings data for ${selectedYear} has been saved successfully.`
-      });
+      if (success) {
+        // Update local state
+        const updatedProfile = {
+          ...profile,
+          monthlySavings: updatedSavings
+        };
+        
+        onSave(updatedProfile);
+        
+        toast({
+          title: "Savings Saved",
+          description: `Your savings data for ${selectedYear} has been saved successfully.`
+        });
+      } else {
+        throw new Error("Failed to save data");
+      }
     } catch (err) {
       console.error("Error saving savings data:", err);
       toast({
@@ -92,20 +161,12 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     }
   };
 
-  const handleYearChange = (year: number) => {
+  const handleYearChange = async (year: number) => {
     setSelectedYear(year);
     setEditingMonth(null);
     
-    // Reset data for new year if it doesn't exist in profile
-    if (!profile.monthlySavings || profile.monthlySavings.year !== year) {
-      const initialData: MonthlyAmount[] = MONTHS.map((_, index) => ({
-        month: index + 1,
-        amount: 0
-      }));
-      setSavingsData(initialData);
-    } else {
-      setSavingsData(profile.monthlySavings.data);
-    }
+    // When changing year, data will be fetched in useEffect
+    // This ensures we get fresh data from the server for the new year
   };
 
   return (
@@ -120,7 +181,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
             <Button 
               variant="outline" 
               onClick={() => handleYearChange(selectedYear - 1)}
-              disabled={isSaving}
+              disabled={isSaving || savingsLoading || loadingData}
             >
               Previous Year
             </Button>
@@ -130,7 +191,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
             <Button 
               variant="outline" 
               onClick={() => handleYearChange(selectedYear + 1)}
-              disabled={isSaving}
+              disabled={isSaving || savingsLoading || loadingData}
             >
               Next Year
             </Button>
@@ -139,9 +200,9 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
           <Button 
             onClick={handleSaveAll} 
             className="flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark"
-            disabled={isSaving}
+            disabled={isSaving || savingsLoading || loadingData}
           >
-            {isSaving ? (
+            {isSaving || savingsLoading ? (
               <>Saving...</>
             ) : (
               <>
@@ -157,12 +218,18 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
         Track your monthly savings to visualize your progress throughout the year.
       </p>
       
-      <div className="p-4 bg-white rounded-lg shadow-md">
-        <MonthlySavingsChart 
-          data={savingsData} 
-          onEditMonth={handleEditMonth} 
-        />
-      </div>
+      {loadingData ? (
+        <div className="p-4 bg-white rounded-lg shadow-md flex justify-center items-center h-64">
+          <p>Loading savings data...</p>
+        </div>
+      ) : (
+        <div className="p-4 bg-white rounded-lg shadow-md">
+          <MonthlySavingsChart 
+            data={savingsData} 
+            onEditMonth={handleEditMonth} 
+          />
+        </div>
+      )}
       
       {editingMonth !== null && (
         <MonthlySavingsForm
