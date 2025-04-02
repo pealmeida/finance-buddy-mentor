@@ -48,6 +48,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
         const savedData = await fetchMonthlySavings(profile.id, selectedYear);
         
         if (savedData) {
+          console.log("Setting savings data from fetch:", savedData.data);
           setSavingsData(savedData.data);
           
           // Update profile with fetched data
@@ -123,6 +124,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
         return;
       }
       
+      console.log("Starting save process for monthly savings");
       const monthlySavingsId = profile.monthlySavings?.id || uuidv4();
       
       const updatedSavings: MonthlySavingsType = {
@@ -132,10 +134,14 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
         data: savingsData
       };
       
+      console.log("About to save monthly savings:", updatedSavings);
+      
       // Save to Supabase
       const success = await saveMonthlySavings(updatedSavings);
       
       if (success) {
+        console.log("Monthly savings saved successfully");
+        
         // Update local state
         const updatedProfile = {
           ...profile,

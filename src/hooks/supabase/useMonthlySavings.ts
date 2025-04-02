@@ -23,8 +23,9 @@ export function useMonthlySavings() {
       setLocalLoading(true);
       setLoading(true);
 
-      // Fetch monthly savings for the given user and year using raw SQL
-      // This avoids type issues with the new table not being in the generated types
+      console.log(`Fetching monthly savings for user ${userId} and year ${year}`);
+      
+      // Fetch monthly savings for the given user and year
       const { data, error } = await supabase
         .from('monthly_savings')
         .select('*')
@@ -33,14 +34,18 @@ export function useMonthlySavings() {
         .maybeSingle();
 
       if (error) {
+        console.error("Database error when fetching monthly savings:", error);
         throw error;
       }
 
       // If no data found, return null
       if (!data) {
+        console.log(`No savings data found for user ${userId} and year ${year}`);
         return null;
       }
 
+      console.log("Monthly savings data retrieved:", data);
+      
       // Transform to the client-side format
       return {
         id: data.id,
@@ -75,7 +80,9 @@ export function useMonthlySavings() {
         monthlySavings.id = uuidv4();
       }
 
-      // Use a raw upsert operation to avoid type issues
+      console.log("Attempting to save monthly savings:", monthlySavings);
+
+      // Use a raw upsert operation
       const { error } = await supabase
         .from('monthly_savings')
         .upsert({
@@ -89,9 +96,11 @@ export function useMonthlySavings() {
         });
 
       if (error) {
+        console.error("Database error when saving monthly savings:", error);
         throw error;
       }
 
+      console.log("Monthly savings saved successfully");
       return true;
     } catch (err) {
       handleError(err, "Error saving monthly savings");
