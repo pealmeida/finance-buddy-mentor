@@ -1,4 +1,3 @@
-
 import { useSupabaseBase } from './useSupabaseBase';
 import { UserProfile } from '@/types/finance';
 import { v4 as uuidv4 } from 'uuid';
@@ -65,11 +64,7 @@ export function useProfileSave() {
         await handleDebtDetails(userId, profile.debtDetails);
       }
       
-      toast({
-        title: "Profile saved successfully",
-        description: "Your profile has been updated in our database",
-      });
-      
+      // Don't show toast here, let the caller handle it
       return true;
     } catch (err) {
       handleError(err, "Error saving profile");

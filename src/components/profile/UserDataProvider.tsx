@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { UserProfile } from '@/types/finance';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -23,7 +23,7 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
   onProfileUpdate
 }) => {
   // Ensure we have a valid default profile with all required fields
-  const createDefaultProfile = (baseProfile: Partial<UserProfile> = {}): UserProfile => ({
+  const createDefaultProfile = useCallback((baseProfile: Partial<UserProfile> = {}): UserProfile => ({
     id: baseProfile.id || 'default-id',
     email: baseProfile.email || '',
     name: baseProfile.name || '',
@@ -35,18 +35,22 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
     financialGoals: baseProfile.financialGoals || [],
     investments: baseProfile.investments || [],
     debtDetails: baseProfile.debtDetails || []
-  });
+  }), []);
 
   // Initialize with a complete profile
   const [profile, setProfile] = useState<UserProfile>(createDefaultProfile(userProfile));
   const [userName, setUserName] = useState<string>(userProfile.name || '');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasLoaded, setHasLoaded] = useState(false);
   const { toast } = useToast();
   const { fetchUserProfile } = useSupabaseData();
   
   // Fetch current user email and name from Supabase auth
   useEffect(() => {
+    // Prevent multiple fetches after the initial load
+    if (hasLoaded) return;
+
     const fetchUserData = async () => {
       setLoading(true);
       setError(null);
@@ -98,6 +102,8 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
           setProfile(defaultProfile);
           setUserName(defaultProfile.name || 'User');
         }
+        
+        setHasLoaded(true);
       } catch (err) {
         console.error("Error fetching user data:", err);
         setError(err instanceof Error ? err.message : "Unknown error occurred");
@@ -113,7 +119,7 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
     };
     
     fetchUserData();
-  }, [userProfile]);
+  }, [userProfile, hasLoaded, createDefaultProfile, fetchUserProfile, onProfileUpdate, profile, toast]);
   
   const handleInputChange = (field: keyof UserProfile, value: any) => {
     setProfile(prev => {
