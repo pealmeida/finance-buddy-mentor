@@ -10,11 +10,17 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onboardingComplete = false }) => {
-  const { user, signOut } = useAuth();
+  const { userProfile, handleProfileUpdate } = useAuth();
   const location = useLocation();
   
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  const signOut = async () => {
+    // Any signout logic would go here
+    // For now we'll just redirect to login page
+    window.location.href = '/login';
   };
   
   return (
@@ -26,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = false }) => {
         </Link>
         
         <nav className="hidden md:flex items-center space-x-1">
-          {user && onboardingComplete && (
+          {userProfile && onboardingComplete && (
             <>
               <Link to="/dashboard">
                 <Button 
@@ -63,7 +69,7 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = false }) => {
             </>
           )}
           
-          {user ? (
+          {userProfile ? (
             <Button onClick={signOut} variant="outline">Logout</Button>
           ) : (
             <>

@@ -12,9 +12,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 interface FinancialTabProps {
   profile: UserProfile;
   onInputChange: (field: keyof UserProfile, value: any) => void;
+  handleInputChange?: (field: keyof UserProfile, value: any) => void; // Add for backward compatibility
 }
 
-const FinancialTab: React.FC<FinancialTabProps> = ({ profile, onInputChange }) => {
+const FinancialTab: React.FC<FinancialTabProps> = ({ profile, onInputChange, handleInputChange }) => {
+  // Use either onInputChange or handleInputChange (for backward compatibility)
+  const handleChange = (field: keyof UserProfile, value: any) => {
+    if (handleInputChange) {
+      handleInputChange(field, value);
+    } else {
+      onInputChange(field, value);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -29,7 +39,7 @@ const FinancialTab: React.FC<FinancialTabProps> = ({ profile, onInputChange }) =
               id="income" 
               type="number" 
               value={profile.monthlyIncome} 
-              onChange={(e) => onInputChange('monthlyIncome', parseInt(e.target.value) || 0)}
+              onChange={(e) => handleChange('monthlyIncome', parseInt(e.target.value) || 0)}
               placeholder="5000"
               className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-finance-blue"
             />
@@ -42,7 +52,7 @@ const FinancialTab: React.FC<FinancialTabProps> = ({ profile, onInputChange }) =
           <Label>Risk Profile</Label>
           <RadioGroup 
             value={profile.riskProfile} 
-            onValueChange={(value) => onInputChange('riskProfile', value)}
+            onValueChange={(value) => handleChange('riskProfile', value)}
             className="space-y-2"
           >
             <div className="flex items-start space-x-3 rounded-lg border p-3 hover:bg-gray-50">
@@ -78,7 +88,7 @@ const FinancialTab: React.FC<FinancialTabProps> = ({ profile, onInputChange }) =
             <Checkbox 
               id="emergency" 
               checked={profile.hasEmergencyFund} 
-              onCheckedChange={(checked) => onInputChange('hasEmergencyFund', !!checked)}
+              onCheckedChange={(checked) => handleChange('hasEmergencyFund', !!checked)}
             />
             <Label htmlFor="emergency">I have an emergency fund (3-6 months of expenses)</Label>
           </div>
@@ -87,7 +97,7 @@ const FinancialTab: React.FC<FinancialTabProps> = ({ profile, onInputChange }) =
             <Checkbox 
               id="debts" 
               checked={profile.hasDebts} 
-              onCheckedChange={(checked) => onInputChange('hasDebts', !!checked)}
+              onCheckedChange={(checked) => handleChange('hasDebts', !!checked)}
             />
             <Label htmlFor="debts">I have high-interest debts (credit cards, personal loans)</Label>
           </div>

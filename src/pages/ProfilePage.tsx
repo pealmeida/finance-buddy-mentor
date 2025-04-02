@@ -68,8 +68,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
                 <TabsContent value="personal" className="space-y-4">
                   <PersonalInfoTab 
                     profile={profile} 
-                    handleInputChange={handleInputChange} 
-                    onSave={handleProfileUpdate}
+                    onInputChange={handleInputChange}
+                    handleInputChange={handleInputChange}
                     isSubmitting={isSubmitting}
                   />
                 </TabsContent>
@@ -77,8 +77,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
                 <TabsContent value="financial" className="space-y-4">
                   <FinancialTab 
                     profile={profile} 
-                    handleInputChange={handleInputChange} 
-                    onSave={handleProfileUpdate}
+                    onInputChange={handleInputChange}
+                    handleInputChange={handleInputChange}
                     isSubmitting={isSubmitting}
                   />
                 </TabsContent>

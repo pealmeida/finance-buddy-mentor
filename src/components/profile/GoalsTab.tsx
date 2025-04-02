@@ -8,9 +8,11 @@ import { Target, ChevronRight } from 'lucide-react';
 
 interface GoalsTabProps {
   profile?: UserProfile;
+  onSave?: (updatedProfile: UserProfile) => void;
+  isSubmitting?: boolean;
 }
 
-const GoalsTab: React.FC<GoalsTabProps> = ({ profile }) => {
+const GoalsTab: React.FC<GoalsTabProps> = ({ profile, onSave, isSubmitting }) => {
   const navigate = useNavigate();
 
   const goalsCount = profile?.financialGoals?.length || 0;
