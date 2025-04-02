@@ -48,7 +48,29 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
   }, [isEditMode, existingProfile, updateProfile, profileInitialized]);
 
   const handleComplete = () => {
-    completeOnboarding(profile);
+    // Make sure we have a complete UserProfile with required fields
+    if (!profile.id && existingProfile?.id) {
+      // Use the id from existingProfile if profile doesn't have one
+      const completeProfile: UserProfile = {
+        ...profile,
+        id: existingProfile.id,
+        // Ensure other required properties are present
+        email: profile.email || existingProfile.email,
+        name: profile.name || existingProfile.name,
+        age: profile.age ?? existingProfile.age,
+        monthlyIncome: profile.monthlyIncome ?? existingProfile.monthlyIncome,
+        riskProfile: profile.riskProfile || existingProfile.riskProfile,
+        hasEmergencyFund: profile.hasEmergencyFund ?? existingProfile.hasEmergencyFund,
+        hasDebts: profile.hasDebts ?? existingProfile.hasDebts,
+        financialGoals: profile.financialGoals || existingProfile.financialGoals,
+        investments: profile.investments || existingProfile.investments,
+        debtDetails: profile.debtDetails || existingProfile.debtDetails
+      };
+      completeOnboarding(completeProfile);
+    } else {
+      // If we have a complete profile with an id, use it directly
+      completeOnboarding(profile as UserProfile);
+    }
   };
 
   return (

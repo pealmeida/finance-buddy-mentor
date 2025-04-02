@@ -112,7 +112,7 @@ export function useOnboardingFlow({
 
       // Ensure we have all required properties with default values as needed
       const completeProfile: UserProfile = {
-        id: session.user.id, // Always use the authenticated user's ID
+        id: profile.id || session.user.id, // Use profile id if available, otherwise use session id
         email: profile.email || session.user.email || 'user@example.com',
         name: profile.name || (session.user.user_metadata?.name as string || 'User'),
         age: profile.age || 0,
