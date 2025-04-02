@@ -25,6 +25,16 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
   const [saving, setSaving] = useState(false);
   
   const handleSaveProfile = async (profile: UserProfile) => {
+    if (!profile || !profile.id) {
+      toast({
+        title: "Error",
+        description: "Invalid profile data. Please try again.",
+        variant: "destructive",
+        duration: 4000
+      });
+      return;
+    }
+
     try {
       setSaving(true);
       console.log('Saving profile from ProfilePage:', profile);
@@ -120,6 +130,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
                   onSave={() => handleSaveProfile(profile)} 
                   profile={profile}
                   isSaving={saving}
+                  disabled={!profile || !profile.id}
                 />
               </div>
             </>

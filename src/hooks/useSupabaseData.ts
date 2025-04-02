@@ -18,6 +18,10 @@ export function useSupabaseData() {
   // Wrapper for saveUserProfile to ensure we always have a complete UserProfile
   const saveUserProfile = async (profile: UserProfile): Promise<boolean> => {
     try {
+      if (!profile.id) {
+        throw new Error("Profile must have a valid ID");
+      }
+
       // Ensure the profile is complete with all required fields
       const completeProfile: UserProfile = {
         id: profile.id,
@@ -32,6 +36,7 @@ export function useSupabaseData() {
         investments: profile.investments || [],
         debtDetails: profile.debtDetails || []
       };
+      
       return await saveProfile(completeProfile);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "Unknown error occurred";

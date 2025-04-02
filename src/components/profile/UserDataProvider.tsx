@@ -22,21 +22,23 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
   userProfile, 
   onProfileUpdate
 }) => {
-  // Ensure we start with a complete UserProfile by providing default values for all required fields
-  const [profile, setProfile] = useState<UserProfile>({
-    ...userProfile,
-    id: userProfile.id,
-    email: userProfile.email || '',
-    name: userProfile.name || '',
-    age: userProfile.age || 0,
-    monthlyIncome: userProfile.monthlyIncome || 0,
-    riskProfile: userProfile.riskProfile || 'moderate',
-    hasEmergencyFund: userProfile.hasEmergencyFund || false,
-    hasDebts: userProfile.hasDebts || false,
-    financialGoals: userProfile.financialGoals || [],
-    investments: userProfile.investments || [],
-    debtDetails: userProfile.debtDetails || []
+  // Ensure we have a valid default profile with all required fields
+  const createDefaultProfile = (baseProfile: Partial<UserProfile> = {}): UserProfile => ({
+    id: baseProfile.id || 'default-id',
+    email: baseProfile.email || '',
+    name: baseProfile.name || '',
+    age: baseProfile.age || 0,
+    monthlyIncome: baseProfile.monthlyIncome || 0,
+    riskProfile: baseProfile.riskProfile || 'moderate',
+    hasEmergencyFund: baseProfile.hasEmergencyFund || false,
+    hasDebts: baseProfile.hasDebts || false,
+    financialGoals: baseProfile.financialGoals || [],
+    investments: baseProfile.investments || [],
+    debtDetails: baseProfile.debtDetails || []
   });
+
+  // Initialize with a complete profile
+  const [profile, setProfile] = useState<UserProfile>(createDefaultProfile(userProfile));
   const [userName, setUserName] = useState<string>(userProfile.name || '');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,41 +67,36 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
           // If we have Supabase profile data, use it
           if (supabaseProfile) {
             console.log('Loaded profile from Supabase:', supabaseProfile);
-            // Ensure we have all required fields with defaults if needed
-            const completeProfile: UserProfile = {
+            // Create a complete profile with all required fields
+            const completeProfile = createDefaultProfile({
               ...supabaseProfile,
               id: supabaseProfile.id || id,
               email: supabaseProfile.email || email || '',
               name: supabaseProfile.name || (user_metadata?.name as string) || 'User',
-              age: supabaseProfile.age || 0,
-              monthlyIncome: supabaseProfile.monthlyIncome || 0,
-              riskProfile: supabaseProfile.riskProfile || 'moderate',
-              hasEmergencyFund: supabaseProfile.hasEmergencyFund || false,
-              hasDebts: supabaseProfile.hasDebts || false,
-              financialGoals: supabaseProfile.financialGoals || [],
-              investments: supabaseProfile.investments || [],
-              debtDetails: supabaseProfile.debtDetails || []
-            };
+            });
+            
             setProfile(completeProfile);
             setUserName(completeProfile.name);
             // Update app-level profile state
             onProfileUpdate(completeProfile);
           } else {
             // Fallback to localStorage data with session user data
-            const updatedProfile: UserProfile = {
+            const updatedProfile = createDefaultProfile({
               ...profile,
               id,
-              email: email || profile.email || '',
-              name: (user_metadata?.name as string) || profile.name || 'User',
-            };
+              email: email || profile.email,
+              name: (user_metadata?.name as string) || profile.name,
+            });
+            
             setProfile(updatedProfile);
             setUserName(updatedProfile.name);
           }
         } else {
           console.log('No active session found, using provided profile data');
           // No active session, but continue with the provided profile data
-          setProfile(userProfile);
-          setUserName(userProfile.name || 'User');
+          const defaultProfile = createDefaultProfile(userProfile);
+          setProfile(defaultProfile);
+          setUserName(defaultProfile.name || 'User');
         }
       } catch (err) {
         console.error("Error fetching user data:", err);
@@ -127,7 +124,7 @@ const UserDataProvider: React.FC<UserDataProviderProps> = ({
       
       // Update userName if name field changes
       if (field === 'name') {
-        setUserName(value);
+        setUserName(value || '');
       }
       
       return updatedProfile;

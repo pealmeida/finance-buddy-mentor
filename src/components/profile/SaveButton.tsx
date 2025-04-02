@@ -1,17 +1,22 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Save } from 'lucide-react';
+import { Save, Loader2 } from 'lucide-react';
 import { UserProfile } from '@/types/finance';
-import { Loader2 } from 'lucide-react';
 
 interface SaveButtonProps {
   onSave: () => void;
   profile: UserProfile;
   isSaving?: boolean;
+  disabled?: boolean;
 }
 
-const SaveButton: React.FC<SaveButtonProps> = ({ onSave, profile, isSaving = false }) => {
+const SaveButton: React.FC<SaveButtonProps> = ({ 
+  onSave, 
+  profile, 
+  isSaving = false,
+  disabled = false
+}) => {
   // Determine if there's any data to save
   const hasProfileData = profile && (
     profile.name || 
@@ -23,11 +28,13 @@ const SaveButton: React.FC<SaveButtonProps> = ({ onSave, profile, isSaving = fal
     profile.hasDebts !== undefined
   );
 
+  const buttonDisabled = disabled || !hasProfileData || isSaving;
+
   return (
     <div className="flex justify-end mt-8">
       <Button 
         onClick={onSave}
-        disabled={!hasProfileData || isSaving}
+        disabled={buttonDisabled}
         className="bg-finance-blue hover:bg-finance-blue-dark text-white transition-all duration-300 shadow-button hover:shadow-button-hover flex items-center gap-2"
       >
         {isSaving ? (
