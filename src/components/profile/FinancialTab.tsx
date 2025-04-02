@@ -13,6 +13,7 @@ interface FinancialTabProps {
   profile: UserProfile;
   onInputChange: (field: keyof UserProfile, value: any) => void;
   handleInputChange?: (field: keyof UserProfile, value: any) => void; // Add for backward compatibility
+  isSubmitting?: boolean; // Add isSubmitting property
 }
 
 const FinancialTab: React.FC<FinancialTabProps> = ({ profile, onInputChange, handleInputChange }) => {
