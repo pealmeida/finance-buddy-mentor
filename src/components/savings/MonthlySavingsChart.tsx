@@ -16,16 +16,12 @@ import {
   XAxis, 
   YAxis 
 } from 'recharts';
+import { MONTHS_SHORT } from '@/constants/months';
 
 interface MonthlySavingsChartProps {
   data: MonthlyAmount[];
   onEditMonth: (month: number) => void;
 }
-
-const MONTHS_SHORT = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-];
 
 const MonthlySavingsChart: React.FC<MonthlySavingsChartProps> = ({ data, onEditMonth }) => {
   const formattedData = data.map(item => ({

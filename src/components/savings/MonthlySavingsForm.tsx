@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Save, X } from 'lucide-react';
+import { MONTHS } from '@/constants/months';
 
 interface MonthlySavingsFormProps {
   month: number;
@@ -11,11 +12,6 @@ interface MonthlySavingsFormProps {
   onSave: (month: number, amount: number) => void;
   onCancel: () => void;
 }
-
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
 
 const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
   month,
