@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FinancialGoal } from '@/types/finance';
 import { useGoals } from '@/hooks/useGoals';
 import GoalForm from './GoalForm';
@@ -15,14 +15,20 @@ interface GoalsManagementProps {
 const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
   const [editingGoal, setEditingGoal] = useState<FinancialGoal | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const { goals, loading, error, addGoal, editGoal, removeGoal } = useGoals();
+  const [isSaving, setIsSaving] = useState(false);
+  const { goals, loading, error, addGoal, editGoal, removeGoal, refreshGoals } = useGoals();
   
   // Update parent component's state when goals change
-  React.useEffect(() => {
+  useEffect(() => {
     if (goals) {
       onGoalsChange(goals);
     }
   }, [goals, onGoalsChange]);
+
+  // Ensure goals are loaded when component mounts
+  useEffect(() => {
+    refreshGoals();
+  }, [refreshGoals]);
 
   const handleAddGoal = () => {
     setEditingGoal(null);
@@ -36,6 +42,7 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
 
   const handleSaveGoal = async (goal: FinancialGoal) => {
     try {
+      setIsSaving(true);
       if (editingGoal) {
         await editGoal(goal);
       } else {
@@ -45,6 +52,9 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
       setEditingGoal(null);
     } catch (err) {
       // Error is handled in the useGoals hook
+      console.error("Error saving goal:", err);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -53,6 +63,7 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
       await removeGoal(goalId);
     } catch (err) {
       // Error is handled in the useGoals hook
+      console.error("Error deleting goal:", err);
     }
   };
 
@@ -75,7 +86,7 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
         <p>Error loading goals: {error}</p>
         <Button 
           variant="outline"
-          onClick={() => window.location.reload()}
+          onClick={() => refreshGoals()}
           className="mt-2"
         >
           Try Again
@@ -91,7 +102,7 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
           goal={editingGoal} 
           onSave={handleSaveGoal} 
           onCancel={handleCancelEdit}
-          isSaving={false}
+          isSaving={isSaving}
         />
       ) : (
         <>

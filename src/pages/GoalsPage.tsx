@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
-import { UserProfile } from '@/types/finance';
+import { FinancialGoal, UserProfile } from '@/types/finance';
 import GoalsManagement from '@/components/goals/GoalsManagement';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -15,7 +15,7 @@ const GoalsPage: React.FC<GoalsPageProps> = ({ userProfile, onProfileUpdate }) =
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleGoalsChange = (updatedGoals) => {
+  const handleGoalsChange = (updatedGoals: FinancialGoal[]) => {
     const updatedProfile = {
       ...userProfile,
       financialGoals: updatedGoals

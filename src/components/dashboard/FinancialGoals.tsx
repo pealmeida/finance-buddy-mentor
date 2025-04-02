@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { UserProfile, FinancialGoal } from '@/types/finance';
 import { fetchUserGoals } from '@/services/goalService';
+import { useToast } from '@/components/ui/use-toast';
 
 interface FinancialGoalsProps {
   userProfile: UserProfile;
@@ -13,6 +14,7 @@ interface FinancialGoalsProps {
 
 const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [goals, setGoals] = useState<FinancialGoal[]>(userProfile.financialGoals);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +66,7 @@ const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
         </Link>
       </div>
       
-      {goals.length > 0 ? (
+      {goals && goals.length > 0 ? (
         <div className="space-y-4">
           {goals.slice(0, 3).map((goal) => (
             <div key={goal.id} className="flex items-center space-x-4 p-4 rounded-xl border hover:bg-gray-50 transition-all duration-300">
