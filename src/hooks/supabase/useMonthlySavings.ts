@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useSupabaseBase } from './useSupabaseBase';
 import { MonthlySavings, MonthlyAmount } from '@/types/finance';
 import { v4 as uuidv4 } from 'uuid';
+import { Json } from '@/integrations/supabase/types';
 
 export function useMonthlySavings() {
   const { supabase, loading: baseLoading, setLoading, handleError } = useSupabaseBase();
@@ -45,7 +46,8 @@ export function useMonthlySavings() {
         id: data.id,
         userId: data.user_id,
         year: data.year,
-        data: data.data as MonthlyAmount[]
+        // Explicit casting to MonthlyAmount[] using type assertion
+        data: (data.data as unknown) as MonthlyAmount[]
       };
     } catch (err) {
       handleError(err, "Error fetching monthly savings");
@@ -80,7 +82,8 @@ export function useMonthlySavings() {
           id: monthlySavings.id,
           user_id: monthlySavings.userId,
           year: monthlySavings.year,
-          data: monthlySavings.data
+          // Cast the MonthlyAmount[] to Json using type assertion
+          data: monthlySavings.data as unknown as Json
         }, {
           onConflict: 'user_id,year'
         });
