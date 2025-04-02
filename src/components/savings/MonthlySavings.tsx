@@ -18,8 +18,25 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   onSave,
   isSaving = false
 }) => {
-  // Strong authentication check before proceeding
-  if (!profile || !profile.id) {
+  // Initialize the state hook even if profile is not valid
+  // This allows us to handle the auth check within the hook
+  const {
+    selectedYear,
+    savingsData,
+    editingMonth,
+    loadingData,
+    savingsLoading,
+    error,
+    authChecked,
+    handleSaveAmount,
+    handleEditMonth,
+    handleSaveAll,
+    handleYearChange,
+    setEditingMonth
+  } = useMonthlySavingsState(profile, onSave, isSaving);
+
+  // Display authentication error if profile is invalid and auth check is complete
+  if (authChecked && (!profile || !profile.id)) {
     return (
       <div className="p-6 bg-white rounded-lg shadow-md">
         <Alert variant="destructive">
@@ -32,27 +49,13 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     );
   }
 
-  const {
-    selectedYear,
-    savingsData,
-    editingMonth,
-    loadingData,
-    savingsLoading,
-    error,
-    handleSaveAmount,
-    handleEditMonth,
-    handleSaveAll,
-    handleYearChange,
-    setEditingMonth
-  } = useMonthlySavingsState(profile, onSave, isSaving);
-
   return (
     <div className="space-y-6">
       <MonthlySavingsHeader
         selectedYear={selectedYear}
         onYearChange={handleYearChange}
         onSaveAll={handleSaveAll}
-        disabled={isSaving || savingsLoading || loadingData}
+        disabled={isSaving || savingsLoading || loadingData || !profile?.id}
         isSaving={isSaving || savingsLoading}
       />
       

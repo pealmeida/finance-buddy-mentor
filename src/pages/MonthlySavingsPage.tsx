@@ -25,25 +25,30 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
-    // Check if user is authenticated
-    if (!userProfile || !userProfile.id) {
-      setError("Authentication required to access monthly savings");
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to access the monthly savings feature.",
-        variant: "destructive"
-      });
+    // Short timeout to ensure the component is mounted before checking authentication
+    const timer = setTimeout(() => {
+      // Check if user is authenticated
+      if (!userProfile || !userProfile.id) {
+        setError("Authentication required to access monthly savings");
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to access the monthly savings feature.",
+          variant: "destructive"
+        });
+        
+        // Give the toast time to be seen before redirecting
+        const redirectTimer = setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+        
+        return () => clearTimeout(redirectTimer);
+      }
       
-      // Give the toast time to be seen before redirecting
-      const timer = setTimeout(() => {
-        navigate("/login");
-      }, 2000);
-      
-      return () => clearTimeout(timer);
-    }
+      // Set loading to false after we've confirmed the user is authenticated
+      setLoading(false);
+    }, 300);
     
-    // Set loading to false after we've confirmed the user is authenticated
-    setLoading(false);
+    return () => clearTimeout(timer);
   }, [userProfile, navigate, toast]);
   
   const handleSave = (updatedProfile: UserProfile) => {
@@ -52,7 +57,7 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
         throw new Error("Cannot save: Profile is not valid");
       }
       
-      handleProfileComplete(updatedProfile, true);
+      handleProfileComplete(updatedProfile);
     } catch (err) {
       console.error("Error saving profile:", err);
       setError("Failed to save profile data");
@@ -64,6 +69,7 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
     }
   };
 
+  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex justify-center items-center">
@@ -75,6 +81,7 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
     );
   }
 
+  // Show error state
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { UserProfile, MonthlyAmount, MonthlySavings as MonthlySavingsType } from '@/types/finance';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 import { useToast } from '@/components/ui/use-toast';
@@ -19,25 +19,41 @@ export const useMonthlySavingsState = (
   const [editingMonth, setEditingMonth] = useState<number | null>(null);
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
   // Initialize savings data from profile or create empty data
+  const initializeEmptyData = useCallback(() => {
+    // Initialize empty data for all months
+    const initialData: MonthlyAmount[] = MONTHS.map((_, index) => ({
+      month: index + 1,
+      amount: 0
+    }));
+    setSavingsData(initialData);
+  }, []);
+
+  // Authentication check
   useEffect(() => {
+    if (!profile?.id) {
+      setError("Authentication required. Please log in.");
+      setAuthChecked(true);
+      setLoadingData(false);
+      initializeEmptyData();
+    } else {
+      setAuthChecked(true);
+    }
+  }, [profile?.id, initializeEmptyData]);
+
+  // Fetch data when year changes or auth is confirmed
+  useEffect(() => {
+    if (!authChecked || !profile?.id) return;
+
     const fetchData = async () => {
       // Reset state at the beginning of the fetch
       setLoadingData(true);
       setError(null);
       
-      // Safety check for profile
-      if (!profile?.id) {
-        console.log("No profile ID available, initializing empty data");
-        initializeEmptyData();
-        setError("Authentication required. Please log in.");
-        setLoadingData(false);
-        return;
-      }
-      
       try {
-        console.log(`Attempting to fetch monthly savings for user ${profile.id} and year ${selectedYear}`);
+        console.log(`Fetching monthly savings for user ${profile.id} and year ${selectedYear}`);
         // Try to fetch data from Supabase
         const savedData = await fetchMonthlySavings(profile.id, selectedYear);
         
@@ -45,7 +61,7 @@ export const useMonthlySavingsState = (
           console.log("Setting savings data from fetch:", savedData.data);
           setSavingsData(savedData.data);
           
-          // Update profile with fetched data
+          // Update profile with fetched data if needed
           const existingData = profile.monthlySavings?.data || [];
           if (JSON.stringify(savedData.data) !== JSON.stringify(existingData)) {
             const updatedMonthlySavings: MonthlySavingsType = {
@@ -81,16 +97,7 @@ export const useMonthlySavingsState = (
     };
     
     fetchData();
-  }, [profile?.id, selectedYear]);
-
-  const initializeEmptyData = () => {
-    // Initialize empty data for all months
-    const initialData: MonthlyAmount[] = MONTHS.map((_, index) => ({
-      month: index + 1,
-      amount: 0
-    }));
-    setSavingsData(initialData);
-  };
+  }, [profile?.id, selectedYear, authChecked, fetchMonthlySavings, initializeEmptyData, onSave, profile, toast]);
 
   const handleSaveAmount = (month: number, amount: number) => {
     // Create a new array rather than mutating the existing one
@@ -170,7 +177,7 @@ export const useMonthlySavingsState = (
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
     setEditingMonth(null);
-    // Note: The data fetching will be triggered by the useEffect
+    // The data fetching will be triggered by the useEffect
   };
 
   return {
@@ -180,6 +187,7 @@ export const useMonthlySavingsState = (
     loadingData,
     savingsLoading,
     error,
+    authChecked,
     handleSaveAmount,
     handleEditMonth,
     handleSaveAll,
