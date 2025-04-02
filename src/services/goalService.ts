@@ -8,15 +8,19 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export const fetchUserGoals = async (): Promise<FinancialGoal[]> => {
   try {
-    const { data: session } = await supabase.auth.getSession();
-    if (!session?.user) {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) throw sessionError;
+    if (!sessionData.session) {
       throw new Error('No authenticated user');
     }
+    
+    const userId = sessionData.session.user.id;
     
     const { data, error } = await supabase
       .from('financial_goals')
       .select('*')
-      .eq('user_id', session.user.id);
+      .eq('user_id', userId);
     
     if (error) throw error;
     
@@ -39,10 +43,14 @@ export const fetchUserGoals = async (): Promise<FinancialGoal[]> => {
  */
 export const createGoal = async (goal: Omit<FinancialGoal, 'id'>): Promise<FinancialGoal> => {
   try {
-    const { data: session } = await supabase.auth.getSession();
-    if (!session?.user) {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) throw sessionError;
+    if (!sessionData.session) {
       throw new Error('No authenticated user');
     }
+    
+    const userId = sessionData.session.user.id;
     
     const newGoal = {
       id: uuidv4(),
@@ -53,7 +61,7 @@ export const createGoal = async (goal: Omit<FinancialGoal, 'id'>): Promise<Finan
       .from('financial_goals')
       .insert({
         id: newGoal.id,
-        user_id: session.user.id,
+        user_id: userId,
         name: newGoal.name,
         target_amount: newGoal.targetAmount,
         current_amount: newGoal.currentAmount,
@@ -77,10 +85,14 @@ export const createGoal = async (goal: Omit<FinancialGoal, 'id'>): Promise<Finan
  */
 export const updateGoal = async (goal: FinancialGoal): Promise<FinancialGoal> => {
   try {
-    const { data: session } = await supabase.auth.getSession();
-    if (!session?.user) {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) throw sessionError;
+    if (!sessionData.session) {
       throw new Error('No authenticated user');
     }
+    
+    const userId = sessionData.session.user.id;
     
     const { error } = await supabase
       .from('financial_goals')
@@ -94,7 +106,7 @@ export const updateGoal = async (goal: FinancialGoal): Promise<FinancialGoal> =>
         priority: goal.priority
       })
       .eq('id', goal.id)
-      .eq('user_id', session.user.id);
+      .eq('user_id', userId);
     
     if (error) throw error;
     
@@ -110,16 +122,20 @@ export const updateGoal = async (goal: FinancialGoal): Promise<FinancialGoal> =>
  */
 export const deleteGoal = async (goalId: string): Promise<void> => {
   try {
-    const { data: session } = await supabase.auth.getSession();
-    if (!session?.user) {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) throw sessionError;
+    if (!sessionData.session) {
       throw new Error('No authenticated user');
     }
+    
+    const userId = sessionData.session.user.id;
     
     const { error } = await supabase
       .from('financial_goals')
       .delete()
       .eq('id', goalId)
-      .eq('user_id', session.user.id);
+      .eq('user_id', userId);
     
     if (error) throw error;
   } catch (error) {
