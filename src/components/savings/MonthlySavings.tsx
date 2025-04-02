@@ -16,6 +16,15 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   onSave,
   isSaving = false
 }) => {
+  // Ensure profile has an ID before proceeding
+  if (!profile || !profile.id) {
+    return (
+      <div className="p-6 bg-white rounded-lg shadow-md">
+        <p className="text-red-500">User profile is not available. Please log in.</p>
+      </div>
+    );
+  }
+
   const {
     selectedYear,
     savingsData,

@@ -27,6 +27,7 @@ export const useMonthlySavingsState = (
       if (!profile || !profile.id) {
         console.log("No profile ID available, initializing empty data");
         initializeEmptyData();
+        setError("Authentication required. Please log in.");
         return;
       }
       
@@ -77,7 +78,7 @@ export const useMonthlySavingsState = (
     };
     
     fetchData();
-  }, [profile, profile?.id, selectedYear]);
+  }, [profile?.id, selectedYear]);
 
   const initializeEmptyData = () => {
     // Initialize empty data for all months
