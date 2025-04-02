@@ -6,15 +6,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useSupabaseData } from '@/hooks/useSupabaseData';
 
 export function useProfileData(initialProfile: UserProfile) {
-  const [profile, setProfile] = useState<UserProfile>(createDefaultProfile(initialProfile));
-  const [userName, setUserName] = useState<string>(initialProfile.name || '');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [hasLoaded, setHasLoaded] = useState(false);
-  const { toast } = useToast();
-  const { fetchUserProfile } = useSupabaseData();
-  
-  // Create a default profile with all required fields
+  // Create a default profile with all required fields - moved up before it's used
   const createDefaultProfile = useCallback((baseProfile: Partial<UserProfile> = {}): UserProfile => ({
     id: baseProfile.id || 'default-id',
     email: baseProfile.email || '',
@@ -28,6 +20,14 @@ export function useProfileData(initialProfile: UserProfile) {
     investments: baseProfile.investments || [],
     debtDetails: baseProfile.debtDetails || []
   }), []);
+  
+  const [profile, setProfile] = useState<UserProfile>(createDefaultProfile(initialProfile));
+  const [userName, setUserName] = useState<string>(initialProfile.name || '');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const { toast } = useToast();
+  const { fetchUserProfile } = useSupabaseData();
   
   const handleInputChange = (field: keyof UserProfile, value: any) => {
     setProfile(prev => {
