@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { TrendingUp, Wallet, LineChart, AlertTriangle, Shield } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -223,31 +222,41 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({ userProfile }) =>
           </div>
         )}
         
-        {/* Investment Distribution */}
+        {/* Investment Distribution - Updated to match PersonalizedInsights style */}
         <div className="mt-2">
           <div className="flex items-center justify-between mb-3">
             <p className="font-medium">Investment Distribution</p>
             <p className="text-xs text-gray-500">{userProfile.riskProfile} profile</p>
           </div>
           
-          <div className="space-y-2">
+          <div className="flex items-center">
+            <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              {investmentDistribution.length > 0 ? (
+                <div className="flex h-full">
+                  {investmentDistribution.map((item, index) => (
+                    <div 
+                      key={index}
+                      className={`h-full ${
+                        index === 0 ? 'bg-finance-blue' : 
+                        index === 1 ? 'bg-finance-green' :
+                        index === 2 ? 'bg-finance-purple' : 
+                        index === 3 ? 'bg-yellow-400' : 'bg-gray-400'
+                      }`}
+                      style={{ width: `${item.percentage}%` }}
+                    ></div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-gray-300 h-full w-full"></div>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
             {investmentDistribution.map((item, index) => (
-              <div key={index} className="flex flex-col">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm">{item.type}</span>
-                  <span className="text-sm font-medium">{item.percentage}%</span>
-                </div>
-                <div className="w-full h-1.5 bg-gray-100 rounded-full">
-                  <div 
-                    className={`h-full rounded-full ${
-                      index === 0 ? 'bg-finance-blue' : 
-                      index === 1 ? 'bg-finance-green' :
-                      index === 2 ? 'bg-finance-purple' : 'bg-yellow-400'
-                    }`}
-                    style={{ width: `${item.percentage}%` }}
-                  ></div>
-                </div>
-              </div>
+              <span key={index}>
+                {item.type}: {item.percentage}%
+              </span>
             ))}
           </div>
           
