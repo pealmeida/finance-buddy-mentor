@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Edit, Trash2, LineChart, Landmark, Home, Coins, BitcoinSign, DollarSign, HelpCircle } from 'lucide-react';
+import { Edit, Trash2, LineChart, Landmark, Home, Coins, Bitcoin, DollarSign, HelpCircle } from 'lucide-react';
 import { Investment } from '@/types/finance';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,7 @@ const InvestmentCard: React.FC<InvestmentCardProps> = ({
       case 'cash':
         return <DollarSign className="h-5 w-5 text-green-500" />;
       case 'crypto':
-        return <BitcoinSign className="h-5 w-5 text-yellow-500" />;
+        return <Bitcoin className="h-5 w-5 text-yellow-500" />;
       case 'other':
       default:
         return <Coins className="h-5 w-5 text-purple-500" />;

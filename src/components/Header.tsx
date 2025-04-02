@@ -12,14 +12,16 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
-  const { user, signOut } = useAuth();
+  const { userProfile, handleProfileUpdate } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [logoutDialog, setLogoutDialog] = useState(false);
 
   const handleSignOut = async () => {
-    await signOut();
+    // Import the supabase client directly
+    const { supabase } = await import('@/integrations/supabase/client');
+    await supabase.auth.signOut();
     setLogoutDialog(false);
     navigate('/login');
   };
@@ -46,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
             </div>
             
             {/* Desktop navigation */}
-            {user && onboardingComplete && (
+            {userProfile && onboardingComplete && (
               <nav className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 {navigation.map((item) => {
                   const Icon = item.icon;
@@ -71,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
           
           {/* User dropdown and mobile menu button */}
           <div className="flex items-center">
-            {user ? (
+            {userProfile ? (
               <>
                 <Button 
                   variant="ghost" 
@@ -111,7 +113,7 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
         </div>
         
         {/* Mobile menu, show/hide based on menu state */}
-        {isOpen && user && onboardingComplete && (
+        {isOpen && userProfile && onboardingComplete && (
           <div className="sm:hidden">
             <div className="space-y-1 pt-2 pb-3">
               {navigation.map((item) => {
