@@ -8,8 +8,9 @@ const MonthlySavingsLoading: React.FC = () => {
       <div className="flex flex-col items-center gap-4">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
-          <p>Loading savings data...</p>
+          <p className="text-blue-700 font-medium">Loading savings data...</p>
         </div>
+        <p className="text-sm text-gray-500">Please wait while we retrieve your information</p>
       </div>
     </div>
   );

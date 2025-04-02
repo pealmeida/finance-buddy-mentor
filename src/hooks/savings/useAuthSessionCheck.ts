@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
@@ -9,13 +9,30 @@ export const useAuthSessionCheck = () => {
   const navigate = useNavigate();
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const lastCheckTime = useRef<number>(0);
+  const checkingRef = useRef<boolean>(false);
   
   // Check if auth session is valid and refresh token if needed
   const checkAndRefreshSession = useCallback(async () => {
+    // Prevent concurrent checks
+    if (checkingRef.current) {
+      console.log("Auth check already in progress, skipping");
+      return true;
+    }
+    
+    const now = Date.now();
+    // Don't check more often than every 15 seconds unless forced
+    if (now - lastCheckTime.current < 15000 && lastCheckTime.current !== 0) {
+      console.log("Auth was checked recently, using cached result");
+      return !error;
+    }
+    
+    checkingRef.current = true;
     setCheckingAuth(true);
     
     try {
       const { data, error } = await supabase.auth.getSession();
+      lastCheckTime.current = Date.now();
       
       // If there's an error or no session, redirect to login
       if (error || !data.session) {
@@ -52,14 +69,19 @@ export const useAuthSessionCheck = () => {
       return false;
     } finally {
       setCheckingAuth(false);
+      checkingRef.current = false;
     }
-  }, [toast]);
+  }, [toast, error]);
   
   // Set up refresh interval
   useEffect(() => {
     // Set up refresh interval every 4 minutes (240000ms)
     const refreshInterval = setInterval(() => {
-      checkAndRefreshSession();
+      // Only check if we haven't checked recently
+      const now = Date.now();
+      if (now - lastCheckTime.current >= 60000) { // At least 1 minute since last check
+        checkAndRefreshSession();
+      }
     }, 240000);
     
     return () => clearInterval(refreshInterval);

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { UserProfile } from '@/types/finance';
 import MonthlySavings from '@/components/savings/MonthlySavings';
 
@@ -33,4 +33,5 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
   );
 };
 
-export default MonthlySavingsContent;
+// Memoize the component to prevent unnecessary re-renders
+export default memo(MonthlySavingsContent);

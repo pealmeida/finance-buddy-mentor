@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Header from '@/components/Header';
 import { UserProfile } from '@/types/finance';
 import { useProfileCompletion } from '@/hooks/useProfileCompletion';
@@ -25,9 +25,9 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   const [loading, setLoading] = useState(true);
   const { checkingAuth, error, setError, checkAndRefreshSession } = useAuthSessionCheck();
   
-  // Initial auth check
-  useEffect(() => {
-    const initialAuthCheck = async () => {
+  // Initial auth check - using useCallback to prevent recreating this function on every render
+  const initialAuthCheck = useCallback(async () => {
+    try {
       const isAuthenticated = await checkAndRefreshSession();
       
       if (!isAuthenticated) {
@@ -55,12 +55,22 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
       
       // Set loading to false after we've confirmed the user is authenticated
       setLoading(false);
-    };
-    
-    initialAuthCheck();
+    } catch (err) {
+      console.error("Auth check error:", err);
+      setError("Authentication error occurred");
+      setLoading(false);
+    }
   }, [userProfile, navigate, toast, checkAndRefreshSession, setError]);
   
-  const handleSave = (updatedProfile: UserProfile) => {
+  // Run auth check only once on mount or when dependencies change
+  useEffect(() => {
+    // Only run if loading is true to prevent multiple checks
+    if (loading) {
+      initialAuthCheck();
+    }
+  }, [initialAuthCheck, loading]);
+  
+  const handleSave = useCallback((updatedProfile: UserProfile) => {
     try {
       if (!updatedProfile || !updatedProfile.id) {
         throw new Error("Cannot save: Profile is not valid");
@@ -76,9 +86,9 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
         variant: "destructive"
       });
     }
-  };
+  }, [handleProfileComplete, setError, toast]);
 
-  const handleRetry = async () => {
+  const handleRetry = useCallback(async () => {
     setError(null);
     setLoading(true);
     
@@ -91,7 +101,7 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
         navigate("/login");
       }, 1000);
     }
-  };
+  }, [checkAndRefreshSession, navigate, setError]);
 
   // Show loading state
   if (loading || checkingAuth) {
