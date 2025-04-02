@@ -1,24 +1,53 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TrendingUp, Wallet, LineChart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { UserProfile, FinancialGoal } from '@/types/finance';
+import { UserProfile, FinancialGoal, MonthlyAmount } from '@/types/finance';
+import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 
 interface FinancialOverviewProps {
   userProfile: UserProfile;
 }
 
 const FinancialOverview: React.FC<FinancialOverviewProps> = ({ userProfile }) => {
+  const { fetchMonthlySavings, calculateAverageSavings } = useMonthlySavings();
+  const [monthlySavingsData, setMonthlySavingsData] = useState<MonthlyAmount[]>([]);
+  const [averageSavings, setAverageSavings] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  
   const totalInvestments = userProfile.investments.reduce((sum, inv) => sum + inv.value, 0);
   const monthlyIncome = userProfile.monthlyIncome;
 
   // Calculate recommended savings (basic rule: 20% of income)
   const recommendedSavings = monthlyIncome * 0.2;
   
-  // Mock data for dashboard
-  const currentSavings = monthlyIncome * 0.15; // Assume user is saving 15% for example
-  const savingsProgress = Math.min((currentSavings / recommendedSavings) * 100, 100);
+  useEffect(() => {
+    const loadSavingsData = async () => {
+      if (!userProfile.id) return;
+      
+      setLoading(true);
+      try {
+        const currentYear = new Date().getFullYear();
+        const savingsData = await fetchMonthlySavings(userProfile.id, currentYear);
+        
+        if (savingsData) {
+          setMonthlySavingsData(savingsData.data);
+          const avg = calculateAverageSavings(savingsData.data);
+          setAverageSavings(avg);
+        }
+      } catch (error) {
+        console.error("Error loading savings data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadSavingsData();
+  }, [userProfile.id]);
+  
+  // Calculate savings progress based on average monthly savings
+  const savingsProgress = Math.min((averageSavings / recommendedSavings) * 100, 100);
   
   // Mock emergency fund calculation (target = 6 months of expenses)
   const emergencyFundTarget = monthlyIncome * 6 * 0.7; // Assuming expenses are 70% of income
@@ -72,7 +101,10 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({ userProfile }) =>
         <div>
           <div className="flex items-center justify-between mb-2">
             <p className="font-medium">Monthly Savings</p>
-            <p className="text-sm text-gray-500">${currentSavings.toLocaleString()} of ${recommendedSavings.toLocaleString()}</p>
+            <p className="text-sm text-gray-500">
+              {loading ? 'Loading...' : 
+                `$${averageSavings.toLocaleString(undefined, {maximumFractionDigits: 0})} of $${recommendedSavings.toLocaleString(undefined, {maximumFractionDigits: 0})}`}
+            </p>
           </div>
           <Progress value={savingsProgress} className="h-2 progress-animation" />
           <p className="mt-1 text-xs text-gray-500">

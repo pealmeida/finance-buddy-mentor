@@ -1,9 +1,11 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LineChart, PiggyBank, Target, ArrowUpRight, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserProfile } from '@/types/finance';
+import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
+import { useToast } from '@/components/ui/use-toast';
 
 interface PersonalizedInsightsProps {
   userProfile: UserProfile;
@@ -14,6 +16,31 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
   userProfile, 
   savingsProgress 
 }) => {
+  const { fetchMonthlySavings, calculateAverageSavings } = useMonthlySavings();
+  const { toast } = useToast();
+  const [averageSavingsPercent, setAverageSavingsPercent] = useState<number>(15); // Default 15%
+  
+  useEffect(() => {
+    const loadActualSavingsPercent = async () => {
+      if (!userProfile.id || userProfile.monthlyIncome <= 0) return;
+      
+      try {
+        const currentYear = new Date().getFullYear();
+        const savingsData = await fetchMonthlySavings(userProfile.id, currentYear);
+        
+        if (savingsData) {
+          const avgSavings = calculateAverageSavings(savingsData.data);
+          const savingsPercent = (avgSavings / userProfile.monthlyIncome) * 100;
+          setAverageSavingsPercent(Math.round(savingsPercent));
+        }
+      } catch (error) {
+        console.error("Error calculating actual savings percent:", error);
+      }
+    };
+    
+    loadActualSavingsPercent();
+  }, [userProfile.id, userProfile.monthlyIncome]);
+
   return (
     <div className="glass-panel rounded-2xl p-6">
       <div className="flex items-center justify-between mb-4">
@@ -57,7 +84,7 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
             <h3 className="font-medium">Savings Rate</h3>
           </div>
           <p className="text-sm text-gray-600 mb-1">
-            You're saving approximately <span className="font-medium">15%</span> of your income.
+            You're saving approximately <span className="font-medium">{averageSavingsPercent}%</span> of your income.
           </p>
           <p className="text-sm text-gray-600">
             {savingsProgress < 90 ? 
@@ -92,13 +119,17 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
                 Pay off high-interest debt
               </li>
             )}
+            {averageSavingsPercent < 20 && (
+              <li className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-finance-blue"></div>
+                Increase monthly savings to 20% of income
+              </li>
+            )}
             <li className="flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-finance-blue"></div>
-              Increase retirement contributions
-            </li>
-            <li className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-finance-blue"></div>
-              Diversify investment portfolio
+              {userProfile.investments.length === 0 ? 
+                "Start building an investment portfolio" : 
+                "Diversify investment portfolio"}
             </li>
           </ul>
         </div>

@@ -46,13 +46,15 @@ export function useMonthlySavings() {
 
       console.log("Monthly savings data retrieved:", data);
       
-      // Transform to the client-side format
+      // Transform to the client-side format with safer type handling
       return {
         id: data.id,
         userId: data.user_id,
         year: data.year,
-        // Explicit casting to MonthlyAmount[] using type assertion
-        data: (data.data as unknown) as MonthlyAmount[]
+        // Parse JSON data if it's a string, otherwise use as is
+        data: typeof data.data === 'string' 
+          ? JSON.parse(data.data) as MonthlyAmount[]
+          : (data.data as unknown) as MonthlyAmount[]
       };
     } catch (err) {
       handleError(err, "Error fetching monthly savings");
@@ -82,7 +84,7 @@ export function useMonthlySavings() {
 
       console.log("Attempting to save monthly savings:", monthlySavings);
 
-      // Use a raw upsert operation
+      // Use a raw upsert operation with explicit conflict target
       const { error } = await supabase
         .from('monthly_savings')
         .upsert({
@@ -111,9 +113,20 @@ export function useMonthlySavings() {
     }
   };
 
+  /**
+   * Calculate average monthly savings for a given year
+   */
+  const calculateAverageSavings = (monthlySavings: MonthlyAmount[] | undefined): number => {
+    if (!monthlySavings || monthlySavings.length === 0) return 0;
+    
+    const totalSavings = monthlySavings.reduce((sum, month) => sum + month.amount, 0);
+    return totalSavings / monthlySavings.length;
+  };
+
   return {
     loading: baseLoading || loading,
     fetchMonthlySavings,
-    saveMonthlySavings
+    saveMonthlySavings,
+    calculateAverageSavings
   };
 }
