@@ -7,6 +7,7 @@ import MonthlySavings from '@/components/savings/MonthlySavings';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 
 interface MonthlySavingsPageProps {
   userProfile: UserProfile;
@@ -20,7 +21,7 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   const { toast } = useToast();
   const navigate = useNavigate();
   const { handleProfileComplete, isSubmitting } = useProfileCompletion(onProfileUpdate);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     // Check if user is authenticated
@@ -31,17 +32,24 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
         variant: "destructive"
       });
       navigate("/login");
+      return;
     }
+    
+    // Set loading to false after we've confirmed the user is authenticated
+    setLoading(false);
   }, [userProfile, navigate, toast]);
   
   const handleSave = (updatedProfile: UserProfile) => {
     handleProfileComplete(updatedProfile, true);
   };
 
-  if (loading || !userProfile) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex justify-center items-center">
-        <p>Loading...</p>
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+          <p>Loading savings data...</p>
+        </div>
       </div>
     );
   }

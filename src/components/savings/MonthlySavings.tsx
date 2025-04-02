@@ -22,6 +22,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     editingMonth,
     loadingData,
     savingsLoading,
+    error,
     handleSaveAmount,
     handleEditMonth,
     handleSaveAll,
@@ -46,6 +47,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
         onEditMonth={handleEditMonth}
         onSaveAmount={handleSaveAmount}
         onCancelEdit={() => setEditingMonth(null)}
+        error={error}
       />
     </div>
   );

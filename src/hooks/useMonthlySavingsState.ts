@@ -18,18 +18,23 @@ export const useMonthlySavingsState = (
   const [savingsData, setSavingsData] = useState<MonthlyAmount[]>([]);
   const [editingMonth, setEditingMonth] = useState<number | null>(null);
   const [loadingData, setLoadingData] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Initialize savings data from profile or create empty data
   useEffect(() => {
     const fetchData = async () => {
       // If user is not logged in or doesn't have an ID yet, initialize with empty data
-      if (!profile.id) {
+      if (!profile || !profile.id) {
+        console.log("No profile ID available, initializing empty data");
         initializeEmptyData();
         return;
       }
       
       setLoadingData(true);
+      setError(null);
+      
       try {
+        console.log(`Attempting to fetch monthly savings for user ${profile.id} and year ${selectedYear}`);
         // Try to fetch data from Supabase
         const savedData = await fetchMonthlySavings(profile.id, selectedYear);
         
@@ -54,10 +59,12 @@ export const useMonthlySavingsState = (
             onSave(updatedProfile);
           }
         } else {
+          console.log("No saved data found, initializing empty data");
           initializeEmptyData();
         }
       } catch (err) {
         console.error("Error fetching savings data:", err);
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
         toast({
           title: "Error",
           description: "Failed to load savings data. Please try again.",
@@ -70,7 +77,7 @@ export const useMonthlySavingsState = (
     };
     
     fetchData();
-  }, [profile.id, selectedYear]);
+  }, [profile, profile?.id, selectedYear]);
 
   const initializeEmptyData = () => {
     // Initialize empty data for all months
@@ -101,7 +108,7 @@ export const useMonthlySavingsState = (
 
   const handleSaveAll = async () => {
     try {
-      if (!profile.id) {
+      if (!profile || !profile.id) {
         toast({
           title: "Not Logged In",
           description: "Please log in to save your data.",
@@ -164,6 +171,7 @@ export const useMonthlySavingsState = (
     editingMonth,
     loadingData,
     savingsLoading,
+    error,
     handleSaveAmount,
     handleEditMonth,
     handleSaveAll,
