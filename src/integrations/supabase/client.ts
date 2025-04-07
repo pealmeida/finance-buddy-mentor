@@ -16,5 +16,14 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     autoRefreshToken: true,
     detectSessionInUrl: true, // Enable detection of OAuth redirects
     flowType: 'implicit'  // Use implicit flow for simpler auth handling
+  },
+  // Enable vector type support
+  db: {
+    schema: 'public'
+  },
+  global: {
+    headers: {
+      'X-App-Info': 'Finance-Buddy'
+    }
   }
 });
