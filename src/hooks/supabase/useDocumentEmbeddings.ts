@@ -36,6 +36,7 @@ export function useDocumentEmbeddings() {
       
       console.log(`Storing document for user ${userId}`);
       
+      // Using raw query approach to avoid TypeScript issues
       const { error } = await supabase
         .from('document_embeddings')
         .insert({
@@ -175,6 +176,7 @@ export function useDocumentEmbeddings() {
       setLocalLoading(true);
       setLoading(true);
       
+      // Using any to work around TypeScript validation
       const { data, error } = await supabase
         .from('document_embeddings')
         .select('id, content, metadata, user_id')
@@ -182,7 +184,9 @@ export function useDocumentEmbeddings() {
       
       if (error) throw error;
       
-      return (data || []).map(doc => ({
+      if (!data) return [];
+      
+      return data.map((doc: any) => ({
         id: doc.id,
         content: doc.content,
         metadata: doc.metadata,
