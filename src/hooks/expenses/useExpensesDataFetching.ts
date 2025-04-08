@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useRef } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
@@ -23,7 +24,7 @@ interface UseExpensesDataFetchingResult {
   setExpensesData: (data: MonthlyAmount[]) => void;
   setError: (error: string | null) => void;
   initializeEmptyData: () => void;
-  convertExpensesDataToJson: (data: MonthlyAmount[]) => any;
+  convertExpensesDataToJson: (data: MonthlyAmount[]) => Json;
 }
 
 /**
@@ -75,7 +76,7 @@ export const useExpensesDataFetching = ({
       const savedData = await fetchMonthlyExpenses(profile.id, selectedYear);
       
       if (savedData && savedData.data) {
-        // Convert data to proper MonthlyAmount type
+        // Convert data to proper MonthlyAmount type using our utility function
         const typedData = convertToTypedExpensesData(savedData.data);
         setExpensesData(typedData);
         
@@ -112,6 +113,6 @@ export const useExpensesDataFetching = ({
     setExpensesData,
     setError,
     initializeEmptyData,
-    convertExpensesDataToJson  // Export the new conversion function
+    convertExpensesDataToJson
   };
 };
