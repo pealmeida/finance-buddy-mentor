@@ -5,8 +5,7 @@ import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { useToast } from '@/components/ui/use-toast';
 import { 
   convertToTypedExpensesData, 
-  initializeEmptyExpensesData,
-  convertExpensesDataToJson
+  initializeEmptyExpensesData
 } from './utils/expensesDataUtils';
 
 interface UseExpensesDataFetchingProps {
@@ -80,10 +79,9 @@ export const useExpensesDataFetching = ({
       console.log("Received expenses data:", savedData);
       
       if (savedData && savedData.data) {
-        // Convert data to proper MonthlyAmount type
-        const typedData = convertToTypedExpensesData(savedData.data);
-        console.log("Converted to typed data:", typedData);
-        setExpensesData(typedData);
+        // We don't need to convert here as the fetchMonthlyExpenses already returns properly typed data
+        console.log("Setting fetched expenses data:", savedData.data);
+        setExpensesData(savedData.data);
         
         toast({
           title: "Data Refreshed",
