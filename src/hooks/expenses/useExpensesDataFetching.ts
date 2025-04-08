@@ -70,7 +70,7 @@ export const useExpensesDataFetching = ({
         return;
       }
       
-      // Properly convert the data before passing to fetchMonthlyExpenses
+      // Fetch data from Supabase
       const savedData = await fetchMonthlyExpenses(profile.id, selectedYear);
       
       if (savedData && savedData.data) {

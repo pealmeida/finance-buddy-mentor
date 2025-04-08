@@ -38,6 +38,8 @@ export const useSaveMonthlyExpenses = () => {
         data: jsonData
       };
       
+      console.log("Formatted data for Supabase:", formattedData);
+      
       const { data, error } = await supabase
         .from('monthly_expenses')
         .upsert(formattedData)
