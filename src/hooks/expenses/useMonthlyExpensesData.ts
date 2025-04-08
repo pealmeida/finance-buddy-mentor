@@ -2,8 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { UserProfile } from '@/types/finance';
 import { useExpensesDataFetching } from './useExpensesDataFetching';
-import { convertToTypedExpensesData, convertExpensesDataToJson } from './utils/expensesDataUtils';
-import { Json } from '@/integrations/supabase/types';
+import { convertToTypedExpensesData } from './utils/expensesDataUtils';
 
 /**
  * Hook to manage monthly expenses data loading and saving
@@ -96,7 +95,6 @@ export const useMonthlyExpensesData = (
     refreshData,
     setExpensesData,
     setError,
-    initializeEmptyData,
-    convertExpensesDataToJson
+    initializeEmptyData
   };
 };

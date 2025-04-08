@@ -51,6 +51,6 @@ export const convertToTypedExpensesData = (data: Json | Json[] | null): MonthlyA
  * This properly handles the type conversion needed for Supabase
  */
 export const convertExpensesDataToJson = (data: MonthlyAmount[]): Json => {
-  // Deep clone the data and cast it to the Json type
+  // Deep clone the data and explicitly cast it to Json type
   return JSON.parse(JSON.stringify(data)) as Json;
 };

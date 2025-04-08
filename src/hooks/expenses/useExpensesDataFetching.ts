@@ -25,7 +25,6 @@ interface UseExpensesDataFetchingResult {
   setExpensesData: (data: MonthlyAmount[]) => void;
   setError: (error: string | null) => void;
   initializeEmptyData: () => void;
-  convertExpensesDataToJson: (data: MonthlyAmount[]) => Json;
 }
 
 /**
@@ -111,7 +110,6 @@ export const useExpensesDataFetching = ({
     refreshData,
     setExpensesData,
     setError,
-    initializeEmptyData,
-    convertExpensesDataToJson
+    initializeEmptyData
   };
 };
