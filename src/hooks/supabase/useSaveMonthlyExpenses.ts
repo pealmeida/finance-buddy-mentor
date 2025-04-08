@@ -1,7 +1,6 @@
 
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { MonthlyExpenses } from '@/types/finance';
 import { Json } from '@/integrations/supabase/types';
 import { toast } from '@/components/ui/use-toast';
 

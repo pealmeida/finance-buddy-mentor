@@ -3,7 +3,6 @@ import { useState, useCallback, useRef } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { useToast } from '@/components/ui/use-toast';
-import { Json } from '@/integrations/supabase/types';
 import { 
   convertToTypedExpensesData, 
   initializeEmptyExpensesData,
@@ -74,7 +73,7 @@ export const useExpensesDataFetching = ({
       const savedData = await fetchMonthlyExpenses(profile.id, selectedYear);
       
       if (savedData && savedData.data) {
-        // Convert data to proper MonthlyAmount type using our utility function
+        // Convert data to proper MonthlyAmount type
         const typedData = convertToTypedExpensesData(savedData.data);
         setExpensesData(typedData);
         

@@ -45,17 +45,18 @@ export const useExpensesSaveHandler = (
       // Use existing ID or generate a new one
       const monthlyExpensesId = profile.monthlyExpenses?.id || uuidv4();
       
-      // Convert expenses data to JSON for Supabase
-      const jsonData = convertExpensesDataToJson(expensesData);
-      
+      // Create the updated expenses object
       const updatedExpenses: MonthlyExpenses = {
         id: monthlyExpensesId,
         userId: profile.id,
         year: selectedYear,
         data: expensesData
       };
-      
+
       console.log("About to save monthly expenses:", updatedExpenses);
+      
+      // Convert expenses data to JSON for Supabase
+      const jsonData = convertExpensesDataToJson(expensesData);
       
       // Save to Supabase with properly converted data
       const success = await saveMonthlyExpenses({

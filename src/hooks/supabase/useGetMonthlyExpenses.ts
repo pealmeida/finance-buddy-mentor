@@ -37,18 +37,12 @@ export const useGetMonthlyExpenses = () => {
       
       console.log("Monthly expenses fetched successfully:", data);
       
-      // Process the data from Supabase to ensure correct typing
-      const expensesData = Array.isArray(data.data) ? data.data : [];
-      
-      // Convert the Json data to properly typed MonthlyAmount[] data
-      const typedExpensesData = convertToTypedExpensesData(expensesData);
-      
       // Transform the data into a MonthlyExpenses object
       const monthlyExpenses: MonthlyExpenses = {
         id: data.id,
         userId: data.user_id,
         year: data.year,
-        data: typedExpensesData
+        data: convertToTypedExpensesData(data.data)
       };
       
       return monthlyExpenses;
