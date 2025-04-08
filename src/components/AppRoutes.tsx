@@ -13,6 +13,7 @@ import { UserProfile } from '@/types/finance';
 import MonthlySavingsPage from '@/pages/MonthlySavingsPage';
 import MonthlyExpensesPage from '@/pages/MonthlyExpensesPage';
 import InvestmentsPage from '@/pages/InvestmentsPage';
+import SavingsAnalysisPage from '@/pages/SavingsAnalysisPage';
 
 interface AppRoutesProps {
   userProfile: UserProfile | null;
@@ -37,35 +38,39 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
       <Route path="/signup" element={<SignupPage />} />
       
       <Route path="/dashboard" element={
-        authRedirect || <Dashboard userProfile={userProfile as UserProfile} />
+        authRedirect || completeRedirect || <Dashboard userProfile={userProfile as UserProfile} />
       } />
       
       <Route path="/onboarding" element={
-        completeRedirect || <OnboardingPage onProfileComplete={onProfileComplete} userProfile={userProfile as UserProfile} />
+        authRedirect || <OnboardingPage onProfileComplete={onProfileComplete} userProfile={userProfile as UserProfile} />
       } />
       
       <Route path="/full-profile" element={
-        authRedirect || <FullProfilePage onProfileComplete={onProfileComplete} userProfile={userProfile as UserProfile} />
+        authRedirect || completeRedirect || <FullProfilePage onProfileComplete={onProfileComplete} userProfile={userProfile as UserProfile} />
       } />
       
       <Route path="/profile" element={
-        authRedirect || <ProfilePage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
+        authRedirect || completeRedirect || <ProfilePage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
       } />
       
       <Route path="/goals" element={
-        authRedirect || <GoalsPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
+        authRedirect || completeRedirect || <GoalsPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
       } />
       
       <Route path="/monthly-savings" element={
-        authRedirect || <MonthlySavingsPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
+        authRedirect || completeRedirect || <MonthlySavingsPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
       } />
       
       <Route path="/monthly-expenses" element={
-        authRedirect || <MonthlyExpensesPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
+        authRedirect || completeRedirect || <MonthlyExpensesPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
       } />
       
       <Route path="/investments" element={
-        authRedirect || <InvestmentsPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
+        authRedirect || completeRedirect || <InvestmentsPage userProfile={userProfile as UserProfile} onProfileUpdate={onProfileUpdate} />
+      } />
+
+      <Route path="/savings-analysis" element={
+        authRedirect || completeRedirect || <SavingsAnalysisPage />
       } />
       
       <Route path="/" element={<Navigate to={homeRedirectPath} replace />} />
