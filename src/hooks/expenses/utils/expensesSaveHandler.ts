@@ -4,10 +4,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { UserProfile, MonthlyAmount, MonthlyExpenses } from '@/types/finance';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { toast } from "@/components/ui/use-toast";
-import { initializeEmptyExpensesData } from './expensesDataUtils';
+import { initializeEmptyExpensesData, ensureCompleteExpensesData } from './expensesDataUtils';
 
 /**
  * Hook to handle saving expenses data
+ * Improved with better error handling and data validation
  */
 export const useExpensesSaveHandler = (
   profile: UserProfile,
@@ -22,6 +23,7 @@ export const useExpensesSaveHandler = (
   const handleSaveAll = useCallback(async () => {
     try {
       if (!profile || !profile.id) {
+        console.error("Cannot save expenses: No user profile");
         toast({
           title: "Not Logged In",
           description: "Please log in to save your data.",
@@ -44,24 +46,41 @@ export const useExpensesSaveHandler = (
       }
       
       console.log("Starting save process for monthly expenses");
+      
       // Use existing ID or generate a new one
       const monthlyExpensesId = profile.monthlyExpenses?.id || uuidv4();
       
-      // Ensure we have a complete data set (all 12 months)
+      // Ensure we have a complete data set with all 12 months
       let dataToSave = expensesData;
+      
+      // Validate the data before saving
       if (!Array.isArray(dataToSave) || dataToSave.length !== 12) {
-        console.log("Incomplete expenses data, filling in missing months");
-        // Start with empty data for all months
+        console.log("Incomplete expenses data, ensuring all months are included");
+        dataToSave = ensureCompleteExpensesData(dataToSave);
+      }
+      
+      // Validate each entry
+      dataToSave = dataToSave.map(item => ({
+        month: Number(item.month) || 0,
+        amount: Number(item.amount) || 0
+      }));
+      
+      // Double-check months and sort
+      dataToSave = dataToSave
+        .filter(item => item.month >= 1 && item.month <= 12)
+        .sort((a, b) => a.month - b.month);
+      
+      // If we still don't have 12 months, start fresh
+      if (dataToSave.length !== 12) {
+        console.log("Data still incomplete after validation, creating complete data set");
         const completeData = initializeEmptyExpensesData();
         
-        // Overlay any existing data
-        if (Array.isArray(dataToSave)) {
-          dataToSave.forEach(item => {
-            if (item.month >= 1 && item.month <= 12) {
-              completeData[item.month - 1] = item;
-            }
-          });
-        }
+        // Overlay any existing valid data
+        dataToSave.forEach(item => {
+          if (item.month >= 1 && item.month <= 12) {
+            completeData[item.month - 1] = item;
+          }
+        });
         
         dataToSave = completeData;
       }

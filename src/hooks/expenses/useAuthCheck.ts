@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 /**
  * Hook to check authentication status and refresh token if needed
+ * Improved to prevent redirect loops and unwanted logouts
  */
 export const useAuthCheck = (userId?: string) => {
   const [authChecked, setAuthChecked] = useState(false);
@@ -64,7 +65,7 @@ export const useAuthCheck = (userId?: string) => {
     }
   }, []);
 
-  // Initial authentication check
+  // Initial authentication check - improved to prevent redirect loops
   useEffect(() => {
     const checkAuth = async () => {
       if (!userId) {
@@ -77,11 +78,12 @@ export const useAuthCheck = (userId?: string) => {
       
       if (!isAuthenticated) {
         console.log("Authentication failed or session expired");
-        setError("Authentication session expired. Please log in again.");
         
         // Only navigate to login if we're not already there and we're not already redirecting
         const currentPath = window.location.pathname;
         if (currentPath !== '/login' && !redirectingRef.current) {
+          setError("Authentication session expired. Please log in again.");
+          
           // Set redirecting flag to prevent multiple redirects
           redirectingRef.current = true;
           
@@ -89,9 +91,14 @@ export const useAuthCheck = (userId?: string) => {
           setTimeout(() => {
             navigate('/login');
             redirectingRef.current = false;
-          }, 500);
+          }, 300);
+        } else {
+          // We're already on login page or redirecting, just set error but don't navigate
+          setError("Authentication required. Please log in.");
         }
       } else {
+        // Clear any previous errors if authentication is successful
+        setError(null);
         console.log("Authentication successful");
       }
       

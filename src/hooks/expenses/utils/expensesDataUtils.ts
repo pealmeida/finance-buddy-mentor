@@ -5,8 +5,10 @@ import { Json } from '@/integrations/supabase/types';
 
 /**
  * Initialize empty monthly expense data for all months
+ * Returns a properly structured array with 12 months
  */
 export const initializeEmptyExpensesData = (): MonthlyAmount[] => {
+  console.log("Initializing empty expenses data");
   return MONTHS.map((_, index) => ({
     month: index + 1,
     amount: 0
@@ -18,9 +20,11 @@ export const initializeEmptyExpensesData = (): MonthlyAmount[] => {
  * This safely handles any format issues from the database
  */
 export const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] => {
+  console.log("Converting JSON to typed expenses data:", data);
+  
   // If we get null or non-array data, return empty data
   if (!data || !Array.isArray(data)) {
-    console.log("Invalid expenses data format received, initializing empty data");
+    console.log("Invalid or empty expenses data received, initializing empty data");
     return initializeEmptyExpensesData();
   }
   
@@ -49,9 +53,11 @@ export const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] =
       
       console.warn("Unexpected data format in expense item:", item);
       return { month: 0, amount: 0 };
-    });
+    }).filter(item => item.month >= 1 && item.month <= 12);
     
-    // Validate that we have data for all 12 months
+    console.log("Converted typed data:", typedData);
+    
+    // Validate that we have data for all 12 months - if not, fill in the missing months
     if (typedData.length !== 12) {
       console.log("Expenses data doesn't have 12 months, filling missing months");
       const completeData = initializeEmptyExpensesData();
@@ -63,6 +69,7 @@ export const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] =
         }
       });
       
+      console.log("Filled complete data:", completeData);
       return completeData;
     }
     
@@ -110,6 +117,8 @@ export const convertExpensesDataToJson = (data: MonthlyAmount[]): Json => {
       amount: item.amount
     }));
     
+    console.log("Converted expenses data to JSON:", sanitizedData);
+    
     // Return the sanitized data as Json
     return sanitizedData as unknown as Json;
   } catch (error) {
@@ -122,13 +131,17 @@ export const convertExpensesDataToJson = (data: MonthlyAmount[]): Json => {
  * Ensure data consistency and completeness for monthly expenses
  */
 export const ensureCompleteExpensesData = (data: MonthlyAmount[]): MonthlyAmount[] => {
+  console.log("Ensuring complete expenses data:", data);
+  
   // If empty or invalid, return completely empty data
   if (!Array.isArray(data) || data.length === 0) {
+    console.log("No data provided, initializing empty data");
     return initializeEmptyExpensesData();
   }
   
   // If we don't have exactly 12 months, fill in the missing ones
   if (data.length !== 12) {
+    console.log("Data doesn't have 12 months, filling missing months");
     const completeData = initializeEmptyExpensesData();
     
     // Update with any valid months we have
@@ -138,9 +151,13 @@ export const ensureCompleteExpensesData = (data: MonthlyAmount[]): MonthlyAmount
       }
     });
     
+    console.log("Filled complete data:", completeData);
     return completeData;
   }
   
   // Sort by month number to ensure consistent order
-  return [...data].sort((a, b) => a.month - b.month);
+  const sortedData = [...data].sort((a, b) => a.month - b.month);
+  console.log("Sorted expenses data:", sortedData);
+  
+  return sortedData;
 };

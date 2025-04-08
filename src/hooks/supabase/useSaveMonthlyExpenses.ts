@@ -7,10 +7,13 @@ import { convertExpensesDataToJson } from '@/hooks/expenses/utils/expensesDataUt
 
 /**
  * Hook to save monthly expenses data to Supabase
+ * Improved with better error handling and retry logic
  */
 export const useSaveMonthlyExpenses = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const MAX_RETRIES = 3;
 
   const saveMonthlyExpenses = useCallback(async (expenses: { 
     id: string;
@@ -20,8 +23,13 @@ export const useSaveMonthlyExpenses = () => {
   }): Promise<boolean> => {
     try {
       setLoading(true);
+      setRetryCount(0);
       
-      if (!expenses.userId || !expenses.data) {
+      if (!expenses.userId) {
+        throw new Error("Missing user ID");
+      }
+      
+      if (!expenses.data || !Array.isArray(expenses.data)) {
         throw new Error("Invalid expenses data");
       }
       
@@ -66,39 +74,8 @@ export const useSaveMonthlyExpenses = () => {
       console.log("Formatted data for Supabase:", formattedData);
       
       // Add retry logic for intermittent connection issues
-      let attempts = 0;
-      let success = false;
+      return await saveWithRetry(formattedData);
       
-      while (attempts < 3 && !success) {
-        try {
-          const { data, error } = await supabase
-            .from('monthly_expenses')
-            .upsert(formattedData, {
-              onConflict: 'user_id,year' // Handle conflict on these columns
-            })
-            .select('*')
-            .maybeSingle();
-          
-          if (error) {
-            console.error(`Attempt ${attempts + 1}: Error saving monthly expenses:`, error);
-            throw error;
-          }
-          
-          console.log("Monthly expenses saved successfully:", data);
-          success = true;
-        } catch (err) {
-          attempts++;
-          if (attempts >= 3) throw err;
-          // Wait briefly before retrying
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
-      }
-      
-      toast({
-        title: 'Success',
-        description: 'Monthly expenses saved successfully',
-      });
-      return true;
     } catch (err) {
       console.error("Unexpected error saving monthly expenses:", err);
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -112,6 +89,69 @@ export const useSaveMonthlyExpenses = () => {
       setLoading(false);
     }
   }, []);
+
+  // Implement retry logic as a separate helper function for clarity
+  const saveWithRetry = async (formattedData: any, attempt = 0): Promise<boolean> => {
+    if (attempt >= MAX_RETRIES) {
+      console.error(`Failed after ${MAX_RETRIES} attempts`);
+      toast({
+        title: 'Error',
+        description: `Failed to save after ${MAX_RETRIES} attempts. Please try again later.`,
+        variant: 'destructive'
+      });
+      return false;
+    }
+    
+    try {
+      console.log(`Save attempt ${attempt + 1}/${MAX_RETRIES}`);
+      
+      const { data, error } = await supabase
+        .from('monthly_expenses')
+        .upsert(formattedData, {
+          onConflict: 'user_id,year' // Handle conflict on these columns
+        })
+        .select('*')
+        .maybeSingle();
+      
+      if (error) {
+        console.error(`Attempt ${attempt + 1}: Error saving monthly expenses:`, error);
+        
+        // If it's a network or temporary error, retry
+        if (error.message?.includes("network") || 
+            error.message?.includes("timeout") || 
+            error.code === '23505') { // Duplicate key error
+          
+          const delay = Math.min(2000 * Math.pow(2, attempt), 10000); // Exponential backoff, max 10s
+          console.log(`Retrying in ${delay}ms...`);
+          
+          await new Promise(resolve => setTimeout(resolve, delay));
+          return saveWithRetry(formattedData, attempt + 1);
+        }
+        
+        throw error;
+      }
+      
+      console.log("Monthly expenses saved successfully:", data);
+      
+      toast({
+        title: 'Success',
+        description: 'Monthly expenses saved successfully',
+      });
+      
+      return true;
+    } catch (err) {
+      if (attempt < MAX_RETRIES - 1) {
+        const delay = Math.min(1000 * Math.pow(2, attempt), 10000);
+        console.log(`Error during save, retrying in ${delay}ms...`);
+        
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return saveWithRetry(formattedData, attempt + 1);
+      }
+      
+      console.error("Error saving after retries:", err);
+      throw err;
+    }
+  };
 
   return {
     saveMonthlyExpenses,
