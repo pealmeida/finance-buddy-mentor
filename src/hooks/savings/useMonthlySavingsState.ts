@@ -1,10 +1,10 @@
 
 import { useState, useCallback } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
-import { useMonthlySavings } from './supabase/useMonthlySavings';
+import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 import { useToast } from '@/components/ui/use-toast';
 import { v4 as uuidv4 } from 'uuid';
-import { initializeEmptySavingsData, ensureCompleteSavingsData } from './supabase/utils/savingsUtils';
+import { initializeEmptySavingsData, ensureCompleteSavingsData } from '@/hooks/supabase/utils/savingsUtils';
 
 export const useMonthlySavingsState = (
   profile: UserProfile,
@@ -37,7 +37,7 @@ export const useMonthlySavingsState = (
     setLoadingData(true);
     
     try {
-      console.log("Fetching savings data for user:", profile.id, "year:", selectedYear);
+      console.log(`Fetching monthly savings for user: ${profile.id}, year: ${selectedYear}`);
       const savedData = await fetchMonthlySavings(profile.id, selectedYear);
       
       if (savedData && savedData.data) {
@@ -62,15 +62,15 @@ export const useMonthlySavingsState = (
     } finally {
       setLoadingData(false);
     }
-  }, [profile?.id, selectedYear, fetchMonthlySavings, toast]);
+  }, [fetchMonthlySavings, profile?.id, selectedYear, toast]);
 
   // Handle year change
   const handleYearChange = useCallback((year: number) => {
     console.log("Year changed to:", year);
     setSelectedYear(year);
     setEditingMonth(null);
-    // loadSavingsData will be called in the useEffect when selectedYear changes
-  }, []);
+    loadSavingsData();
+  }, [loadSavingsData]);
 
   // Handle editing a month
   const handleEditMonth = useCallback((month: number) => {
@@ -146,13 +146,6 @@ export const useMonthlySavingsState = (
       });
     }
   }, [profile, selectedYear, savingsData, saveMonthlySavings, onSave, toast]);
-
-  // Fix for issue with page redirects
-  const useSimpleAuthCheckFix = useCallback(() => {
-    useCallback(() => { 
-      console.log("Auth check fixed in useMonthlySavingsState");
-    }, []);
-  }, []);
 
   return {
     selectedYear,

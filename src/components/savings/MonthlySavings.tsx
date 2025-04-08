@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { UserProfile } from '@/types/finance';
-import { useMonthlySavingsState } from '@/hooks/useMonthlySavingsState';
+import { useMonthlySavingsState } from '@/hooks/savings/useMonthlySavingsState';
 import MonthlySavingsHeader from './savings-components/MonthlySavingsHeader';
 import MonthlySavingsContent from './MonthlySavingsContent';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -35,6 +35,12 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     isSaving
   );
 
+  // Initial data load
+  useEffect(() => {
+    refreshData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (!profile || !profile.id) {
     return (
       <Alert variant="destructive">
@@ -51,6 +57,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
         selectedYear={selectedYear}
         onYearChange={handleYearChange}
         onSaveAll={handleSaveAll}
+        onRefresh={refreshData}
         disabled={loadingData || isSaving}
         isSaving={isSaving}
       />

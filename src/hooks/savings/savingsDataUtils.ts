@@ -3,7 +3,7 @@ import { MonthlyAmount } from '@/types/finance';
 import { MONTHS } from '@/constants/months';
 
 /**
- * Initialize empty data for all months
+ * Initialize empty monthly savings data for all months
  */
 export const initializeEmptySavingsData = (): MonthlyAmount[] => {
   console.log("Initializing empty savings data");
@@ -14,25 +14,22 @@ export const initializeEmptySavingsData = (): MonthlyAmount[] => {
 };
 
 /**
- * Process fetched savings data, ensuring it's complete and valid
+ * Process fetched data to ensure it's in the right format
  */
-export const processFetchedData = (
-  fetchedData: MonthlyAmount[] | undefined | null
-): MonthlyAmount[] => {
-  if (!fetchedData || !Array.isArray(fetchedData) || fetchedData.length === 0) {
-    console.log("No valid savings data found, initializing empty data");
+export const processFetchedData = (data: MonthlyAmount[]): MonthlyAmount[] => {
+  // If empty or invalid, return completely empty data
+  if (!Array.isArray(data) || data.length === 0) {
+    console.log("No data provided, initializing empty data");
     return initializeEmptySavingsData();
   }
   
-  console.log("Processing fetched savings data:", fetchedData);
-  
   // If we don't have exactly 12 months, fill in the missing ones
-  if (fetchedData.length !== 12) {
+  if (data.length !== 12) {
     console.log("Data doesn't have 12 months, filling missing months");
     const completeData = initializeEmptySavingsData();
     
     // Update with any valid months we have
-    fetchedData.forEach(item => {
+    data.forEach(item => {
       if (item.month >= 1 && item.month <= 12) {
         completeData[item.month - 1] = {
           month: item.month,
@@ -41,15 +38,29 @@ export const processFetchedData = (
       }
     });
     
+    console.log("Filled complete data:", completeData);
     return completeData;
   }
   
   // Ensure all items have proper numeric amounts
-  const validatedData = fetchedData.map(item => ({
+  const validatedData = data.map(item => ({
     month: item.month,
     amount: typeof item.amount === 'number' ? item.amount : 0
   }));
   
   // Sort by month number to ensure consistent order
-  return [...validatedData].sort((a, b) => a.month - b.month);
+  const sortedData = [...validatedData].sort((a, b) => a.month - b.month);
+  console.log("Sorted savings data:", sortedData);
+  
+  return sortedData;
+};
+
+/**
+ * Calculate average monthly savings for a given year
+ */
+export const calculateAverageSavings = (monthlySavings: MonthlyAmount[]): number => {
+  if (!monthlySavings || monthlySavings.length === 0) return 0;
+  
+  const totalSavings = monthlySavings.reduce((sum, month) => sum + month.amount, 0);
+  return totalSavings / monthlySavings.length;
 };

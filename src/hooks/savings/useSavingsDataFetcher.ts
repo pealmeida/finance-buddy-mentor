@@ -61,7 +61,7 @@ export const useSavingsDataFetcher = (
     } finally {
       dataFetchingRef.current = false;
     }
-  }, [fetchMonthlySavings, profile.id, selectedYear, fetchAttempts, toast]);
+  }, [fetchMonthlySavings, profile?.id, selectedYear, fetchAttempts, toast]);
 
   // Manual refresh function that can be called by user action
   const refreshData = useCallback(async (): Promise<MonthlySavings | null> => {
