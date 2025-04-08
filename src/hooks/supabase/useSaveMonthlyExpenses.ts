@@ -2,6 +2,7 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { MonthlyExpenses } from '@/types/finance';
+import { Json } from '@/integrations/supabase/types';
 import { toast } from '@/components/ui/use-toast';
 
 /**
@@ -21,12 +22,13 @@ export const useSaveMonthlyExpenses = () => {
       
       console.log("Saving monthly expenses:", expenses);
       
-      // Format the data correctly for Supabase
+      // Format the data correctly for Supabase by casting to Json
+      // This is needed because the Supabase type expects Json, not MonthlyAmount[]
       const formattedData = {
         id: expenses.id,
         user_id: expenses.userId,
         year: expenses.year,
-        data: expenses.data
+        data: expenses.data as unknown as Json
       };
       
       const { data, error } = await supabase

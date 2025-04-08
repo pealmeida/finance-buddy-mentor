@@ -1,7 +1,9 @@
 
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { MonthlyExpenses } from '@/types/finance';
+import { MonthlyAmount, MonthlyExpenses } from '@/types/finance';
+import { Json } from '@/integrations/supabase/types';
+import { convertToTypedExpensesData } from '@/hooks/expenses/utils/expensesDataUtils';
 
 /**
  * Hook to fetch monthly expenses data from Supabase
@@ -35,12 +37,18 @@ export const useGetMonthlyExpenses = () => {
       
       console.log("Monthly expenses fetched successfully:", data);
       
+      // Process the data from Supabase to ensure correct typing
+      const expensesData = Array.isArray(data.data) ? data.data : [];
+      
+      // Convert the Json data to properly typed MonthlyAmount[] data
+      const typedExpensesData = convertToTypedExpensesData(expensesData);
+      
       // Transform the data into a MonthlyExpenses object
       const monthlyExpenses: MonthlyExpenses = {
         id: data.id,
         userId: data.user_id,
         year: data.year,
-        data: Array.isArray(data.data) ? data.data : []
+        data: typedExpensesData
       };
       
       return monthlyExpenses;
@@ -54,7 +62,7 @@ export const useGetMonthlyExpenses = () => {
   }, []);
 
   // Calculate average expenses from monthly data
-  const calculateAverageExpenses = useCallback((monthlyData: any[]) => {
+  const calculateAverageExpenses = useCallback((monthlyData: MonthlyAmount[]) => {
     if (!monthlyData || monthlyData.length === 0) return 0;
     
     const total = monthlyData.reduce((sum, item) => {

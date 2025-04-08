@@ -16,7 +16,7 @@ export const initializeEmptyExpensesData = (): MonthlyAmount[] => {
 /**
  * Convert raw JSON data to typed MonthlyAmount array
  */
-export const convertToTypedExpensesData = (data: Json[] | MonthlyAmount[] | null): MonthlyAmount[] => {
+export const convertToTypedExpensesData = (data: Json | Json[] | null): MonthlyAmount[] => {
   if (!data || !Array.isArray(data)) {
     return initializeEmptyExpensesData();
   }
