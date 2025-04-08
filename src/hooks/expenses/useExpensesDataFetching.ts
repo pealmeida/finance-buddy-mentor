@@ -5,7 +5,8 @@ import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { useToast } from '@/components/ui/use-toast';
 import { 
   convertToTypedExpensesData, 
-  initializeEmptyExpensesData
+  initializeEmptyExpensesData,
+  convertExpensesDataToJson
 } from './utils/expensesDataUtils';
 
 interface UseExpensesDataFetchingProps {
@@ -36,7 +37,7 @@ export const useExpensesDataFetching = ({
 }: UseExpensesDataFetchingProps): UseExpensesDataFetchingResult => {
   const { toast } = useToast();
   const { fetchMonthlyExpenses } = useMonthlyExpenses();
-  const [expensesData, setExpensesData] = useState<MonthlyAmount[]>([]);
+  const [expensesData, setExpensesData] = useState<MonthlyAmount[]>(initializeEmptyExpensesData());
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const dataFetchingRef = useRef<boolean>(false);
@@ -44,8 +45,9 @@ export const useExpensesDataFetching = ({
   // Initialize empty data for all months
   const initializeEmptyData = useCallback(() => {
     const emptyData = initializeEmptyExpensesData();
-    console.log("Initializing empty data:", emptyData);
+    console.log("Initializing empty expenses data for all months:", emptyData);
     setExpensesData(emptyData);
+    setLoadingData(false);
   }, []);
 
   // Manual refresh function that can be called by user action
@@ -79,7 +81,7 @@ export const useExpensesDataFetching = ({
       console.log("Received expenses data:", savedData);
       
       if (savedData && savedData.data) {
-        // We don't need to convert here as the fetchMonthlyExpenses already returns properly typed data
+        // We already get converted data from fetchMonthlyExpenses
         console.log("Setting fetched expenses data:", savedData.data);
         setExpensesData(savedData.data);
         
@@ -92,15 +94,17 @@ export const useExpensesDataFetching = ({
         initializeEmptyData();
         toast({
           title: "No Data Found",
-          description: "No expenses data was found for the selected year."
+          description: "No expenses data was found for the selected year. Starting with empty data."
         });
       }
     } catch (err) {
-      console.error("Error refreshing data:", err);
+      console.error("Error refreshing expenses data:", err);
       setError(err instanceof Error ? err.message : "An unknown error occurred");
+      // Initialize empty data even on error
+      initializeEmptyData();
       toast({
         title: "Error",
-        description: "Failed to refresh expenses data. Please try again.",
+        description: "Failed to refresh expenses data. Starting with empty data.",
         variant: "destructive"
       });
     } finally {

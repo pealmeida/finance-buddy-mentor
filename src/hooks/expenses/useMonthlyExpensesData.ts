@@ -75,6 +75,7 @@ export const useMonthlyExpensesData = (
         if (!isMounted) return;
         console.error("Error fetching expenses data:", err);
         setError(err instanceof Error ? err.message : "An unknown error occurred");
+        // Initialize with empty data even on error
         initializeEmptyData();
       }
     };

@@ -44,6 +44,17 @@ export const useExpensesSaveHandler = (
       // Use existing ID or generate a new one
       const monthlyExpensesId = profile.monthlyExpenses?.id || uuidv4();
       
+      // Validate the data before saving
+      if (!expensesData || !Array.isArray(expensesData) || expensesData.length === 0) {
+        console.error("Invalid expenses data format", expensesData);
+        toast({
+          title: "Error",
+          description: "Invalid expenses data format. Cannot save.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       // Create the updated expenses object
       const updatedExpenses: MonthlyExpenses = {
         id: monthlyExpensesId,
@@ -54,8 +65,7 @@ export const useExpensesSaveHandler = (
 
       console.log("About to save monthly expenses:", updatedExpenses);
       
-      // Save to Supabase with proper data format
-      // The saveMonthlyExpenses function will handle JSON conversion internally
+      // Save to Supabase
       const success = await saveMonthlyExpenses({
         id: updatedExpenses.id,
         userId: updatedExpenses.userId,

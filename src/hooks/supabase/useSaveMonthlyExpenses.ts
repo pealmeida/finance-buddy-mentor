@@ -27,7 +27,7 @@ export const useSaveMonthlyExpenses = () => {
       
       console.log("Saving monthly expenses:", expenses);
       
-      // Convert array data to Json type for Supabase
+      // Convert array data to Json type for Supabase using the utility function
       const jsonData = convertExpensesDataToJson(expenses.data);
       console.log("Converted expenses data to JSON format:", jsonData);
       

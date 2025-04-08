@@ -15,19 +15,22 @@ export const initializeEmptyExpensesData = (): MonthlyAmount[] => {
 
 /**
  * Convert raw JSON data to typed MonthlyAmount array
+ * This safely handles any format issues from the database
  */
 export const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] => {
+  // If we get null or non-array data, return empty data
   if (!data || !Array.isArray(data)) {
-    console.log("Invalid data format received, initializing empty data");
+    console.log("Invalid expenses data format received, initializing empty data");
     return initializeEmptyExpensesData();
   }
   
   try {
+    // Map the JSON data to properly typed MonthlyAmount objects
     const typedData = data.map(item => {
-      // Handle case where item might already be properly typed
       if (typeof item === 'object' && item !== null) {
         const itemObj = item as Record<string, unknown>;
         
+        // Safely extract month and amount with proper type handling
         const month = typeof itemObj.month === 'number' 
           ? itemObj.month 
           : typeof itemObj.month === 'string' 
@@ -40,24 +43,39 @@ export const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] =
             ? parseFloat(itemObj.amount) 
             : 0;
         
+        // Return a clean MonthlyAmount object
         return { month, amount };
       }
       
-      // Fallback for unexpected data format
-      console.warn("Unexpected data format in item:", item);
+      console.warn("Unexpected data format in expense item:", item);
       return { month: 0, amount: 0 };
     });
     
+    // Validate that we have data for all 12 months
+    if (typedData.length !== 12) {
+      console.log("Expenses data doesn't have 12 months, filling missing months");
+      const completeData = initializeEmptyExpensesData();
+      
+      // Update the complete data with any valid months we received
+      typedData.forEach(item => {
+        if (item.month >= 1 && item.month <= 12) {
+          completeData[item.month - 1] = item;
+        }
+      });
+      
+      return completeData;
+    }
+    
     return typedData;
   } catch (error) {
-    console.error("Error converting JSON to typed data:", error);
+    console.error("Error converting JSON to typed expenses data:", error);
     return initializeEmptyExpensesData();
   }
 };
 
 /**
  * Convert MonthlyAmount array to Json format for Supabase
- * This properly handles the type conversion needed for Supabase
+ * Creates a clean array representation suitable for storage
  */
 export const convertExpensesDataToJson = (data: MonthlyAmount[]): Json => {
   try {
@@ -67,13 +85,10 @@ export const convertExpensesDataToJson = (data: MonthlyAmount[]): Json => {
       amount: item.amount
     }));
     
-    // Convert to standard JSON and then parse back to ensure JSON compatibility
-    const jsonString = JSON.stringify(sanitizedData);
-    const jsonData = JSON.parse(jsonString) as Json;
-    
-    return jsonData;
+    // Return the sanitized data as Json
+    return sanitizedData as unknown as Json;
   } catch (error) {
     console.error("Error converting expenses data to JSON:", error);
-    return [] as Json;
+    return [] as unknown as Json;
   }
 };
