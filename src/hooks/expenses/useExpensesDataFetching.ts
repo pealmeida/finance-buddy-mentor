@@ -5,7 +5,8 @@ import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { useToast } from '@/components/ui/use-toast';
 import { 
   convertToTypedExpensesData, 
-  initializeEmptyExpensesData
+  initializeEmptyExpensesData,
+  convertExpensesDataToJson
 } from './utils/expensesDataUtils';
 
 interface UseExpensesDataFetchingProps {
@@ -69,6 +70,7 @@ export const useExpensesDataFetching = ({
         return;
       }
       
+      // Properly convert the data before passing to fetchMonthlyExpenses
       const savedData = await fetchMonthlyExpenses(profile.id, selectedYear);
       
       if (savedData && savedData.data) {

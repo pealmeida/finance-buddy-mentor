@@ -60,7 +60,7 @@ export const useExpensesSaveHandler = (
         id: updatedExpenses.id,
         userId: updatedExpenses.userId,
         year: updatedExpenses.year,
-        data: expensesData // The hook will handle the conversion internally
+        data: expensesData // The hook will handle the JSON conversion internally
       });
       
       if (success) {
