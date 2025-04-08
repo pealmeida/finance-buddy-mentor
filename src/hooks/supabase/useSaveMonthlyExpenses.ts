@@ -27,6 +27,34 @@ export const useSaveMonthlyExpenses = () => {
       
       console.log("Saving monthly expenses:", expenses);
       
+      // First, check the auth session and refresh if needed
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) {
+        console.error("Session error:", sessionError);
+        throw new Error("Authentication required. Please log in again.");
+      }
+      
+      if (!sessionData.session) {
+        console.log("No active session found, trying to refresh token...");
+        const { error: refreshError } = await supabase.auth.refreshSession();
+        
+        if (refreshError) {
+          console.error("Failed to refresh auth token:", refreshError);
+          toast({
+            title: 'Authentication Error',
+            description: 'Your session has expired. Please log in again.',
+            variant: 'destructive'
+          });
+          
+          // Wait a moment before redirecting to login (prevents redirect loops)
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 2000);
+          
+          return false;
+        }
+      }
+      
       // Convert array data to Json type for Supabase using the utility function
       const jsonData = convertExpensesDataToJson(expenses.data);
       console.log("Converted expenses data to JSON format:", jsonData);
@@ -43,7 +71,9 @@ export const useSaveMonthlyExpenses = () => {
       
       const { data, error } = await supabase
         .from('monthly_expenses')
-        .upsert(formattedData)
+        .upsert(formattedData, {
+          onConflict: 'user_id,year' // Handle conflict on these columns
+        })
         .select('*')
         .single();
       

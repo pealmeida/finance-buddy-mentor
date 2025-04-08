@@ -5,8 +5,7 @@ import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { useToast } from '@/components/ui/use-toast';
 import { 
   convertToTypedExpensesData, 
-  initializeEmptyExpensesData,
-  convertExpensesDataToJson
+  initializeEmptyExpensesData
 } from './utils/expensesDataUtils';
 
 interface UseExpensesDataFetchingProps {
@@ -41,18 +40,28 @@ export const useExpensesDataFetching = ({
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const dataFetchingRef = useRef<boolean>(false);
+  const dataInitializedRef = useRef<boolean>(false);
 
   // Initialize empty data for all months
   const initializeEmptyData = useCallback(() => {
+    if (dataInitializedRef.current) {
+      console.log("Data already initialized, skipping");
+      return;
+    }
+    
     const emptyData = initializeEmptyExpensesData();
     console.log("Initializing empty expenses data for all months:", emptyData);
     setExpensesData(emptyData);
     setLoadingData(false);
+    dataInitializedRef.current = true;
   }, []);
 
   // Manual refresh function that can be called by user action
   const refreshData = useCallback(async () => {
-    if (!profile?.id || dataFetchingRef.current) return;
+    if (!profile?.id || dataFetchingRef.current) {
+      console.log("Skipping data fetch: profile missing or fetch in progress");
+      return;
+    }
     
     // Reset to initial state
     setLoadingData(true);
@@ -63,6 +72,7 @@ export const useExpensesDataFetching = ({
       // Verify auth before proceeding
       const isAuthenticated = await checkAndRefreshAuth();
       if (!isAuthenticated) {
+        console.error("Authentication failed during data refresh");
         toast({
           title: "Authentication Error",
           description: "Your session has expired. Please log in again.",
@@ -84,6 +94,7 @@ export const useExpensesDataFetching = ({
         // We already get converted data from fetchMonthlyExpenses
         console.log("Setting fetched expenses data:", savedData.data);
         setExpensesData(savedData.data);
+        dataInitializedRef.current = true;
         
         toast({
           title: "Data Refreshed",
@@ -92,6 +103,8 @@ export const useExpensesDataFetching = ({
       } else {
         console.log("No expenses data found, initializing empty data");
         initializeEmptyData();
+        dataInitializedRef.current = true;
+        
         toast({
           title: "No Data Found",
           description: "No expenses data was found for the selected year. Starting with empty data."
@@ -102,6 +115,8 @@ export const useExpensesDataFetching = ({
       setError(err instanceof Error ? err.message : "An unknown error occurred");
       // Initialize empty data even on error
       initializeEmptyData();
+      dataInitializedRef.current = true;
+      
       toast({
         title: "Error",
         description: "Failed to refresh expenses data. Starting with empty data.",

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UserProfile, MonthlyAmount, MonthlyExpenses } from '@/types/finance';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { toast } from "@/components/ui/use-toast";
+import { initializeEmptyExpensesData } from './expensesDataUtils';
 
 /**
  * Hook to handle saving expenses data
@@ -30,8 +31,10 @@ export const useExpensesSaveHandler = (
       }
       
       // Refresh auth token before saving
+      console.log("Checking authentication before saving expenses");
       const isAuthenticated = await checkAndRefreshAuth();
       if (!isAuthenticated) {
+        console.error("Authentication failed during save attempt");
         toast({
           title: "Authentication Error",
           description: "Your session has expired. Please log in again.",
@@ -44,15 +47,23 @@ export const useExpensesSaveHandler = (
       // Use existing ID or generate a new one
       const monthlyExpensesId = profile.monthlyExpenses?.id || uuidv4();
       
-      // Validate the data before saving
-      if (!expensesData || !Array.isArray(expensesData) || expensesData.length === 0) {
-        console.error("Invalid expenses data format", expensesData);
-        toast({
-          title: "Error",
-          description: "Invalid expenses data format. Cannot save.",
-          variant: "destructive"
-        });
-        return;
+      // Ensure we have a complete data set (all 12 months)
+      let dataToSave = expensesData;
+      if (!Array.isArray(dataToSave) || dataToSave.length !== 12) {
+        console.log("Incomplete expenses data, filling in missing months");
+        // Start with empty data for all months
+        const completeData = initializeEmptyExpensesData();
+        
+        // Overlay any existing data
+        if (Array.isArray(dataToSave)) {
+          dataToSave.forEach(item => {
+            if (item.month >= 1 && item.month <= 12) {
+              completeData[item.month - 1] = item;
+            }
+          });
+        }
+        
+        dataToSave = completeData;
       }
       
       // Create the updated expenses object
@@ -60,7 +71,7 @@ export const useExpensesSaveHandler = (
         id: monthlyExpensesId,
         userId: profile.id,
         year: selectedYear,
-        data: expensesData
+        data: dataToSave
       };
 
       console.log("About to save monthly expenses:", updatedExpenses);

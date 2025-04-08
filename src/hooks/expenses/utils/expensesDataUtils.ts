@@ -34,7 +34,7 @@ export const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] =
         const month = typeof itemObj.month === 'number' 
           ? itemObj.month 
           : typeof itemObj.month === 'string' 
-            ? parseInt(itemObj.month) 
+            ? parseInt(itemObj.month, 10) 
             : 0;
         
         const amount = typeof itemObj.amount === 'number' 
@@ -79,6 +79,12 @@ export const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] =
  */
 export const convertExpensesDataToJson = (data: MonthlyAmount[]): Json => {
   try {
+    // Ensure we have valid data first
+    if (!Array.isArray(data) || data.length === 0) {
+      console.warn("Empty expenses data provided for conversion to JSON, using empty array");
+      return [] as unknown as Json;
+    }
+    
     // Create a clean array with only the needed properties
     const sanitizedData = data.map(item => ({
       month: item.month,
