@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useRef } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';

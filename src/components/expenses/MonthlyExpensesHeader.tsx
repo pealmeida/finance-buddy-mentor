@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { CircleDollarSign } from 'lucide-react';
-import YearSelector from '../savings/YearSelector';
-import SaveAllButton from '../savings/SaveAllButton';
+import { DollarSign } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Save, Loader2 } from 'lucide-react';
 
 interface MonthlyExpensesHeaderProps {
   selectedYear: number;
@@ -19,30 +19,54 @@ const MonthlyExpensesHeader: React.FC<MonthlyExpensesHeaderProps> = ({
   disabled,
   isSaving
 }) => {
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
+
   return (
     <>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-semibold flex items-center gap-2">
-          <CircleDollarSign className="text-red-600" />
+          <DollarSign className="text-red-500" />
           Monthly Expenses
         </h2>
         <div className="flex gap-4 items-center">
-          <YearSelector
-            selectedYear={selectedYear}
-            onYearChange={onYearChange}
-            disabled={disabled}
-          />
+          <div className="flex">
+            <select
+              value={selectedYear}
+              onChange={(e) => onYearChange(Number(e.target.value))}
+              disabled={disabled}
+              className="px-4 py-2 border border-gray-300 rounded-md bg-white"
+            >
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
           
-          <SaveAllButton
-            onSave={onSaveAll}
+          <Button
+            onClick={onSaveAll}
             disabled={disabled}
-            isSaving={isSaving}
-          />
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-700"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                Save All
+              </>
+            )}
+          </Button>
         </div>
       </div>
       
       <p className="text-gray-600">
-        Track your monthly expenses to monitor your spending habits throughout the year.
+        Track your monthly expenses to visualize your spending patterns throughout the year.
       </p>
     </>
   );

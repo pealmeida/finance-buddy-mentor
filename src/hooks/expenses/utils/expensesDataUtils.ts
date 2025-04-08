@@ -52,6 +52,5 @@ export const convertToTypedExpensesData = (data: Json | Json[] | null): MonthlyA
  */
 export const convertExpensesDataToJson = (data: MonthlyAmount[]): Json => {
   // Deep clone the data and cast it to the Json type
-  // JSON.parse(JSON.stringify()) ensures we have a plain object
   return JSON.parse(JSON.stringify(data)) as Json;
 };
