@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -54,23 +53,9 @@ const SignupPage: React.FC = () => {
         
         // Session should be created automatically after signUp
         if (data.session) {
-          // Check if this is a first-time user who needs to complete onboarding
-          const userId = data.session.user.id;
-          const userProfile = await fetchUserProfile(userId);
-          
-          // Wait a moment to ensure the session is properly established
-          setTimeout(() => {
-            // If profile exists with complete data, go to dashboard, otherwise go to onboarding
-            if (userProfile && 
-                userProfile.monthlyIncome > 0 && 
-                userProfile.age > 0 && 
-                userProfile.riskProfile) {
-              navigate('/dashboard');
-            } else {
-              // Navigate to onboarding to complete profile setup
-              navigate('/onboarding');
-            }
-          }, 500);
+          // Immediately redirect to onboarding to set up the profile
+          // This is a new user, so they always need to complete onboarding
+          navigate('/onboarding');
         } else {
           // If session is not automatically created, we may need to sign in
           const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -81,20 +66,8 @@ const SignupPage: React.FC = () => {
           if (signInError) {
             throw new Error(`Error signing in after signup: ${signInError.message}`);
           } else if (signInData.session) {
-            // Check if user has completed profile
-            const userId = signInData.session.user.id;
-            const userProfile = await fetchUserProfile(userId);
-            
-            // If profile exists with complete data, go to dashboard, otherwise go to onboarding
-            if (userProfile && 
-                userProfile.monthlyIncome > 0 && 
-                userProfile.age > 0 && 
-                userProfile.riskProfile) {
-              navigate('/dashboard');
-            } else {
-              // Navigate to onboarding to complete profile setup
-              navigate('/onboarding');
-            }
+            // New user, redirect to onboarding
+            navigate('/onboarding');
           }
         }
       }
