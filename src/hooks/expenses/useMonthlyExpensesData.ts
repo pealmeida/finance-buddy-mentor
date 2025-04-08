@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from 'react';
 import { UserProfile } from '@/types/finance';
 import { useExpensesDataFetching } from './useExpensesDataFetching';
@@ -23,7 +22,8 @@ export const useMonthlyExpensesData = (
     refreshData,
     setExpensesData,
     setError,
-    initializeEmptyData
+    initializeEmptyData,
+    convertExpensesDataToJson
   } = useExpensesDataFetching({
     profile,
     selectedYear,
@@ -95,6 +95,7 @@ export const useMonthlyExpensesData = (
     refreshData,
     setExpensesData,
     setError,
-    initializeEmptyData
+    initializeEmptyData,
+    convertExpensesDataToJson
   };
 };

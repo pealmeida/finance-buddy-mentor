@@ -28,7 +28,7 @@ export const useSaveMonthlyExpenses = () => {
         id: expenses.id,
         user_id: expenses.userId,
         year: expenses.year,
-        data: expenses.data as unknown as Json
+        data: JSON.parse(JSON.stringify(expenses.data)) as Json
       };
       
       const { data, error } = await supabase

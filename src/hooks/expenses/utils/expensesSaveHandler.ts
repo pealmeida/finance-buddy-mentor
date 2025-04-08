@@ -1,9 +1,9 @@
-
 import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { UserProfile, MonthlyAmount, MonthlyExpenses } from '@/types/finance';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { toast } from "@/components/ui/use-toast";
+import { convertExpensesDataToJson } from './expensesDataUtils';
 
 /**
  * Hook to handle saving expenses data
@@ -43,6 +43,9 @@ export const useExpensesSaveHandler = (
       console.log("Starting save process for monthly expenses");
       // Use existing ID or generate a new one
       const monthlyExpensesId = profile.monthlyExpenses?.id || uuidv4();
+      
+      // Convert MonthlyAmount[] to Json for Supabase compatibility
+      const jsonData = convertExpensesDataToJson(expensesData);
       
       const updatedExpenses: MonthlyExpenses = {
         id: monthlyExpensesId,

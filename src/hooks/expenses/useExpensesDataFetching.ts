@@ -1,9 +1,12 @@
-
 import { useState, useCallback, useRef } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { useToast } from '@/components/ui/use-toast';
-import { convertToTypedExpensesData, initializeEmptyExpensesData } from './utils/expensesDataUtils';
+import { 
+  convertToTypedExpensesData, 
+  initializeEmptyExpensesData,
+  convertExpensesDataToJson
+} from './utils/expensesDataUtils';
 
 interface UseExpensesDataFetchingProps {
   profile: UserProfile;
@@ -20,6 +23,7 @@ interface UseExpensesDataFetchingResult {
   setExpensesData: (data: MonthlyAmount[]) => void;
   setError: (error: string | null) => void;
   initializeEmptyData: () => void;
+  convertExpensesDataToJson: (data: MonthlyAmount[]) => any;
 }
 
 /**
@@ -107,6 +111,7 @@ export const useExpensesDataFetching = ({
     refreshData,
     setExpensesData,
     setError,
-    initializeEmptyData
+    initializeEmptyData,
+    convertExpensesDataToJson  // Export the new conversion function
   };
 };

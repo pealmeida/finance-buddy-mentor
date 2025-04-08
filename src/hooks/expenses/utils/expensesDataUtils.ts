@@ -24,16 +24,18 @@ export const convertToTypedExpensesData = (data: Json | Json[] | null): MonthlyA
   return data.map(item => {
     // Handle case where item might already be properly typed
     if (typeof item === 'object' && item !== null) {
-      const month = typeof item.month === 'number' 
-        ? item.month 
-        : typeof item.month === 'string' 
-          ? parseInt(item.month) 
+      const itemObj = item as Record<string, unknown>;
+      
+      const month = typeof itemObj.month === 'number' 
+        ? itemObj.month 
+        : typeof itemObj.month === 'string' 
+          ? parseInt(itemObj.month) 
           : 0;
       
-      const amount = typeof item.amount === 'number' 
-        ? item.amount 
-        : typeof item.amount === 'string' 
-          ? parseFloat(item.amount) 
+      const amount = typeof itemObj.amount === 'number' 
+        ? itemObj.amount 
+        : typeof itemObj.amount === 'string' 
+          ? parseFloat(itemObj.amount) 
           : 0;
       
       return { month, amount };
@@ -42,4 +44,11 @@ export const convertToTypedExpensesData = (data: Json | Json[] | null): MonthlyA
     // Fallback for unexpected data format
     return { month: 0, amount: 0 };
   });
+};
+
+/**
+ * Convert MonthlyAmount array to Json format for Supabase
+ */
+export const convertExpensesDataToJson = (data: MonthlyAmount[]): Json => {
+  return data as unknown as Json;
 };
