@@ -59,7 +59,7 @@ export const useExpensesSaveHandler = (
         id: updatedExpenses.id,
         userId: updatedExpenses.userId,
         year: updatedExpenses.year,
-        data: expensesData
+        data: expensesData  // saveMonthlyExpenses will handle the JSON conversion
       });
       
       if (success) {
