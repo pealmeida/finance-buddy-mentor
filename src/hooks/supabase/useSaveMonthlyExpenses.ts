@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { MonthlyExpenses } from '@/types/finance';
 import { Json } from '@/integrations/supabase/types';
 import { toast } from '@/components/ui/use-toast';
+import { convertExpensesDataToJson } from '@/hooks/expenses/utils/expensesDataUtils';
 
 /**
  * Hook to save monthly expenses data to Supabase
@@ -28,7 +29,7 @@ export const useSaveMonthlyExpenses = () => {
         id: expenses.id,
         user_id: expenses.userId,
         year: expenses.year,
-        data: JSON.parse(JSON.stringify(expenses.data)) as Json
+        data: convertExpensesDataToJson(expenses.data)
       };
       
       const { data, error } = await supabase
