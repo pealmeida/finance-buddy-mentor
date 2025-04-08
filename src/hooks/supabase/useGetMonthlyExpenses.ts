@@ -37,6 +37,10 @@ export const useGetMonthlyExpenses = () => {
       
       console.log("Monthly expenses fetched successfully:", data);
       
+      // Log the data type to help with debugging
+      console.log("Data type:", typeof data.data);
+      console.log("Is array?", Array.isArray(data.data));
+      
       // Transform the data into a MonthlyExpenses object
       const monthlyExpenses: MonthlyExpenses = {
         id: data.id,
@@ -45,6 +49,7 @@ export const useGetMonthlyExpenses = () => {
         data: convertToTypedExpensesData(data.data)
       };
       
+      console.log("Transformed monthly expenses:", monthlyExpenses);
       return monthlyExpenses;
     } catch (err) {
       console.error("Unexpected error fetching monthly expenses:", err);

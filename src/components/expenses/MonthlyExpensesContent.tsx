@@ -30,6 +30,10 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
   onRefresh,
   error
 }) => {
+  // Log the data to assist with debugging
+  console.log("MonthlyExpensesContent received data:", expensesData);
+  console.log("Loading state:", loadingData);
+  
   if (loadingData) {
     return (
       <div className="p-8 bg-white rounded-lg shadow-md flex justify-center items-center h-64">
@@ -65,8 +69,10 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
     );
   }
   
-  // Make sure expensesData exists and has items
-  if (!Array.isArray(expensesData) || expensesData.length === 0) {
+  // Validate data is in expected format
+  const validData = Array.isArray(expensesData) && expensesData.length > 0;
+  
+  if (!validData) {
     return (
       <div className="p-8 bg-white rounded-lg shadow-md flex flex-col justify-center items-center h-64 space-y-4">
         <p className="text-gray-500">No expenses data available for the selected year.</p>

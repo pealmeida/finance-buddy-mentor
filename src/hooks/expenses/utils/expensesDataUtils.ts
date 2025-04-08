@@ -55,7 +55,7 @@ export const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] =
       return { month: 0, amount: 0 };
     }).filter(item => item.month >= 1 && item.month <= 12);
     
-    console.log("Converted typed data:", typedData);
+    console.log("Converted typed data after filtering:", typedData);
     
     // Validate that we have data for all 12 months - if not, fill in the missing months
     if (typedData.length !== 12) {
@@ -114,7 +114,7 @@ export const convertExpensesDataToJson = (data: MonthlyAmount[]): Json => {
     // Create a clean array with only the needed properties
     const sanitizedData = completeData.map(item => ({
       month: item.month,
-      amount: item.amount
+      amount: typeof item.amount === 'number' ? item.amount : 0
     }));
     
     console.log("Converted expenses data to JSON:", sanitizedData);
@@ -147,7 +147,10 @@ export const ensureCompleteExpensesData = (data: MonthlyAmount[]): MonthlyAmount
     // Update with any valid months we have
     data.forEach(item => {
       if (item.month >= 1 && item.month <= 12) {
-        completeData[item.month - 1] = item;
+        completeData[item.month - 1] = {
+          month: item.month,
+          amount: typeof item.amount === 'number' ? item.amount : 0
+        };
       }
     });
     
@@ -155,8 +158,14 @@ export const ensureCompleteExpensesData = (data: MonthlyAmount[]): MonthlyAmount
     return completeData;
   }
   
+  // Ensure all items have proper numeric amounts
+  const validatedData = data.map(item => ({
+    month: item.month,
+    amount: typeof item.amount === 'number' ? item.amount : 0
+  }));
+  
   // Sort by month number to ensure consistent order
-  const sortedData = [...data].sort((a, b) => a.month - b.month);
+  const sortedData = [...validatedData].sort((a, b) => a.month - b.month);
   console.log("Sorted expenses data:", sortedData);
   
   return sortedData;
