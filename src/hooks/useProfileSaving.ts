@@ -11,17 +11,8 @@ export function useProfileSaving() {
   const saveProfile = async (profile: UserProfile): Promise<boolean> => {
     setIsSaving(true);
     try {
-      const success = await saveUserProfile(profile);
-      
-      if (!success) {
-        toast({
-          title: "Error saving profile",
-          description: "There was a problem saving your profile. Please try again.",
-          variant: "destructive"
-        });
-      }
-      
-      return success;
+      await saveUserProfile(profile);
+      return true;
     } catch (error) {
       console.error("Error saving profile:", error);
       toast({

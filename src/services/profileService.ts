@@ -46,7 +46,7 @@ export const saveUserProfile = async (profile: UserProfile): Promise<boolean> =>
     return true;
   } catch (err) {
     console.error("Error saving user profile:", err);
-    return false;
+    throw err; // Rethrow to allow the calling code to handle the error
   }
 };
 

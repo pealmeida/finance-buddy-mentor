@@ -66,11 +66,14 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
         duration: 3000,
       });
       
-      // Refresh the page data to ensure everything is up-to-date
-      setTimeout(() => {
+      // Fixed navigation: Only redirect if not in edit mode or explicitly requested
+      // This prevents the navigation loop when updating profile
+      if (!isEditMode) {
         // Navigate to the dashboard page after completing the onboarding
-        navigate('/dashboard', { replace: true });
-      }, 500);
+        setTimeout(() => {
+          navigate('/dashboard', { replace: true });
+        }, 500);
+      }
     } catch (err) {
       console.error("Error completing profile:", err);
       toast({
