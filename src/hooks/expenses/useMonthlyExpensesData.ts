@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { UserProfile } from '@/types/finance';
 import { useExpensesDataFetching } from './useExpensesDataFetching';
-import { convertToTypedExpensesData } from './utils/expensesDataUtils';
+import { convertToTypedExpensesData, convertExpensesDataToJson } from './utils/expensesDataUtils';
 
 /**
  * Hook to manage monthly expenses data loading and saving
