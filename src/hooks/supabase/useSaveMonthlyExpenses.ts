@@ -12,7 +12,12 @@ export const useSaveMonthlyExpenses = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const saveMonthlyExpenses = useCallback(async (expenses: MonthlyExpenses & { data: Json }): Promise<boolean> => {
+  const saveMonthlyExpenses = useCallback(async (expenses: { 
+    id: string;
+    userId: string;
+    year: number;
+    data: Json;
+  }): Promise<boolean> => {
     try {
       setLoading(true);
       
