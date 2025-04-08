@@ -10,11 +10,13 @@ import { useToast } from '@/components/ui/use-toast';
 interface PersonalizedInsightsProps {
   userProfile: UserProfile;
   savingsProgress: number;
+  expensesRatio: number; // Added this prop
 }
 
 const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({ 
   userProfile, 
-  savingsProgress 
+  savingsProgress,
+  expensesRatio
 }) => {
   const { fetchMonthlySavings, calculateAverageSavings } = useMonthlySavings();
   const { toast } = useToast();

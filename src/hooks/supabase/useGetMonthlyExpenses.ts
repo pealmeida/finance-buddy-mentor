@@ -4,9 +4,10 @@ import { useSupabaseBase } from './useSupabaseBase';
 import { MonthlyAmount } from '@/types/finance';
 import { MONTHS } from '@/constants/months';
 import { Json } from '@/integrations/supabase/types';
+import { supabaseWrapper } from './utils/supabaseWrapper';
 
 export function useGetMonthlyExpenses() {
-  const { supabase, loading: baseLoading, setLoading, handleError } = useSupabaseBase();
+  const { loading: baseLoading, setLoading, handleError } = useSupabaseBase();
   const [loading, setLocalLoading] = useState(false);
   
   /**
@@ -19,12 +20,7 @@ export function useGetMonthlyExpenses() {
       
       console.log(`Fetching monthly expenses for user ${userId} and year ${year}`);
       
-      const { data, error } = await supabase
-        .from('monthly_expenses')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('year', year)
-        .maybeSingle();
+      const { data, error } = await supabaseWrapper.monthlyExpenses.getByUserAndYear(userId, year);
       
       if (error) throw error;
       

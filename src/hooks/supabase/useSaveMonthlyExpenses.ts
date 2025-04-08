@@ -4,6 +4,7 @@ import { useSupabaseBase } from './useSupabaseBase';
 import { MonthlyExpenses } from '@/types/finance';
 import { Json } from '@/integrations/supabase/types';
 import { v4 as uuidv4 } from 'uuid';
+import { supabaseWrapper } from './utils/supabaseWrapper';
 
 export function useSaveMonthlyExpenses() {
   const { supabase, loading: baseLoading, setLoading, handleError } = useSupabaseBase();
@@ -42,18 +43,16 @@ export function useSaveMonthlyExpenses() {
         }
       }
 
-      // Use a raw upsert operation with explicit conflict target
-      const { error } = await supabase
-        .from('monthly_expenses')
-        .upsert({
-          id: monthlyExpenses.id,
-          user_id: monthlyExpenses.userId,
-          year: monthlyExpenses.year,
-          // Cast the MonthlyAmount[] to Json using type assertion
-          data: monthlyExpenses.data as unknown as Json
-        }, {
-          onConflict: 'user_id,year'
-        });
+      // Use our custom wrapper for the upsert operation
+      const { error } = await supabaseWrapper.monthlyExpenses.upsert({
+        id: monthlyExpenses.id,
+        user_id: monthlyExpenses.userId,
+        year: monthlyExpenses.year,
+        // Cast the MonthlyAmount[] to Json using type assertion
+        data: monthlyExpenses.data as unknown as Json
+      }, {
+        onConflict: 'user_id,year'
+      });
 
       if (error) {
         console.error("Database error when saving monthly expenses:", error);
