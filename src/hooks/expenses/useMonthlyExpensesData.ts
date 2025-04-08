@@ -24,8 +24,7 @@ export const useMonthlyExpensesData = (
     refreshData,
     setExpensesData,
     setError,
-    initializeEmptyData,
-    convertExpensesDataToJson
+    initializeEmptyData
   } = useExpensesDataFetching({
     profile,
     selectedYear,

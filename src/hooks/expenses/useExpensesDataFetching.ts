@@ -42,8 +42,6 @@ export const useExpensesDataFetching = ({
   const [expensesData, setExpensesData] = useState<MonthlyAmount[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [fetchAttempts, setFetchAttempts] = useState(0);
-  const MAX_FETCH_ATTEMPTS = 3;
   const dataFetchingRef = useRef<boolean>(false);
 
   // Initialize empty data for all months
