@@ -23,13 +23,21 @@ const SavingsAnalysisPage = () => {
   const [loadingData, setLoadingData] = useState<boolean>(true);
   const [totalSaved, setTotalSaved] = useState<number>(0);
   const [averageSaved, setAverageSaved] = useState<number>(0);
+  const [error, setError] = useState<string | null>(null);
   
   const { 
     fetchMonthlySavings, 
     loading, 
-    error,
+    error: fetchError,
     calculateAverageSavings 
   } = useMonthlySavings();
+  
+  useEffect(() => {
+    // Set any error from the hook to our local state
+    if (fetchError) {
+      setError(fetchError);
+    }
+  }, [fetchError]);
   
   useEffect(() => {
     const loadData = async () => {
@@ -59,6 +67,7 @@ const SavingsAnalysisPage = () => {
         }
       } catch (err) {
         console.error("Error loading savings data:", err);
+        setError(err instanceof Error ? err.message : "Failed to load savings data");
         toast({
           title: "Error",
           description: "Failed to load savings data.",
@@ -94,6 +103,7 @@ const SavingsAnalysisPage = () => {
       }
     } catch (err) {
       console.error("Error refreshing data:", err);
+      setError(err instanceof Error ? err.message : "Failed to refresh data");
       toast({
         title: "Error",
         description: "Failed to refresh data.",
