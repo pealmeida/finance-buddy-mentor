@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { UserProfile, MonthlyAmount, MonthlyExpenses } from '@/types/finance';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
-import { useExpensesToasts } from './expensesToastUtils';
+import { toast } from "@/components/ui/use-toast";
 
 /**
  * Hook to handle saving expenses data
@@ -16,25 +16,27 @@ export const useExpensesSaveHandler = (
   onSave: (updatedProfile: UserProfile) => void
 ) => {
   const { saveMonthlyExpenses } = useMonthlyExpenses();
-  const { 
-    showAuthenticationErrorToast,
-    showSessionExpiredToast,
-    showSaveSuccessToast,
-    showSaveErrorToast
-  } = useExpensesToasts();
 
   // Handle saving all expenses data
   const handleSaveAll = useCallback(async () => {
     try {
       if (!profile || !profile.id) {
-        showAuthenticationErrorToast();
+        toast({
+          title: "Not Logged In",
+          description: "Please log in to save your data.",
+          variant: "destructive"
+        });
         return;
       }
       
       // Refresh auth token before saving
       const isAuthenticated = await checkAndRefreshAuth();
       if (!isAuthenticated) {
-        showSessionExpiredToast();
+        toast({
+          title: "Authentication Error",
+          description: "Your session has expired. Please log in again.",
+          variant: "destructive"
+        });
         return;
       }
       
@@ -64,13 +66,20 @@ export const useExpensesSaveHandler = (
         };
         
         onSave(updatedProfile);
-        showSaveSuccessToast(selectedYear);
+        toast({
+          title: "Expenses Saved",
+          description: `Your expenses data for ${selectedYear} has been saved successfully.`
+        });
       } else {
         throw new Error("Failed to save data");
       }
     } catch (err) {
       console.error("Error saving expenses data:", err);
-      showSaveErrorToast();
+      toast({
+        title: "Error",
+        description: "There was a problem saving your expenses data. Please try again.",
+        variant: "destructive"
+      });
     }
   }, [
     checkAndRefreshAuth, 
@@ -78,11 +87,7 @@ export const useExpensesSaveHandler = (
     profile, 
     saveMonthlyExpenses, 
     expensesData, 
-    selectedYear, 
-    showAuthenticationErrorToast,
-    showSessionExpiredToast,
-    showSaveSuccessToast,
-    showSaveErrorToast
+    selectedYear
   ]);
 
   return {

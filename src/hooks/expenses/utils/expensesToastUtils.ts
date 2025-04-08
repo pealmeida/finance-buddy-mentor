@@ -1,10 +1,11 @@
 
 import { MONTHS } from '@/constants/months';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from "@/components/ui/use-toast";
 
+/**
+ * Toast utility functions for expenses-related notifications
+ */
 export const useExpensesToasts = () => {
-  const { toast } = useToast();
-  
   const showAmountUpdatedToast = (month: number) => {
     toast({
       title: "Expenses Updated",

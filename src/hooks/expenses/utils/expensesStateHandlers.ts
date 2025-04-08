@@ -1,7 +1,8 @@
 
 import { useState, useCallback } from 'react';
 import { MonthlyAmount } from '@/types/finance';
-import { useExpensesToasts } from './expensesToastUtils';
+import { MONTHS } from '@/constants/months';
+import { toast } from "@/components/ui/use-toast";
 
 /**
  * Hook to handle expenses state changes
@@ -11,7 +12,6 @@ export const useExpensesStateHandlers = (
   setExpensesData: (data: MonthlyAmount[]) => void
 ) => {
   const [editingMonth, setEditingMonth] = useState<number | null>(null);
-  const { showAmountUpdatedToast } = useExpensesToasts();
   
   // Handle saving an updated amount for a specific month
   const handleSaveAmount = useCallback((month: number, amount: number) => {
@@ -24,8 +24,11 @@ export const useExpensesStateHandlers = (
     setEditingMonth(null);
     
     // Show a toast notification of the update
-    showAmountUpdatedToast(month);
-  }, [expensesData, setExpensesData, showAmountUpdatedToast]);
+    toast({
+      title: "Expenses Updated",
+      description: `Your expenses for ${MONTHS[month - 1]} have been updated.`
+    });
+  }, [expensesData, setExpensesData]);
 
   // Handle setting the month to edit
   const handleEditMonth = useCallback((month: number) => {
