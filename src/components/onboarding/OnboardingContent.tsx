@@ -40,12 +40,10 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
 
   // Initialize onboarding context with existing profile data if in edit mode
   useEffect(() => {
-    if ((isEditMode || existingProfile) && !profileInitialized) {
-      if (existingProfile) {
-        console.log('Initializing onboarding with existing profile:', existingProfile);
-        updateProfile(existingProfile);
-        setProfileInitialized(true);
-      }
+    if (isEditMode && existingProfile && !profileInitialized) {
+      console.log('Initializing onboarding with existing profile:', existingProfile);
+      updateProfile(existingProfile);
+      setProfileInitialized(true);
     }
   }, [isEditMode, existingProfile, updateProfile, profileInitialized]);
 

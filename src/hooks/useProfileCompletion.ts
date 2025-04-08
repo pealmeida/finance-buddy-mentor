@@ -66,14 +66,8 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
         duration: 3000,
       });
       
-      // Fixed navigation: Only redirect if not in edit mode or explicitly requested
-      // This prevents the navigation loop when updating profile
-      if (!isEditMode) {
-        // Navigate to the dashboard page after completing the onboarding
-        setTimeout(() => {
-          navigate('/dashboard', { replace: true });
-        }, 500);
-      }
+      // Navigate to the dashboard page after completing the onboarding
+      navigate('/dashboard');
     } catch (err) {
       console.error("Error completing profile:", err);
       toast({
