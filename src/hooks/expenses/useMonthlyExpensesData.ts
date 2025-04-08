@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { UserProfile, MonthlyAmount, MonthlyExpenses as MonthlyExpensesType } from '@/types/finance';
 import { MONTHS } from '@/constants/months';
@@ -86,7 +85,14 @@ export const useMonthlyExpensesData = (
         
         if (savedData && savedData.data) {
           console.log("Setting expenses data from fetch:", savedData.data);
-          setExpensesData(savedData.data);
+          // Ensure we convert any JSON data to the proper MonthlyAmount type
+          const typedData: MonthlyAmount[] = Array.isArray(savedData.data) 
+            ? savedData.data.map(item => ({
+                month: typeof item.month === 'number' ? item.month : parseInt(String(item.month)),
+                amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount))
+              }))
+            : [];
+          setExpensesData(typedData);
         } else {
           console.log("No saved data found, initializing empty data");
           initializeEmptyData();
@@ -164,7 +170,14 @@ export const useMonthlyExpensesData = (
       setLastFetchTime(Date.now());
       
       if (savedData && savedData.data) {
-        setExpensesData(savedData.data);
+        // Ensure we convert any JSON data to the proper MonthlyAmount type
+        const typedData: MonthlyAmount[] = Array.isArray(savedData.data) 
+          ? savedData.data.map(item => ({
+              month: typeof item.month === 'number' ? item.month : parseInt(String(item.month)),
+              amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount))
+            }))
+          : [];
+        setExpensesData(typedData);
         toast({
           title: "Data Refreshed",
           description: "Your expenses data has been refreshed successfully."

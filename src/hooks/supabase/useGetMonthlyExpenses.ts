@@ -29,7 +29,10 @@ export function useGetMonthlyExpenses() {
           id: data.id,
           userId: data.user_id,
           year: data.year,
-          data: Array.isArray(data.data) ? data.data : []
+          data: Array.isArray(data.data) ? data.data.map((item: any) => ({
+            month: typeof item.month === 'number' ? item.month : parseInt(item.month),
+            amount: typeof item.amount === 'number' ? item.amount : parseFloat(item.amount)
+          })) as MonthlyAmount[] : []
         };
       }
       

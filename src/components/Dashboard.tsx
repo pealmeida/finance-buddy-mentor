@@ -34,8 +34,16 @@ const Dashboard: React.FC<DashboardProps> = ({ userProfile }) => {
         // Fetch savings data
         const savingsData = await fetchMonthlySavings(userProfile.id, currentYear);
         
-        if (savingsData) {
-          const avgSavings = calculateAverageSavings(savingsData.data);
+        if (savingsData && savingsData.data) {
+          // Ensure we convert any JSON data to the proper MonthlyAmount type
+          const typedSavingsData = Array.isArray(savingsData.data) 
+            ? savingsData.data.map(item => ({
+                month: typeof item.month === 'number' ? item.month : parseInt(String(item.month)),
+                amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount))
+              }))
+            : [];
+          
+          const avgSavings = calculateAverageSavings(typedSavingsData);
           const progress = Math.min((avgSavings / recommendedSavings) * 100, 100);
           setSavingsProgress(progress);
         }
@@ -44,8 +52,23 @@ const Dashboard: React.FC<DashboardProps> = ({ userProfile }) => {
         const expensesData = await fetchMonthlyExpenses(userProfile.id, currentYear);
         
         if (expensesData && savingsData) {
-          const avgExpenses = calculateAverageExpenses(expensesData.data);
-          const avgSavings = calculateAverageSavings(savingsData.data);
+          // Ensure we convert any JSON data to the proper MonthlyAmount type 
+          const typedExpensesData = Array.isArray(expensesData.data) 
+            ? expensesData.data.map(item => ({
+                month: typeof item.month === 'number' ? item.month : parseInt(String(item.month)),
+                amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount))
+              }))
+            : [];
+          
+          const typedSavingsData = Array.isArray(savingsData.data) 
+            ? savingsData.data.map(item => ({
+                month: typeof item.month === 'number' ? item.month : parseInt(String(item.month)),
+                amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount))
+              }))
+            : [];
+          
+          const avgExpenses = calculateAverageExpenses(typedExpensesData);
+          const avgSavings = calculateAverageSavings(typedSavingsData);
           
           // Calculate what percentage of income is being spent
           if (monthlyIncome > 0) {
