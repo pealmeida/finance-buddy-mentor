@@ -7,11 +7,11 @@ import { calculateAverageSavings } from './utils/savingsUtils';
 
 export function useMonthlySavings() {
   const { fetchMonthlySavings, loading: fetchLoading, error: fetchError } = useGetMonthlySavings();
-  const { saveMonthlySavings, loading: saveLoading, error: saveError } = useSaveMonthlySavings();
+  const { saveMonthlySavings, loading: saveLoading } = useSaveMonthlySavings();
   
   // Combine the loading and error states from both hooks
   const loading = fetchLoading || saveLoading;
-  const error = fetchError || saveError;
+  const error = fetchError;
   
   return {
     loading,
