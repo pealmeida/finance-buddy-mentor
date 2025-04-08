@@ -66,7 +66,7 @@ export function useOnboardingFlow({
     if (state && state.targetStep && state.targetStep <= totalSteps) {
       setStep(state.targetStep);
     }
-  }, [location]);
+  }, [location, totalSteps]);
 
   const handleNextStep = () => {
     if (step < totalSteps) {
@@ -133,8 +133,7 @@ export function useOnboardingFlow({
       // Complete onboarding flow by calling the parent handler
       await onComplete(completeProfile);
       
-      // Navigate to the appropriate page after completing
-      navigate(isEditMode ? '/profile' : '/dashboard');
+      // Don't redirect - the onComplete function will handle navigation
     } catch (error) {
       console.error("Error completing onboarding:", error);
       toast({
