@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSimpleAuthCheck } from '@/hooks/useSimpleAuthCheck';
 import { useProfileData } from '@/hooks/useProfileData';
@@ -13,7 +12,7 @@ import SavingsAnalysisStats from '@/components/savings/analysis/SavingsAnalysisS
 import SavingsAnalysisTabs from '@/components/savings/analysis/SavingsAnalysisTabs';
 
 const SavingsAnalysisPage = () => {
-  const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck(true);
+  const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck(true, '/login');
   const { profile, loading: profileLoading } = useProfileData();
   const { toast } = useToast();
   

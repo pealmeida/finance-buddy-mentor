@@ -16,7 +16,7 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   userProfile,
   onProfileUpdate
 }) => {
-  const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck();
+  const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck(true, '/login');
   const { handleProfileComplete, isSubmitting } = useProfileCompletion(onProfileUpdate);
 
   const handleSave = (updatedProfile: UserProfile) => {
@@ -43,7 +43,7 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
             <h1 className="text-3xl font-bold mb-8">Monthly Savings</h1>
             
             <div className="glass-panel rounded-2xl p-8">
-              <MonthlySavings 
+              <MonthlySavings
                 profile={userProfile} 
                 onSave={handleSave}
                 isSaving={isSubmitting}

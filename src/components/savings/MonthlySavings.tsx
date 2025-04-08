@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
@@ -38,7 +39,10 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   // Fetch savings data when component mounts or year changes
   useEffect(() => {
     const loadSavingsData = async () => {
-      if (!profile?.id) return;
+      if (!profile?.id) {
+        console.log("No profile ID available, cannot fetch savings data");
+        return;
+      }
       
       try {
         console.log("Fetching savings data for user:", profile.id, "year:", selectedYear);
@@ -49,6 +53,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
           // Ensure data is complete and in the right format
           const completeData = ensureCompleteSavingsData(savedData.data);
           setSavingsData(completeData);
+          console.log("Savings data set successfully:", completeData);
         } else {
           console.log("No saved data found, initializing empty data");
           setSavingsData(initializeEmptySavingsData());
@@ -68,6 +73,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   }, [profile?.id, selectedYear, fetchMonthlySavings, toast]);
 
   const handleYearChange = (year: number) => {
+    console.log("Year changed to:", year);
     setSelectedYear(year);
     setEditingMonth(null);
   };
@@ -77,6 +83,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   };
 
   const handleSaveAmount = (month: number, amount: number) => {
+    console.log("Saving amount for month:", month, "amount:", amount);
     setSavingsData(prev => 
       prev.map(item => item.month === month ? { ...item, amount } : item)
     );
@@ -94,6 +101,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     }
     
     try {
+      console.log("Saving all savings data for user:", profile.id, "year:", selectedYear);
       const monthlySavingsId = profile.monthlySavings?.id || uuidv4();
       
       const success = await saveMonthlySavings({
@@ -104,6 +112,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
       });
       
       if (success && onSave) {
+        console.log("Savings data saved successfully");
         onSave({
           ...profile,
           monthlySavings: {
@@ -119,6 +128,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
           description: `Your savings data for ${selectedYear} has been saved successfully.`
         });
       } else if (!success) {
+        console.error("Failed to save savings data");
         toast({
           title: "Save Error",
           description: "Failed to save your savings data. Please try again.",
@@ -139,28 +149,31 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     if (!profile?.id) return;
     
     try {
+      console.log("Refreshing savings data for user:", profile.id, "year:", selectedYear);
       const savedData = await fetchMonthlySavings(profile.id, selectedYear);
       
       if (savedData && savedData.data) {
+        console.log("Received savings data on refresh:", savedData.data);
         const completeData = ensureCompleteSavingsData(savedData.data);
         setSavingsData(completeData);
         
         toast({
           title: "Data Refreshed",
-          description: "Your expenses data has been refreshed successfully."
+          description: "Your savings data has been refreshed successfully."
         });
       } else {
+        console.log("No data found on refresh, initializing empty data");
         setSavingsData(initializeEmptySavingsData());
         toast({
           title: "No Data Found",
-          description: "No expenses data was found for the selected year."
+          description: "No savings data was found for the selected year."
         });
       }
     } catch (err) {
       console.error("Error refreshing data:", err);
       toast({
         title: "Refresh Error",
-        description: "Failed to refresh expenses data. Please try again.",
+        description: "Failed to refresh savings data. Please try again.",
         variant: "destructive"
       });
     }
