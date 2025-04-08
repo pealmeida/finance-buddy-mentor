@@ -206,6 +206,33 @@ export type Database = {
           },
         ]
       }
+      monthly_expenses: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          updated_at: string
+          user_id: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          updated_at?: string
+          user_id: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          updated_at?: string
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
       monthly_savings: {
         Row: {
           created_at: string
