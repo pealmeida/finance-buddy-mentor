@@ -70,8 +70,12 @@ export const useExpensesDataFetching = ({
         return;
       }
       
+      console.log(`Fetching expenses data for user ${profile.id} and year ${selectedYear}`);
+      
       // Fetch data from Supabase
       const savedData = await fetchMonthlyExpenses(profile.id, selectedYear);
+      
+      console.log("Received expenses data:", savedData);
       
       if (savedData && savedData.data) {
         // Convert data to proper MonthlyAmount type
@@ -83,6 +87,7 @@ export const useExpensesDataFetching = ({
           description: "Your expenses data has been refreshed successfully."
         });
       } else {
+        console.log("No expenses data found, initializing empty data");
         initializeEmptyData();
         toast({
           title: "No Data Found",
