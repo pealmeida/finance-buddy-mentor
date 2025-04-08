@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
@@ -42,6 +41,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
       if (!profile?.id) return;
       
       try {
+        console.log("Fetching savings data for user:", profile.id, "year:", selectedYear);
         const savedData = await fetchMonthlySavings(profile.id, selectedYear);
         
         if (savedData && savedData.data) {
@@ -56,8 +56,8 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
       } catch (err) {
         console.error("Error loading savings data:", err);
         toast({
-          title: "Error",
-          description: "Failed to load savings data. Please try refreshing.",
+          title: "Data Loading Error",
+          description: "Could not load your savings data. Using empty values instead.",
           variant: "destructive"
         });
         setSavingsData(initializeEmptySavingsData());
@@ -147,20 +147,20 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
         
         toast({
           title: "Data Refreshed",
-          description: "Your savings data has been refreshed successfully."
+          description: "Your expenses data has been refreshed successfully."
         });
       } else {
         setSavingsData(initializeEmptySavingsData());
         toast({
           title: "No Data Found",
-          description: "No savings data was found for the selected year."
+          description: "No expenses data was found for the selected year."
         });
       }
     } catch (err) {
       console.error("Error refreshing data:", err);
       toast({
         title: "Refresh Error",
-        description: "Failed to refresh savings data. Please try again.",
+        description: "Failed to refresh expenses data. Please try again.",
         variant: "destructive"
       });
     }
@@ -189,7 +189,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
         <div className="flex items-center gap-4">
           <YearSelector
             selectedYear={selectedYear}
-            onYearChange={handleYearChange}
+            onYearChange={setSelectedYear}
             disabled={loading || isSaving}
           />
           
