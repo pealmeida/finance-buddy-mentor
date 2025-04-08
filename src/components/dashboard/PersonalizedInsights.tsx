@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { UserProfile } from '@/types/finance';
-import { CircleDollarSign, Wallet, TrendingUp, Ban } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { BrainCircuit, BarChart3 } from 'lucide-react';
 
 interface PersonalizedInsightsProps {
   userProfile: UserProfile;
@@ -10,89 +11,95 @@ interface PersonalizedInsightsProps {
   expensesRatio: number;
 }
 
-const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({ 
-  userProfile, 
+const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
+  userProfile,
   savingsProgress,
   expensesRatio
 }) => {
-  // Calculate spending insights
-  const isHighSpending = expensesRatio > 70;
-  const spendingStatus = isHighSpending ? 'High' : expensesRatio > 50 ? 'Moderate' : 'Low';
-  const spendingColor = isHighSpending ? 'text-red-500' : expensesRatio > 50 ? 'text-amber-500' : 'text-green-500';
-
+  // Generate personalized insights based on user data
+  const getPersonalizedInsight = (): string => {
+    const name = userProfile.name?.split(' ')[0] || 'there';
+    let insight = '';
+    
+    if (savingsProgress < 50) {
+      insight = `Hi ${name}, we noticed your monthly savings are below the recommended amount. Consider creating a budget to increase your savings rate.`;
+    } else if (savingsProgress >= 50 && savingsProgress < 100) {
+      insight = `Good job ${name}! You're making progress toward your savings goals, but there's still room for improvement.`;
+    } else {
+      insight = `Excellent work ${name}! You're exceeding your savings targets. Consider investing the extra funds to maximize your returns.`;
+    }
+    
+    return insight;
+  };
+  
+  const getExpenseInsight = (): string => {
+    const name = userProfile.name?.split(' ')[0] || 'there';
+    
+    if (expensesRatio > 70) {
+      return `${name}, your expenses are high relative to your income. Consider identifying areas where you can cut back.`;
+    } else if (expensesRatio > 50) {
+      return `${name}, your expenses are at a moderate level. Look for opportunities to reduce non-essential spending.`;
+    } else {
+      return `${name}, you're doing well at keeping your expenses in check. This gives you more flexibility for savings and investments.`;
+    }
+  };
+  
+  const getRiskBasedAdvice = (): string => {
+    const name = userProfile.name?.split(' ')[0] || 'there';
+    const riskProfile = userProfile.riskProfile.toLowerCase();
+    
+    if (riskProfile === 'conservative') {
+      return `As a conservative investor ${name}, focus on stable investments like bonds and dividend stocks to preserve capital.`;
+    } else if (riskProfile === 'moderate') {
+      return `With your moderate risk tolerance ${name}, a balanced portfolio of stocks and bonds could work well for you.`;
+    } else {
+      return `As an aggressive investor ${name}, you might consider growth stocks and alternative investments for higher potential returns.`;
+    }
+  };
+  
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Personalized Insights</h2>
-      
-      <div className="space-y-6">
-        {/* Savings Progress */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center">
-              <Wallet className="text-blue-500 mr-2" />
-              <h3 className="font-medium">Savings Progress</h3>
-            </div>
-            <span className="text-sm font-semibold">{Math.round(savingsProgress)}%</span>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-lg font-medium">
+          <div className="flex items-center gap-2">
+            <BrainCircuit className="h-5 w-5 text-purple-500" />
+            Personalized Insights
           </div>
-          <Progress value={savingsProgress} className="h-2" />
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div>
+          <h3 className="text-md font-medium mb-2">Savings Progress</h3>
+          <Progress value={savingsProgress} className="h-2" indicatorClassName="bg-green-500" />
           <p className="mt-2 text-sm text-gray-600">
-            {savingsProgress >= 100 
-              ? "Excellent! You're meeting or exceeding your savings goals."
-              : savingsProgress >= 70
-              ? "Good progress towards your saving target."
-              : "Consider increasing your monthly savings."}
+            {getPersonalizedInsight()}
           </p>
         </div>
         
-        {/* Spending Analysis */}
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center">
-              <CircleDollarSign className="text-red-500 mr-2" />
-              <h3 className="font-medium">Spending Analysis</h3>
+          <h3 className="text-md font-medium mb-2">Expense Analysis</h3>
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-red-500" />
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-red-500 h-2 rounded-full" 
+                style={{ width: `${Math.min(expensesRatio, 100)}%` }}
+              ></div>
             </div>
-            <span className={`text-sm font-semibold ${spendingColor}`}>{spendingStatus}</span>
           </div>
-          <Progress value={expensesRatio} className="h-2 bg-gray-100" indicatorClassName="bg-red-500" />
           <p className="mt-2 text-sm text-gray-600">
-            {isHighSpending
-              ? "Your expenses are high relative to your income. Consider budgeting."
-              : expensesRatio > 50
-              ? "Your spending is reasonable, but there's room for improvement."
-              : "Great job keeping your expenses low!"}
+            {getExpenseInsight()}
           </p>
         </div>
         
-        {/* Investment Opportunity */}
-        <div className="flex items-start">
-          <TrendingUp className="text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-          <div>
-            <h3 className="font-medium">Investment Opportunity</h3>
-            <p className="text-sm text-gray-600">
-              Based on your risk profile ({userProfile.riskProfile}), consider exploring {' '}
-              {userProfile.riskProfile === 'Conservative' 
-                ? 'bonds and high-yield savings' 
-                : userProfile.riskProfile === 'Moderate'
-                ? 'balanced mutual funds'
-                : 'growth stocks and ETFs'}.
-            </p>
-          </div>
+        <div>
+          <h3 className="text-md font-medium mb-2">Investment Strategy</h3>
+          <p className="text-sm text-gray-600">
+            {getRiskBasedAdvice()}
+          </p>
         </div>
-        
-        {/* Debt Management */}
-        {userProfile.hasDebts && (
-          <div className="flex items-start">
-            <Ban className="text-amber-500 mt-0.5 mr-2 flex-shrink-0" />
-            <div>
-              <h3 className="font-medium">Debt Management</h3>
-              <p className="text-sm text-gray-600">
-                Focus on paying down high-interest debt first while maintaining minimum payments on others.
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

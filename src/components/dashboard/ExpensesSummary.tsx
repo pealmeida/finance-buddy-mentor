@@ -27,7 +27,9 @@ const ExpensesSummary: React.FC<ExpensesSummaryProps> = ({
       if (!userProfile?.id) return;
       
       try {
-        const { fetchMonthlyExpenses } = await import('@/hooks/supabase/useMonthlyExpenses');
+        const { useGetMonthlyExpenses } = await import('@/hooks/supabase/useGetMonthlyExpenses');
+        const { fetchMonthlyExpenses } = useGetMonthlyExpenses();
+        
         const currentYear = new Date().getFullYear();
         const lastThreeMonths = [];
         

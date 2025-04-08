@@ -53,7 +53,9 @@ export const useMonthlyExpensesData = (
     
     const fetchData = async () => {
       try {
-        const { fetchMonthlyExpenses } = await import('@/hooks/supabase/useMonthlyExpenses');
+        const { useGetMonthlyExpenses } = await import('@/hooks/supabase/useGetMonthlyExpenses');
+        const { fetchMonthlyExpenses } = useGetMonthlyExpenses();
+        
         console.log(`Fetching monthly expenses for user ${profile.id} and year ${selectedYear}`);
         
         // Try to fetch data from Supabase
