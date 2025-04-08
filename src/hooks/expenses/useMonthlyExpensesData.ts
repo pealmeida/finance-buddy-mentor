@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { UserProfile } from '@/types/finance';
 import { useExpensesDataFetching } from './useExpensesDataFetching';
-import { convertToTypedExpensesData } from './utils/expensesDataUtils';
+import { convertToTypedExpensesData, convertExpensesDataToJson } from './utils/expensesDataUtils';
 import { Json } from '@/integrations/supabase/types';
 
 /**
