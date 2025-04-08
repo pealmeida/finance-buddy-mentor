@@ -14,7 +14,7 @@ export const useMonthlySavingsState = (
   onSave: (updatedProfile: UserProfile) => void,
   isSaving = false
 ) => {
-  const { savingsLoading } = useMonthlySavings();
+  const { loading } = useMonthlySavings();
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
   
@@ -74,7 +74,7 @@ export const useMonthlySavingsState = (
     savingsData,
     editingMonth,
     loadingData,
-    savingsLoading,
+    savingsLoading: loading,
     error,
     authChecked,
     handleSaveAmount,
