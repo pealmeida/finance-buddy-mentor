@@ -22,11 +22,10 @@ const MonthlySavingsChart: React.FC<MonthlySavingsChartProps> = ({
   data, 
   onSelectMonth 
 }) => {
-  // Transform data for the chart
   const chartData = data.map(item => ({
     name: MONTHS_SHORT[item.month - 1],
     month: item.month,
-    amount: typeof item.amount === 'number' ? item.amount : 0
+    amount: item.amount
   }));
   
   const handleBarClick = (data: any) => {

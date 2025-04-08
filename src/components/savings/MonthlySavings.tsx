@@ -1,16 +1,15 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
-import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
+import { useMonthlySavingsData } from '@/hooks/useMonthlySavingsData';
+import { MONTHS } from '@/constants/months';
 import { Button } from '@/components/ui/button';
 import { Loader2, RefreshCw, Save } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useToast } from '@/components/ui/use-toast';
 import YearSelector from './YearSelector';
-import MonthlySavingsContent from './MonthlySavingsContent';
+import MonthlySavingsChart from './MonthlySavingsChart';
 import MonthlySavingsForm from './MonthlySavingsForm';
-import { v4 as uuidv4 } from 'uuid';
-import { initializeEmptySavingsData, ensureCompleteSavingsData } from '@/hooks/supabase/utils/savingsUtils';
+import MonthlyCard from './MonthlyCard';
 
 interface MonthlySavingsProps {
   profile: UserProfile;
@@ -26,46 +25,15 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [editingMonth, setEditingMonth] = useState<number | null>(null);
-  const [savingsData, setSavingsData] = useState<MonthlyAmount[]>(initializeEmptySavingsData());
-  const { toast } = useToast();
   
   const {
-    loading,
+    savings,
+    isLoading,
     error,
-    fetchMonthlySavings,
-    saveMonthlySavings
-  } = useMonthlySavings();
-
-  // Fetch savings data when component mounts or year changes
-  useEffect(() => {
-    const loadSavingsData = async () => {
-      if (!profile?.id) return;
-      
-      try {
-        const savedData = await fetchMonthlySavings(profile.id, selectedYear);
-        
-        if (savedData && savedData.data) {
-          console.log("Setting savings data from fetch:", savedData.data);
-          // Ensure data is complete and in the right format
-          const completeData = ensureCompleteSavingsData(savedData.data);
-          setSavingsData(completeData);
-        } else {
-          console.log("No saved data found, initializing empty data");
-          setSavingsData(initializeEmptySavingsData());
-        }
-      } catch (err) {
-        console.error("Error loading savings data:", err);
-        toast({
-          title: "Error",
-          description: "Failed to load savings data. Please try refreshing.",
-          variant: "destructive"
-        });
-        setSavingsData(initializeEmptySavingsData());
-      }
-    };
-    
-    loadSavingsData();
-  }, [profile?.id, selectedYear, fetchMonthlySavings, toast]);
+    updateMonthAmount,
+    saveSavings,
+    fetchSavings
+  } = useMonthlySavingsData(profile?.id, selectedYear);
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
@@ -77,91 +45,22 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   };
 
   const handleSaveAmount = (month: number, amount: number) => {
-    setSavingsData(prev => 
-      prev.map(item => item.month === month ? { ...item, amount } : item)
-    );
+    updateMonthAmount(month, amount);
     setEditingMonth(null);
   };
 
   const handleSaveAll = async () => {
-    if (!profile?.id) {
-      toast({
-        title: "Cannot Save",
-        description: "User profile is not available",
-        variant: "destructive"
-      });
-      return;
-    }
+    const success = await saveSavings();
     
-    try {
-      const monthlySavingsId = profile.monthlySavings?.id || uuidv4();
-      
-      const success = await saveMonthlySavings({
-        id: monthlySavingsId,
-        userId: profile.id,
-        year: selectedYear,
-        data: savingsData
-      });
-      
-      if (success && onSave) {
-        onSave({
-          ...profile,
-          monthlySavings: {
-            id: monthlySavingsId,
-            userId: profile.id,
-            year: selectedYear,
-            data: savingsData
-          }
-        });
-        
-        toast({
-          title: "Savings Saved",
-          description: `Your savings data for ${selectedYear} has been saved successfully.`
-        });
-      } else if (!success) {
-        toast({
-          title: "Save Error",
-          description: "Failed to save your savings data. Please try again.",
-          variant: "destructive"
-        });
-      }
-    } catch (err) {
-      console.error("Error saving savings data:", err);
-      toast({
-        title: "Save Error",
-        description: "Could not save your savings data. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleRefresh = async () => {
-    if (!profile?.id) return;
-    
-    try {
-      const savedData = await fetchMonthlySavings(profile.id, selectedYear);
-      
-      if (savedData && savedData.data) {
-        const completeData = ensureCompleteSavingsData(savedData.data);
-        setSavingsData(completeData);
-        
-        toast({
-          title: "Data Refreshed",
-          description: "Your savings data has been refreshed successfully."
-        });
-      } else {
-        setSavingsData(initializeEmptySavingsData());
-        toast({
-          title: "No Data Found",
-          description: "No savings data was found for the selected year."
-        });
-      }
-    } catch (err) {
-      console.error("Error refreshing data:", err);
-      toast({
-        title: "Refresh Error",
-        description: "Failed to refresh savings data. Please try again.",
-        variant: "destructive"
+    if (success && onSave) {
+      onSave({
+        ...profile,
+        monthlySavings: {
+          id: profile.monthlySavings?.id || '',
+          userId: profile.id,
+          year: selectedYear,
+          data: savings
+        }
       });
     }
   };
@@ -190,12 +89,12 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
           <YearSelector
             selectedYear={selectedYear}
             onYearChange={handleYearChange}
-            disabled={loading || isSaving}
+            disabled={isLoading || isSaving}
           />
           
           <Button
             onClick={handleSaveAll}
-            disabled={loading || isSaving}
+            disabled={isLoading || isSaving}
             className="flex items-center gap-2"
           >
             {isSaving ? (
@@ -213,26 +112,55 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
           
           <Button
             variant="outline"
-            onClick={handleRefresh}
-            disabled={loading}
+            onClick={fetchSavings}
+            disabled={isLoading}
             className="flex items-center gap-2"
           >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            {loading ? 'Loading...' : 'Refresh'}
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            {isLoading ? 'Loading...' : 'Refresh'}
           </Button>
         </div>
       </div>
       
-      <MonthlySavingsContent
-        loadingData={loading}
-        savingsData={savingsData}
-        editingMonth={editingMonth}
-        onEditMonth={handleEditMonth}
-        onSaveAmount={handleSaveAmount}
-        onCancelEdit={() => setEditingMonth(null)}
-        onRefresh={handleRefresh}
-        error={error}
-      />
+      {error ? (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      ) : isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+          <span className="ml-2">Loading savings data...</span>
+        </div>
+      ) : (
+        <>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <MonthlySavingsChart 
+              data={savings} 
+              onSelectMonth={handleEditMonth} 
+            />
+          </div>
+          
+          {editingMonth !== null && (
+            <MonthlySavingsForm
+              month={editingMonth}
+              amount={savings.find(item => item.month === editingMonth)?.amount || 0}
+              onSave={handleSaveAmount}
+              onCancel={() => setEditingMonth(null)}
+            />
+          )}
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {savings.map(item => (
+              <MonthlyCard
+                key={item.month}
+                item={item}
+                monthName={MONTHS[item.month - 1]}
+                onEdit={handleEditMonth}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

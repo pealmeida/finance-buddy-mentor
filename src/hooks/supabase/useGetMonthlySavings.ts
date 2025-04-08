@@ -1,28 +1,31 @@
 
-import { useState, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { MonthlyAmount, MonthlySavings } from '@/types/finance';
-import { Json } from '@/integrations/supabase/types';
-import { convertToTypedSavingsData } from './utils/savingsUtils';
+import { useState } from 'react';
+import { useSupabaseBase } from './useSupabaseBase';
+import { MonthlySavings } from '@/types/finance';
 
-/**
- * Hook to fetch monthly savings data from Supabase
- */
 export function useGetMonthlySavings() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { supabase, loading: baseLoading, setLoading, handleError } = useSupabaseBase();
+  const [loading, setLocalLoading] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-
-  const fetchMonthlySavings = useCallback(async (
+  
+  /**
+   * Fetch monthly savings for a user and year
+   * @param userId User ID
+   * @param year Year to fetch data for
+   * @returns Monthly savings data or null if error
+   */
+  const fetchMonthlySavings = async (
     userId: string, 
     year: number,
     maxRetries = 2
   ): Promise<MonthlySavings | null> => {
     try {
+      setLocalLoading(true);
       setLoading(true);
+
       console.log(`Fetching monthly savings for user ${userId} and year ${year}`);
       
-      // First check the session is valid
+      // First check the session is valid before fetching data
       const { data: sessionData } = await supabase.auth.getSession();
       if (!sessionData.session) {
         console.log("No active session found, trying to refresh token...");
@@ -34,7 +37,7 @@ export function useGetMonthlySavings() {
         }
       }
       
-      // Fetch monthly savings data
+      // Fetch monthly savings for the given user and year
       const { data, error } = await supabase
         .from('monthly_savings')
         .select('*')
@@ -43,7 +46,7 @@ export function useGetMonthlySavings() {
         .maybeSingle();
 
       if (error) {
-        console.error("Error fetching monthly savings:", error);
+        console.error("Database error when fetching monthly savings:", error);
         
         // If it's a network error and we haven't exceeded max retries, try again
         if (error.message?.includes("Failed to fetch") && retryCount < maxRetries) {
@@ -55,7 +58,6 @@ export function useGetMonthlySavings() {
           return fetchMonthlySavings(userId, year, maxRetries);
         }
         
-        setError(error.message);
         throw error;
       }
 
@@ -70,41 +72,27 @@ export function useGetMonthlySavings() {
 
       console.log("Monthly savings data retrieved:", data);
       
-      // Transform data to the expected format
-      const monthlySavings: MonthlySavings = {
+      // Transform to the client-side format with safer type handling
+      return {
         id: data.id,
         userId: data.user_id,
         year: data.year,
-        data: convertToTypedSavingsData(data.data)
+        // Parse JSON data if it's a string, otherwise use as is
+        data: typeof data.data === 'string' 
+          ? JSON.parse(data.data) 
+          : data.data
       };
-      
-      console.log("Transformed monthly savings:", monthlySavings);
-      return monthlySavings;
     } catch (err) {
-      console.error("Error in fetchMonthlySavings:", err);
-      setError(err instanceof Error ? err.message : "An unknown error occurred");
+      handleError(err, "Error fetching monthly savings");
       return null;
     } finally {
       setLoading(false);
+      setLocalLoading(false);
     }
-  }, [retryCount]);
-
-  // Calculate average savings from monthly data
-  const calculateAverageSavings = useCallback((monthlyData: MonthlyAmount[]) => {
-    if (!monthlyData || monthlyData.length === 0) return 0;
-    
-    const total = monthlyData.reduce((sum, item) => {
-      const amount = typeof item.amount === 'number' ? item.amount : 0;
-      return sum + amount;
-    }, 0);
-    
-    return total / monthlyData.length;
-  }, []);
-
+  };
+  
   return {
-    loading,
-    error,
-    fetchMonthlySavings,
-    calculateAverageSavings
+    loading: baseLoading || loading,
+    fetchMonthlySavings
   };
 }
