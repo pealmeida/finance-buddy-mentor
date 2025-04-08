@@ -80,11 +80,11 @@ const ExpensesSummary: React.FC<ExpensesSummaryProps> = ({
   // Get status and color based on expenses ratio
   const getStatusInfo = () => {
     if (expensesRatio > 70) {
-      return { label: 'High', color: 'destructive' };
+      return { label: 'High', color: 'destructive' as const };
     } else if (expensesRatio > 50) {
-      return { label: 'Moderate', color: 'warning' };
+      return { label: 'Moderate', color: 'secondary' as const };
     } else {
-      return { label: 'Low', color: 'success' };
+      return { label: 'Low', color: 'outline' as const };
     }
   };
   
@@ -99,7 +99,7 @@ const ExpensesSummary: React.FC<ExpensesSummaryProps> = ({
             Recent Expenses
           </div>
         </CardTitle>
-        <Badge variant={status.color as "default" | "secondary" | "destructive" | "outline" | "success" | "warning"}>
+        <Badge variant={status.color}>
           {status.label} Spending
         </Badge>
       </CardHeader>
