@@ -58,7 +58,10 @@ export const useExpensesSaveHandler = (
       console.log("About to save monthly expenses:", updatedExpenses);
       
       // Save to Supabase
-      const success = await saveMonthlyExpenses(updatedExpenses);
+      const success = await saveMonthlyExpenses({
+        ...updatedExpenses,
+        data: jsonData
+      });
       
       if (success) {
         console.log("Monthly expenses saved successfully");
