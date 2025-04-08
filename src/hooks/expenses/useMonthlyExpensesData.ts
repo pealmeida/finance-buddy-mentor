@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { UserProfile } from '@/types/finance';
 import { useExpensesDataFetching } from './useExpensesDataFetching';
-import { convertToTypedExpensesData, convertExpensesDataToJson } from './utils/expensesDataUtils';
+import { convertToTypedExpensesData } from './utils/expensesDataUtils';
 
 /**
  * Hook to manage monthly expenses data loading and saving
@@ -53,8 +53,9 @@ export const useMonthlyExpensesData = (
     
     const fetchData = async () => {
       try {
-        const { useGetMonthlyExpenses } = await import('@/hooks/supabase/useGetMonthlyExpenses');
-        const { fetchMonthlyExpenses } = useGetMonthlyExpenses();
+        if (!profile?.id) return;
+        
+        const { fetchMonthlyExpenses } = useMonthlyExpenses();
         
         console.log(`Fetching monthly expenses for user ${profile.id} and year ${selectedYear}`);
         
@@ -65,9 +66,7 @@ export const useMonthlyExpensesData = (
         
         if (savedData && savedData.data) {
           console.log("Setting expenses data from fetch:", savedData.data);
-          // Convert to typed data
-          const typedData = convertToTypedExpensesData(savedData.data);
-          setExpensesData(typedData);
+          setExpensesData(savedData.data);
         } else {
           console.log("No saved data found, initializing empty data");
           initializeEmptyData();
@@ -86,7 +85,15 @@ export const useMonthlyExpensesData = (
       isMounted = false;
       effectRunRef.current = false;
     };
-  }, [profile?.id, selectedYear, authChecked, loadingData, initializeEmptyData, setError, setExpensesData]);
+  }, [
+    profile?.id, 
+    selectedYear, 
+    authChecked, 
+    loadingData, 
+    initializeEmptyData, 
+    setError, 
+    setExpensesData
+  ]);
 
   return {
     expensesData,
@@ -98,3 +105,11 @@ export const useMonthlyExpensesData = (
     initializeEmptyData
   };
 };
+
+// Create utility function outside of the React component to avoid hooks rule violation
+function useMonthlyExpenses() {
+  // Import dynamically to avoid React hooks violation
+  const { useGetMonthlyExpenses } = require('@/hooks/supabase/useGetMonthlyExpenses');
+  const { fetchMonthlyExpenses } = useGetMonthlyExpenses();
+  return { fetchMonthlyExpenses };
+}

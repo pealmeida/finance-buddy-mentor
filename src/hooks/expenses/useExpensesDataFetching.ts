@@ -74,7 +74,7 @@ export const useExpensesDataFetching = ({
       
       if (savedData && savedData.data) {
         // Convert data to proper MonthlyAmount type
-        const typedData = convertToTypedExpensesData(savedData.data);
+        const typedData = savedData.data;
         setExpensesData(typedData);
         
         toast({

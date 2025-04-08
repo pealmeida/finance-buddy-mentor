@@ -52,6 +52,10 @@ export const useSaveMonthlyExpenses = () => {
       }
       
       console.log("Monthly expenses saved successfully:", data);
+      toast({
+        title: 'Success',
+        description: 'Monthly expenses saved successfully',
+      });
       return true;
     } catch (err) {
       console.error("Unexpected error saving monthly expenses:", err);
