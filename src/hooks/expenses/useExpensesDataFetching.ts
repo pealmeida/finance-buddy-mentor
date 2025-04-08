@@ -1,8 +1,8 @@
-
 import { useState, useCallback, useRef } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { useToast } from '@/components/ui/use-toast';
+import { Json } from '@/integrations/supabase/types';
 import { 
   convertToTypedExpensesData, 
   initializeEmptyExpensesData,

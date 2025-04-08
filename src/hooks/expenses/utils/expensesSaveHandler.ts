@@ -5,6 +5,7 @@ import { UserProfile, MonthlyAmount, MonthlyExpenses } from '@/types/finance';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { toast } from "@/components/ui/use-toast";
 import { convertExpensesDataToJson } from './expensesDataUtils';
+import { Json } from '@/integrations/supabase/types';
 
 /**
  * Hook to handle saving expenses data
