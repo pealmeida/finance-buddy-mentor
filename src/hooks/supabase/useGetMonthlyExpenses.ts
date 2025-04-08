@@ -1,62 +1,74 @@
 
-import { useState } from 'react';
-import { useSupabaseBase } from './useSupabaseBase';
-import { MonthlyAmount } from '@/types/finance';
-import { MONTHS } from '@/constants/months';
-import { Json } from '@/integrations/supabase/types';
-import { supabaseWrapper } from './utils/supabaseWrapper';
+import { useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { MonthlyExpenses } from '@/types/finance';
 
-export function useGetMonthlyExpenses() {
-  const { loading: baseLoading, setLoading, handleError } = useSupabaseBase();
-  const [loading, setLocalLoading] = useState(false);
-  
-  /**
-   * Fetch monthly expenses data for a specific user and year
-   */
-  const fetchMonthlyExpenses = async (userId: string, year: number) => {
+/**
+ * Hook to fetch monthly expenses data from Supabase
+ */
+export const useGetMonthlyExpenses = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchMonthlyExpenses = useCallback(async (userId: string, year: number) => {
     try {
-      setLocalLoading(true);
       setLoading(true);
+      console.log(`Fetching expenses for user ${userId} and year ${year}`);
       
-      console.log(`Fetching monthly expenses for user ${userId} and year ${year}`);
+      const { data, error } = await supabase
+        .from('monthly_expenses')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('year', year)
+        .maybeSingle();
       
-      const { data, error } = await supabaseWrapper.monthlyExpenses.getByUserAndYear(userId, year);
-      
-      if (error) throw error;
-      
-      if (data) {
-        return {
-          id: data.id,
-          userId: data.user_id,
-          year: data.year,
-          data: Array.isArray(data.data) ? data.data.map((item: any) => ({
-            month: typeof item.month === 'number' ? item.month : parseInt(item.month),
-            amount: typeof item.amount === 'number' ? item.amount : parseFloat(item.amount)
-          })) as MonthlyAmount[] : []
-        };
+      if (error) {
+        console.error("Error fetching monthly expenses:", error);
+        setError(error.message);
+        return null;
       }
       
-      // Return empty data structure if no data found
-      return {
-        id: '',
-        userId,
-        year,
-        data: MONTHS.map((_, index) => ({
-          month: index + 1,
-          amount: 0
-        }))
+      if (!data) {
+        console.log("No monthly expenses found for this user and year");
+        return null;
+      }
+      
+      console.log("Monthly expenses fetched successfully:", data);
+      
+      // Transform the data into a MonthlyExpenses object
+      const monthlyExpenses: MonthlyExpenses = {
+        id: data.id,
+        userId: data.user_id,
+        year: data.year,
+        data: Array.isArray(data.data) ? data.data : []
       };
+      
+      return monthlyExpenses;
     } catch (err) {
-      handleError(err, "Error fetching monthly expenses");
+      console.error("Unexpected error fetching monthly expenses:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
       return null;
     } finally {
       setLoading(false);
-      setLocalLoading(false);
     }
-  };
-  
+  }, []);
+
+  // Calculate average expenses from monthly data
+  const calculateAverageExpenses = useCallback((monthlyData: any[]) => {
+    if (!monthlyData || monthlyData.length === 0) return 0;
+    
+    const total = monthlyData.reduce((sum, item) => {
+      const amount = typeof item.amount === 'number' ? item.amount : 0;
+      return sum + amount;
+    }, 0);
+    
+    return total / monthlyData.length;
+  }, []);
+
   return {
-    loading: baseLoading || loading,
-    fetchMonthlyExpenses
+    fetchMonthlyExpenses,
+    calculateAverageExpenses,
+    loading,
+    error
   };
-}
+};

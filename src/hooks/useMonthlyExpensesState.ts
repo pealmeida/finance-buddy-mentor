@@ -1,32 +1,31 @@
 
 import { useState, useCallback } from 'react';
-import { UserProfile } from '@/types/finance';
+import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useAuthCheck } from './expenses/useAuthCheck';
 import { useMonthlyExpensesData } from './expenses/useMonthlyExpensesData';
 import { useMonthlyExpensesHandlers } from './expenses/useMonthlyExpensesHandlers';
-import { useMonthlyExpenses } from './supabase/useMonthlyExpenses';
 
 /**
- * Main hook for managing monthly expenses state, composed of smaller, focused hooks
+ * Main hook for the Monthly Expenses feature
+ * This hook combines all the other hooks to provide a single interface
  */
 export const useMonthlyExpensesState = (
   profile: UserProfile,
   onSave: (updatedProfile: UserProfile) => void,
-  isSaving = false
+  isSaving: boolean = false
 ) => {
-  const { expensesLoading } = useMonthlyExpenses();
-  const currentYear = new Date().getFullYear();
-  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [expensesLoading, setExpensesLoading] = useState(false);
   
-  // Authentication checking
-  const { 
-    authChecked, 
-    error: authError, 
+  // Authentication check
+  const {
+    authChecked,
+    error: authError,
     checkAndRefreshAuth,
     setError
   } = useAuthCheck(profile?.id);
   
-  // Data management
+  // Fetch and manage expenses data
   const {
     expensesData,
     loadingData,
@@ -36,14 +35,17 @@ export const useMonthlyExpensesState = (
     setError: setDataError,
     initializeEmptyData
   } = useMonthlyExpensesData(
-    profile, 
+    profile,
     selectedYear,
     authChecked,
     checkAndRefreshAuth,
     onSave
   );
   
-  // Event handlers
+  // Combine errors from auth and data fetching
+  const error = authError || dataError;
+  
+  // UI handlers
   const {
     editingMonth,
     handleSaveAmount,
@@ -58,17 +60,12 @@ export const useMonthlyExpensesState = (
     checkAndRefreshAuth,
     onSave
   );
-
-  // Year change handler
+  
+  // Handle year change
   const handleYearChange = useCallback((year: number) => {
     setSelectedYear(year);
-    setEditingMonth(null);
-    // The data fetching will be triggered by the useEffect in useMonthlyExpensesData
-  }, [setEditingMonth]);
+  }, []);
   
-  // Combine errors from auth and data fetching
-  const error = authError || dataError;
-
   return {
     selectedYear,
     expensesData,

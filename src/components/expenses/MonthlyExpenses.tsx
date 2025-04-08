@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
-import { UserProfile, MonthlyAmount } from '@/types/finance';
+import React from 'react';
+import { UserProfile } from '@/types/finance';
 import { useMonthlyExpensesState } from '@/hooks/useMonthlyExpensesState';
-import { MONTHS } from '@/constants/months';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import MonthlyExpensesHeader from './MonthlyExpensesHeader';
