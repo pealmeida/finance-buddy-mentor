@@ -30,6 +30,10 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
   onRefresh,
   error
 }) => {
+  // Log data for debugging
+  console.log("MonthlySavingsContent received data:", savingsData);
+  console.log("Loading state:", loadingData);
+  
   if (loadingData) {
     return (
       <div className="p-8 bg-white rounded-lg shadow-md flex justify-center items-center h-64">
@@ -65,7 +69,7 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
     );
   }
   
-  // Make sure savingsData exists and has items
+  // Validate that savingsData exists and has items
   if (!Array.isArray(savingsData) || savingsData.length === 0) {
     return (
       <div className="p-8 bg-white rounded-lg shadow-md flex flex-col justify-center items-center h-64 space-y-4">
