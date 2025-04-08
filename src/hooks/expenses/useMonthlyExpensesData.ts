@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useExpensesDataFetching } from './useExpensesDataFetching';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
-import { convertToTypedExpensesData, convertExpensesDataToJson } from './utils/expensesDataUtils';
+import { convertToTypedExpensesData } from './utils/expensesDataUtils';
 
 /**
  * Hook to manage monthly expenses data loading and saving
@@ -68,6 +68,7 @@ export const useMonthlyExpensesData = (
           console.log("Setting expenses data from fetch:", savedData.data);
           // Convert to typed data
           const typedData = convertToTypedExpensesData(savedData.data);
+          console.log("Converted to typed data:", typedData);
           setExpensesData(typedData);
         } else {
           console.log("No saved data found, initializing empty data");

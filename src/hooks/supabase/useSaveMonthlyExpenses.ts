@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Json } from '@/integrations/supabase/types';
+import { MonthlyAmount } from '@/types/finance';
 import { toast } from '@/components/ui/use-toast';
 import { convertExpensesDataToJson } from '@/hooks/expenses/utils/expensesDataUtils';
 
@@ -16,7 +16,7 @@ export const useSaveMonthlyExpenses = () => {
     id: string;
     userId: string;
     year: number;
-    data: any;
+    data: MonthlyAmount[];
   }): Promise<boolean> => {
     try {
       setLoading(true);

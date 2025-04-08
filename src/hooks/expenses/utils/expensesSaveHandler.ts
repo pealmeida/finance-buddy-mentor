@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { UserProfile, MonthlyAmount, MonthlyExpenses } from '@/types/finance';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { toast } from "@/components/ui/use-toast";
-import { convertExpensesDataToJson } from './expensesDataUtils';
 
 /**
  * Hook to handle saving expenses data
@@ -60,7 +59,7 @@ export const useExpensesSaveHandler = (
         id: updatedExpenses.id,
         userId: updatedExpenses.userId,
         year: updatedExpenses.year,
-        data: expensesData // The saveMonthlyExpenses hook will handle the JSON conversion
+        data: expensesData
       });
       
       if (success) {

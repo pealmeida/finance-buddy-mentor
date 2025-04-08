@@ -44,7 +44,9 @@ export const useExpensesDataFetching = ({
 
   // Initialize empty data for all months
   const initializeEmptyData = useCallback(() => {
-    setExpensesData(initializeEmptyExpensesData());
+    const emptyData = initializeEmptyExpensesData();
+    console.log("Initializing empty data:", emptyData);
+    setExpensesData(emptyData);
   }, []);
 
   // Manual refresh function that can be called by user action
@@ -80,6 +82,7 @@ export const useExpensesDataFetching = ({
       if (savedData && savedData.data) {
         // Convert data to proper MonthlyAmount type
         const typedData = convertToTypedExpensesData(savedData.data);
+        console.log("Converted to typed data:", typedData);
         setExpensesData(typedData);
         
         toast({
