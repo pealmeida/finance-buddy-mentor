@@ -7,6 +7,7 @@ import FinancialOverview from './dashboard/FinancialOverview';
 import FinancialGoals from './dashboard/FinancialGoals';
 import PersonalizedInsights from './dashboard/PersonalizedInsights';
 import MarketTrends from './dashboard/MarketTrends';
+import ExpensesSummary from './dashboard/ExpensesSummary';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 
@@ -90,6 +91,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userProfile }) => {
         <div className="w-full md:w-3/5 space-y-8">
           <FinancialOverview userProfile={userProfile} />
           <FinancialGoals userProfile={userProfile} />
+          <ExpensesSummary userProfile={userProfile} expensesRatio={expensesRatio} />
         </div>
         
         <div className="w-full md:w-2/5 space-y-8">

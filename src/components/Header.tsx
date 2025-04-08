@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Menu, X, User, LogOut, LineChart, Target, PiggyBank, BarChart3 } from 'lucide-react';
+import { Menu, X, User, LogOut, LineChart, Target, PiggyBank, BarChart3, Wallet } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 
@@ -34,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
     { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
     { name: 'Goals', href: '/goals', icon: Target },
     { name: 'Monthly Savings', href: '/monthly-savings', icon: PiggyBank },
+    { name: 'Monthly Expenses', href: '/monthly-expenses', icon: Wallet },
     { name: 'Investments', href: '/investments', icon: LineChart },
     { name: 'Profile', href: '/profile', icon: User },
   ];

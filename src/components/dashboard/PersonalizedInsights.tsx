@@ -1,16 +1,13 @@
 
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { LineChart, PiggyBank, Target, ArrowUpRight, Info } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from 'react';
 import { UserProfile } from '@/types/finance';
-import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
-import { useToast } from '@/components/ui/use-toast';
+import { CircleDollarSign, Wallet, TrendingUp, Ban } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
 
 interface PersonalizedInsightsProps {
   userProfile: UserProfile;
   savingsProgress: number;
-  expensesRatio: number; // Added this prop
+  expensesRatio: number;
 }
 
 const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({ 
@@ -18,123 +15,82 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
   savingsProgress,
   expensesRatio
 }) => {
-  const { fetchMonthlySavings, calculateAverageSavings } = useMonthlySavings();
-  const { toast } = useToast();
-  const [averageSavingsPercent, setAverageSavingsPercent] = useState<number>(15); // Default 15%
-  
-  useEffect(() => {
-    const loadActualSavingsPercent = async () => {
-      if (!userProfile.id || userProfile.monthlyIncome <= 0) return;
-      
-      try {
-        const currentYear = new Date().getFullYear();
-        const savingsData = await fetchMonthlySavings(userProfile.id, currentYear);
-        
-        if (savingsData) {
-          const avgSavings = calculateAverageSavings(savingsData.data);
-          const savingsPercent = (avgSavings / userProfile.monthlyIncome) * 100;
-          setAverageSavingsPercent(Math.round(savingsPercent));
-        }
-      } catch (error) {
-        console.error("Error calculating actual savings percent:", error);
-      }
-    };
-    
-    loadActualSavingsPercent();
-  }, [userProfile.id, userProfile.monthlyIncome]);
+  // Calculate spending insights
+  const isHighSpending = expensesRatio > 70;
+  const spendingStatus = isHighSpending ? 'High' : expensesRatio > 50 ? 'Moderate' : 'Low';
+  const spendingColor = isHighSpending ? 'text-red-500' : expensesRatio > 50 ? 'text-amber-500' : 'text-green-500';
 
   return (
-    <div className="glass-panel rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Personalized Insights</h2>
-      </div>
+    <div className="bg-white p-6 rounded-xl shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Personalized Insights</h2>
       
-      <div className="space-y-4">
-        <div className="rounded-xl border p-4 hover:bg-gray-50 transition-all duration-300">
-          <div className="flex items-center space-x-3 mb-2">
-            <LineChart className="h-5 w-5 text-finance-blue" />
-            <h3 className="font-medium">Investment Distribution</h3>
+      <div className="space-y-6">
+        {/* Savings Progress */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center">
+              <Wallet className="text-blue-500 mr-2" />
+              <h3 className="font-medium">Savings Progress</h3>
+            </div>
+            <span className="text-sm font-semibold">{Math.round(savingsProgress)}%</span>
           </div>
-          <p className="text-sm text-gray-600 mb-3">
-            Your investment mix is {userProfile.riskProfile}. This aligns with your risk profile.
+          <Progress value={savingsProgress} className="h-2" />
+          <p className="mt-2 text-sm text-gray-600">
+            {savingsProgress >= 100 
+              ? "Excellent! You're meeting or exceeding your savings goals."
+              : savingsProgress >= 70
+              ? "Good progress towards your saving target."
+              : "Consider increasing your monthly savings."}
           </p>
-          <div className="flex items-center">
-            <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-              {userProfile.investments.length > 0 ? (
-                <div className="flex h-full">
-                  <div className="bg-finance-blue h-full" style={{width: '40%'}}></div>
-                  <div className="bg-finance-green h-full" style={{width: '25%'}}></div>
-                  <div className="bg-finance-purple h-full" style={{width: '20%'}}></div>
-                  <div className="bg-yellow-400 h-full" style={{width: '15%'}}></div>
-                </div>
-              ) : (
-                <div className="bg-gray-300 h-full w-full"></div>
-              )}
+        </div>
+        
+        {/* Spending Analysis */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center">
+              <CircleDollarSign className="text-red-500 mr-2" />
+              <h3 className="font-medium">Spending Analysis</h3>
+            </div>
+            <span className={`text-sm font-semibold ${spendingColor}`}>{spendingStatus}</span>
+          </div>
+          <Progress value={expensesRatio} className="h-2 bg-gray-100" indicatorClassName="bg-red-500" />
+          <p className="mt-2 text-sm text-gray-600">
+            {isHighSpending
+              ? "Your expenses are high relative to your income. Consider budgeting."
+              : expensesRatio > 50
+              ? "Your spending is reasonable, but there's room for improvement."
+              : "Great job keeping your expenses low!"}
+          </p>
+        </div>
+        
+        {/* Investment Opportunity */}
+        <div className="flex items-start">
+          <TrendingUp className="text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+          <div>
+            <h3 className="font-medium">Investment Opportunity</h3>
+            <p className="text-sm text-gray-600">
+              Based on your risk profile ({userProfile.riskProfile}), consider exploring {' '}
+              {userProfile.riskProfile === 'Conservative' 
+                ? 'bonds and high-yield savings' 
+                : userProfile.riskProfile === 'Moderate'
+                ? 'balanced mutual funds'
+                : 'growth stocks and ETFs'}.
+            </p>
+          </div>
+        </div>
+        
+        {/* Debt Management */}
+        {userProfile.hasDebts && (
+          <div className="flex items-start">
+            <Ban className="text-amber-500 mt-0.5 mr-2 flex-shrink-0" />
+            <div>
+              <h3 className="font-medium">Debt Management</h3>
+              <p className="text-sm text-gray-600">
+                Focus on paying down high-interest debt first while maintaining minimum payments on others.
+              </p>
             </div>
           </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
-            <span>Stocks</span>
-            <span>Bonds</span>
-            <span>Real Estate</span>
-            <span>Cash</span>
-          </div>
-        </div>
-        
-        <div className="rounded-xl border p-4 hover:bg-gray-50 transition-all duration-300">
-          <div className="flex items-center space-x-3 mb-2">
-            <PiggyBank className="h-5 w-5 text-finance-green" />
-            <h3 className="font-medium">Savings Rate</h3>
-          </div>
-          <p className="text-sm text-gray-600 mb-1">
-            You're saving approximately <span className="font-medium">{averageSavingsPercent}%</span> of your income.
-          </p>
-          <p className="text-sm text-gray-600">
-            {savingsProgress < 90 ? 
-              "Increasing to 20% can significantly improve your long-term financial security." : 
-              "Great job! You're meeting the recommended savings rate."}
-          </p>
-          <Link to="/savings">
-            <Button 
-              variant="link" 
-              className="text-finance-blue p-0 mt-2 text-sm flex items-center gap-1 hover:underline"
-            >
-              Improve Savings <ArrowUpRight className="h-3 w-3" />
-            </Button>
-          </Link>
-        </div>
-        
-        <div className="rounded-xl border p-4 hover:bg-gray-50 transition-all duration-300">
-          <div className="flex items-center space-x-3 mb-2">
-            <Target className="h-5 w-5 text-finance-purple" />
-            <h3 className="font-medium">Next Steps</h3>
-          </div>
-          <ul className="text-sm text-gray-600 space-y-2">
-            {!userProfile.hasEmergencyFund && (
-              <li className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-finance-blue"></div>
-                Build emergency fund (3-6 months of expenses)
-              </li>
-            )}
-            {userProfile.hasDebts && (
-              <li className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-finance-blue"></div>
-                Pay off high-interest debt
-              </li>
-            )}
-            {averageSavingsPercent < 20 && (
-              <li className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-finance-blue"></div>
-                Increase monthly savings to 20% of income
-              </li>
-            )}
-            <li className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-finance-blue"></div>
-              {userProfile.investments.length === 0 ? 
-                "Start building an investment portfolio" : 
-                "Diversify investment portfolio"}
-            </li>
-          </ul>
-        </div>
+        )}
       </div>
     </div>
   );
