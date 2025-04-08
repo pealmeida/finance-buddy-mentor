@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useSupabaseBase } from './useSupabaseBase';
 import { useToast } from '@/components/ui/use-toast';
+import { Json } from '@/integrations/supabase/types';
 
 interface DocumentEmbedding {
   id: string;
@@ -36,12 +37,12 @@ export function useDocumentEmbeddings() {
       
       console.log(`Storing document for user ${userId}`);
       
-      // Using raw query approach to avoid TypeScript issues
+      // Convert embedding array to string for storage
       const { error } = await supabase
         .from('document_embeddings')
         .insert({
           content,
-          embedding,
+          embedding: JSON.stringify(embedding),
           metadata,
           user_id: userId
         });
@@ -81,7 +82,7 @@ export function useDocumentEmbeddings() {
         .from('document_embeddings')
         .update({
           content,
-          embedding,
+          embedding: JSON.stringify(embedding),
           metadata,
           updated_at: new Date().toISOString()
         })
@@ -150,7 +151,7 @@ export function useDocumentEmbeddings() {
       
       const { data, error } = await supabase
         .rpc('match_documents', {
-          query_embedding: queryEmbedding,
+          query_embedding: JSON.stringify(queryEmbedding),
           match_threshold: options.threshold,
           match_count: options.limit,
           user_id: userId
@@ -158,7 +159,13 @@ export function useDocumentEmbeddings() {
       
       if (error) throw error;
       
-      return data || [];
+      // Convert Json to Record<string, any>
+      return (data || []).map(item => ({
+        id: item.id,
+        content: item.content,
+        metadata: item.metadata as Record<string, any>,
+        similarity: item.similarity
+      }));
     } catch (err) {
       handleError(err, "Error searching documents");
       return [];
@@ -189,7 +196,7 @@ export function useDocumentEmbeddings() {
       return data.map((doc: any) => ({
         id: doc.id,
         content: doc.content,
-        metadata: doc.metadata,
+        metadata: doc.metadata as Record<string, any>,
         userId: doc.user_id
       }));
     } catch (err) {
