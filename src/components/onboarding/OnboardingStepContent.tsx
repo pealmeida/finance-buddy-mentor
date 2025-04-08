@@ -5,6 +5,7 @@ import RiskProfileStep from './RiskProfileStep';
 import FinancialGoalsStep from './FinancialGoalsStep';
 import InvestmentsStep from './InvestmentsStep';
 import MonthlySavingsStep from './MonthlySavingsStep';
+import MonthlyExpensesStep from './MonthlyExpensesStep';
 import ReviewStep from './ReviewStep';
 
 interface OnboardingStepContentProps {
@@ -18,8 +19,9 @@ const OnboardingStepContent: React.FC<OnboardingStepContentProps> = ({ currentSt
       {currentStep === 2 && <RiskProfileStep />}
       {currentStep === 3 && <FinancialGoalsStep />}
       {currentStep === 4 && <InvestmentsStep />}
-      {currentStep === 5 && <MonthlySavingsStep />}
-      {currentStep === 6 && <ReviewStep />}
+      {currentStep === 5 && <MonthlyExpensesStep />}
+      {currentStep === 6 && <MonthlySavingsStep />}
+      {currentStep === 7 && <ReviewStep />}
     </div>
   );
 };

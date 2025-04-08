@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Json } from '@/integrations/supabase/types';
 import { toast } from '@/components/ui/use-toast';
+import { convertExpensesDataToJson } from '@/hooks/expenses/utils/expensesDataUtils';
 
 /**
  * Hook to save monthly expenses data to Supabase
@@ -15,7 +16,7 @@ export const useSaveMonthlyExpenses = () => {
     id: string;
     userId: string;
     year: number;
-    data: Json;
+    data: any;
   }): Promise<boolean> => {
     try {
       setLoading(true);
@@ -26,12 +27,15 @@ export const useSaveMonthlyExpenses = () => {
       
       console.log("Saving monthly expenses:", expenses);
       
+      // Convert array data to Json type for Supabase
+      const jsonData = convertExpensesDataToJson(expenses.data);
+      
       // Format the data correctly for Supabase
       const formattedData = {
         id: expenses.id,
         user_id: expenses.userId,
         year: expenses.year,
-        data: expenses.data
+        data: jsonData
       };
       
       const { data, error } = await supabase

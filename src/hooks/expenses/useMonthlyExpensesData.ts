@@ -1,7 +1,8 @@
 
 import { useEffect, useRef } from 'react';
-import { UserProfile } from '@/types/finance';
+import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useExpensesDataFetching } from './useExpensesDataFetching';
+import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { convertToTypedExpensesData } from './utils/expensesDataUtils';
 
 /**
@@ -15,6 +16,7 @@ export const useMonthlyExpensesData = (
   onSave: (updatedProfile: UserProfile) => void
 ) => {
   const effectRunRef = useRef<boolean>(false);
+  const { fetchMonthlyExpenses } = useMonthlyExpenses();
   
   const {
     expensesData,
@@ -55,8 +57,6 @@ export const useMonthlyExpensesData = (
       try {
         if (!profile?.id) return;
         
-        const { fetchMonthlyExpenses } = useMonthlyExpenses();
-        
         console.log(`Fetching monthly expenses for user ${profile.id} and year ${selectedYear}`);
         
         // Try to fetch data from Supabase
@@ -66,7 +66,9 @@ export const useMonthlyExpensesData = (
         
         if (savedData && savedData.data) {
           console.log("Setting expenses data from fetch:", savedData.data);
-          setExpensesData(savedData.data);
+          // Convert to typed data
+          const typedData = convertToTypedExpensesData(savedData.data);
+          setExpensesData(typedData);
         } else {
           console.log("No saved data found, initializing empty data");
           initializeEmptyData();
@@ -92,7 +94,8 @@ export const useMonthlyExpensesData = (
     loadingData, 
     initializeEmptyData, 
     setError, 
-    setExpensesData
+    setExpensesData,
+    fetchMonthlyExpenses
   ]);
 
   return {
@@ -105,11 +108,3 @@ export const useMonthlyExpensesData = (
     initializeEmptyData
   };
 };
-
-// Create utility function outside of the React component to avoid hooks rule violation
-function useMonthlyExpenses() {
-  // Import dynamically to avoid React hooks violation
-  const { useGetMonthlyExpenses } = require('@/hooks/supabase/useGetMonthlyExpenses');
-  const { fetchMonthlyExpenses } = useGetMonthlyExpenses();
-  return { fetchMonthlyExpenses };
-}

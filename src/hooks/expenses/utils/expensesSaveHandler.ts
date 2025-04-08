@@ -55,15 +55,12 @@ export const useExpensesSaveHandler = (
 
       console.log("About to save monthly expenses:", updatedExpenses);
       
-      // Convert expenses data to JSON for Supabase
-      const jsonData = convertExpensesDataToJson(expensesData);
-      
       // Save to Supabase with properly converted data
       const success = await saveMonthlyExpenses({
         id: updatedExpenses.id,
         userId: updatedExpenses.userId,
         year: updatedExpenses.year,
-        data: jsonData
+        data: expensesData // The hook will handle the conversion internally
       });
       
       if (success) {
