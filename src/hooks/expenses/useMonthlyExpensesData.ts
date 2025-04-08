@@ -1,8 +1,10 @@
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useExpensesDataFetching } from './useExpensesDataFetching';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
+import { toast } from '@/components/ui/use-toast';
+import { ensureCompleteExpensesData } from './utils/expensesDataUtils';
 
 /**
  * Hook to manage monthly expenses data loading and saving
@@ -16,6 +18,7 @@ export const useMonthlyExpensesData = (
 ) => {
   const effectRunRef = useRef<boolean>(false);
   const { fetchMonthlyExpenses } = useMonthlyExpenses();
+  const [initialFetchAttempted, setInitialFetchAttempted] = useState<boolean>(false);
   
   const {
     expensesData,
@@ -44,13 +47,13 @@ export const useMonthlyExpensesData = (
       return;
     }
 
-    // Skip if this effect has already run for the current selection
-    if (effectRunRef.current) {
+    // Use a different mechanism for checking if we've fetched data
+    if (initialFetchAttempted) {
       return;
     }
 
-    // Mark this effect as having run
-    effectRunRef.current = true;
+    // Mark that we've attempted a fetch to prevent duplicate fetches
+    setInitialFetchAttempted(true);
     
     const fetchData = async () => {
       try {
@@ -65,11 +68,22 @@ export const useMonthlyExpensesData = (
         
         if (savedData && savedData.data) {
           console.log("Setting expenses data from fetch:", savedData.data);
-          // The data is already properly typed from fetchMonthlyExpenses
-          setExpensesData(savedData.data);
+          // Ensure data is complete and in the right order
+          const completeData = ensureCompleteExpensesData(savedData.data);
+          setExpensesData(completeData);
+          
+          toast({
+            title: "Expenses Data Loaded",
+            description: "Your monthly expenses have been loaded successfully."
+          });
         } else {
           console.log("No saved data found, initializing empty data");
           initializeEmptyData();
+          
+          toast({
+            title: "No Data Found",
+            description: "No expenses data found for this year. Starting with empty data."
+          });
         }
       } catch (err) {
         if (!isMounted) return;
@@ -77,6 +91,12 @@ export const useMonthlyExpensesData = (
         setError(err instanceof Error ? err.message : "An unknown error occurred");
         // Initialize with empty data even on error
         initializeEmptyData();
+        
+        toast({
+          title: "Error Loading Data",
+          description: "There was a problem loading your expenses data.",
+          variant: "destructive"
+        });
       }
     };
     
@@ -84,7 +104,6 @@ export const useMonthlyExpensesData = (
     
     return () => {
       isMounted = false;
-      effectRunRef.current = false;
     };
   }, [
     profile?.id, 
@@ -94,8 +113,17 @@ export const useMonthlyExpensesData = (
     initializeEmptyData, 
     setError, 
     setExpensesData,
-    fetchMonthlyExpenses
+    fetchMonthlyExpenses,
+    initialFetchAttempted
   ]);
+
+  // Re-fetch data when year changes
+  useEffect(() => {
+    // Reset the fetch flag when year changes to trigger a new fetch
+    if (initialFetchAttempted) {
+      setInitialFetchAttempted(false);
+    }
+  }, [selectedYear]);
 
   return {
     expensesData,

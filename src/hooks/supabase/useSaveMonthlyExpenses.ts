@@ -46,11 +46,7 @@ export const useSaveMonthlyExpenses = () => {
             variant: 'destructive'
           });
           
-          // Wait a moment before redirecting to login (prevents redirect loops)
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 2000);
-          
+          // Don't redirect here, let the auth check handle it
           return false;
         }
       }
@@ -69,26 +65,35 @@ export const useSaveMonthlyExpenses = () => {
       
       console.log("Formatted data for Supabase:", formattedData);
       
-      const { data, error } = await supabase
-        .from('monthly_expenses')
-        .upsert(formattedData, {
-          onConflict: 'user_id,year' // Handle conflict on these columns
-        })
-        .select('*')
-        .single();
+      // Add retry logic for intermittent connection issues
+      let attempts = 0;
+      let success = false;
       
-      if (error) {
-        console.error("Error saving monthly expenses:", error);
-        setError(error.message);
-        toast({
-          title: 'Error',
-          description: `Failed to save expenses: ${error.message}`,
-          variant: 'destructive'
-        });
-        return false;
+      while (attempts < 3 && !success) {
+        try {
+          const { data, error } = await supabase
+            .from('monthly_expenses')
+            .upsert(formattedData, {
+              onConflict: 'user_id,year' // Handle conflict on these columns
+            })
+            .select('*')
+            .maybeSingle();
+          
+          if (error) {
+            console.error(`Attempt ${attempts + 1}: Error saving monthly expenses:`, error);
+            throw error;
+          }
+          
+          console.log("Monthly expenses saved successfully:", data);
+          success = true;
+        } catch (err) {
+          attempts++;
+          if (attempts >= 3) throw err;
+          // Wait briefly before retrying
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
       }
       
-      console.log("Monthly expenses saved successfully:", data);
       toast({
         title: 'Success',
         description: 'Monthly expenses saved successfully',

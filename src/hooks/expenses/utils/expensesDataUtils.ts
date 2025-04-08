@@ -66,6 +66,9 @@ export const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] =
       return completeData;
     }
     
+    // Sort by month number to ensure consistent order
+    typedData.sort((a, b) => a.month - b.month);
+    
     return typedData;
   } catch (error) {
     console.error("Error converting JSON to typed expenses data:", error);
@@ -85,8 +88,24 @@ export const convertExpensesDataToJson = (data: MonthlyAmount[]): Json => {
       return [] as unknown as Json;
     }
     
+    // Ensure we have data for all 12 months
+    let completeData = [...data];
+    if (completeData.length !== 12) {
+      console.log("Expenses data doesn't have 12 months, filling missing months");
+      const emptyData = initializeEmptyExpensesData();
+      
+      // Update the empty data with any valid months we have
+      data.forEach(item => {
+        if (item.month >= 1 && item.month <= 12) {
+          emptyData[item.month - 1] = item;
+        }
+      });
+      
+      completeData = emptyData;
+    }
+    
     // Create a clean array with only the needed properties
-    const sanitizedData = data.map(item => ({
+    const sanitizedData = completeData.map(item => ({
       month: item.month,
       amount: item.amount
     }));
@@ -97,4 +116,31 @@ export const convertExpensesDataToJson = (data: MonthlyAmount[]): Json => {
     console.error("Error converting expenses data to JSON:", error);
     return [] as unknown as Json;
   }
+};
+
+/**
+ * Ensure data consistency and completeness for monthly expenses
+ */
+export const ensureCompleteExpensesData = (data: MonthlyAmount[]): MonthlyAmount[] => {
+  // If empty or invalid, return completely empty data
+  if (!Array.isArray(data) || data.length === 0) {
+    return initializeEmptyExpensesData();
+  }
+  
+  // If we don't have exactly 12 months, fill in the missing ones
+  if (data.length !== 12) {
+    const completeData = initializeEmptyExpensesData();
+    
+    // Update with any valid months we have
+    data.forEach(item => {
+      if (item.month >= 1 && item.month <= 12) {
+        completeData[item.month - 1] = item;
+      }
+    });
+    
+    return completeData;
+  }
+  
+  // Sort by month number to ensure consistent order
+  return [...data].sort((a, b) => a.month - b.month);
 };

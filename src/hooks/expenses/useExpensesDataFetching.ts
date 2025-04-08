@@ -73,11 +73,7 @@ export const useExpensesDataFetching = ({
       const isAuthenticated = await checkAndRefreshAuth();
       if (!isAuthenticated) {
         console.error("Authentication failed during data refresh");
-        toast({
-          title: "Authentication Error",
-          description: "Your session has expired. Please log in again.",
-          variant: "destructive"
-        });
+        setError("Authentication error. Please log in again.");
         setLoadingData(false);
         dataFetchingRef.current = false;
         return;
@@ -104,11 +100,6 @@ export const useExpensesDataFetching = ({
         console.log("No expenses data found, initializing empty data");
         initializeEmptyData();
         dataInitializedRef.current = true;
-        
-        toast({
-          title: "No Data Found",
-          description: "No expenses data was found for the selected year. Starting with empty data."
-        });
       }
     } catch (err) {
       console.error("Error refreshing expenses data:", err);
@@ -116,12 +107,6 @@ export const useExpensesDataFetching = ({
       // Initialize empty data even on error
       initializeEmptyData();
       dataInitializedRef.current = true;
-      
-      toast({
-        title: "Error",
-        description: "Failed to refresh expenses data. Starting with empty data.",
-        variant: "destructive"
-      });
     } finally {
       setLoadingData(false);
       dataFetchingRef.current = false;

@@ -10,6 +10,7 @@ export const useAuthCheck = (userId?: string) => {
   const [authChecked, setAuthChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const authCheckingRef = useRef(false);
+  const redirectingRef = useRef(false);
   const navigate = useNavigate();
 
   // Check authentication status and refresh token if needed
@@ -78,12 +79,16 @@ export const useAuthCheck = (userId?: string) => {
         console.log("Authentication failed or session expired");
         setError("Authentication session expired. Please log in again.");
         
-        // Only navigate to login if we're not already there
+        // Only navigate to login if we're not already there and we're not already redirecting
         const currentPath = window.location.pathname;
-        if (currentPath !== '/login') {
+        if (currentPath !== '/login' && !redirectingRef.current) {
+          // Set redirecting flag to prevent multiple redirects
+          redirectingRef.current = true;
+          
           // Short delay before redirect to prevent immediate redirects during app initialization
           setTimeout(() => {
             navigate('/login');
+            redirectingRef.current = false;
           }, 500);
         }
       } else {
