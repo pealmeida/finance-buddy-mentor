@@ -16,7 +16,7 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
   userProfile,
   onProfileUpdate
 }) => {
-  const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck(true, '/login');
+  const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck(true);
   const { handleProfileComplete, isSubmitting } = useProfileCompletion(onProfileUpdate);
 
   const handleSave = (updatedProfile: UserProfile) => {

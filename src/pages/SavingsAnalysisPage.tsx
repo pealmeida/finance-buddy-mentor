@@ -12,7 +12,7 @@ import SavingsAnalysisStats from '@/components/savings/analysis/SavingsAnalysisS
 import SavingsAnalysisTabs from '@/components/savings/analysis/SavingsAnalysisTabs';
 
 const SavingsAnalysisPage = () => {
-  const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck(true, '/login');
+  const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck(true);
   const { profile, loading: profileLoading } = useProfileData();
   const { toast } = useToast();
   
