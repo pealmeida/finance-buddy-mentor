@@ -66,8 +66,11 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
         duration: 3000,
       });
       
-      // Navigate to the dashboard page after completing the onboarding
-      navigate('/dashboard');
+      // Refresh the page data to ensure everything is up-to-date
+      setTimeout(() => {
+        // Navigate to the dashboard page after completing the onboarding
+        navigate('/dashboard', { replace: true });
+      }, 500);
     } catch (err) {
       console.error("Error completing profile:", err);
       toast({

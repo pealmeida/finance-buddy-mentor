@@ -133,7 +133,7 @@ export function useOnboardingFlow({
       // Complete onboarding flow by calling the parent handler
       await onComplete(completeProfile);
       
-      // Don't redirect - the onComplete function will handle navigation
+      // Let the parent component handle redirection
     } catch (error) {
       console.error("Error completing onboarding:", error);
       toast({
