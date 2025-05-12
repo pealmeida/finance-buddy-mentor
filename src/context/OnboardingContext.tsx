@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState } from "react";
 import {
   FinancialGoal,
@@ -6,6 +7,7 @@ import {
   UserProfile,
 } from "@/types/finance";
 import { v4 as uuidv4 } from "uuid";
+import { logger } from "@/utils/logger";
 
 interface OnboardingContextType {
   profile: Partial<UserProfile>;
@@ -70,6 +72,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const updateProfile = (updates: Partial<UserProfile>) => {
+    logger.debug("Updating profile with:", updates);
     setProfile((prev) => ({ ...prev, ...updates }));
   };
 
@@ -85,12 +88,14 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addGoal = () => {
     if (currentGoal.name && currentGoal.targetAmount > 0) {
-      const newGoal = {
+      const newGoal: FinancialGoal = {
         id: uuidv4(),
         ...currentGoal,
         currentAmount: 0,
       };
 
+      logger.debug("Adding new goal:", newGoal);
+      
       setProfile((prev) => ({
         ...prev,
         financialGoals: [...(prev.financialGoals || []), newGoal],
@@ -101,6 +106,8 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const removeGoal = (id: string) => {
+    logger.debug("Removing goal with ID:", id);
+    
     setProfile((prev) => ({
       ...prev,
       financialGoals:
@@ -110,11 +117,13 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addInvestment = () => {
     if (currentInvestment.name && currentInvestment.value > 0) {
-      const newInvestment = {
+      const newInvestment: Investment = {
         id: uuidv4(),
         ...currentInvestment,
       };
 
+      logger.debug("Adding new investment:", newInvestment);
+      
       setProfile((prev) => ({
         ...prev,
         investments: [...(prev.investments || []), newInvestment],
@@ -125,6 +134,8 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const removeInvestment = (id: string) => {
+    logger.debug("Removing investment with ID:", id);
+    
     setProfile((prev) => ({
       ...prev,
       investments:

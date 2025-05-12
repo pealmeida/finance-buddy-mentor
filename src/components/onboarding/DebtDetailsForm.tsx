@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { DebtDetail } from "@/types/finance";
 import { Label } from "@/components/ui/label";
@@ -14,6 +15,8 @@ import { PlusCircle } from "lucide-react";
 import DebtDetailItem from "./DebtDetailItem";
 import { useOnboarding } from "@/context/OnboardingContext";
 import { v4 as uuidv4 } from "uuid";
+import { safeNumberParse } from "@/utils/dataUtils";
+import { logger } from "@/utils/logger";
 
 const DebtDetailsForm: React.FC = () => {
   const { profile, updateProfile } = useOnboarding();
@@ -28,21 +31,33 @@ const DebtDetailsForm: React.FC = () => {
     field: keyof Omit<DebtDetail, "id">,
     value: string | number
   ) => {
-    setCurrentDebt((prev) => ({
-      ...prev,
-      [field]:
-        field === "amount" || field === "interestRate" ? Number(value) : value,
-    }));
+    if (field === "amount" || field === "interestRate") {
+      // Safely parse numeric fields
+      setCurrentDebt((prev) => ({
+        ...prev,
+        [field]: safeNumberParse(value, 0),
+      }));
+    } else {
+      setCurrentDebt((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    }
   };
 
   const addDebt = () => {
-    if (!currentDebt.name || currentDebt.amount <= 0) return;
+    if (!currentDebt.name || currentDebt.amount <= 0) {
+      logger.debug("Invalid debt data, not adding:", currentDebt);
+      return;
+    }
 
     const newDebt: DebtDetail = {
       id: uuidv4(),
       ...currentDebt,
     };
 
+    logger.debug("Adding new debt:", newDebt);
+    
     updateProfile({
       debtDetails: [...(profile.debtDetails || []), newDebt],
     });
@@ -57,6 +72,8 @@ const DebtDetailsForm: React.FC = () => {
   };
 
   const removeDebt = (id: string) => {
+    logger.debug("Removing debt with ID:", id);
+    
     updateProfile({
       debtDetails: profile.debtDetails?.filter((debt) => debt.id !== id) || [],
     });

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSimpleAuthCheck } from '@/hooks/useSimpleAuthCheck';
 import { useProfileData } from '@/hooks/useProfileData';
@@ -5,11 +6,13 @@ import { useToast } from '@/components/ui/use-toast';
 import Header from '@/components/Header';
 import { MonthlyAmount } from '@/types/finance';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
-import { ensureCompleteSavingsData } from '@/hooks/supabase/utils/savingsUtils';
 import { Loader2 } from 'lucide-react';
 import SavingsAnalysisHeader from '@/components/savings/analysis/SavingsAnalysisHeader';
 import SavingsAnalysisStats from '@/components/savings/analysis/SavingsAnalysisStats';
 import SavingsAnalysisTabs from '@/components/savings/analysis/SavingsAnalysisTabs';
+import { logger } from '@/utils/logger';
+import { useMonthlyDataProcessor } from '@/hooks/useMonthlyDataProcessor';
+import { ensureCompleteMonthlyData } from '@/utils/dataUtils';
 
 const SavingsAnalysisPage = () => {
   const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck(true);
@@ -20,16 +23,16 @@ const SavingsAnalysisPage = () => {
   const [selectedYear, setSelectedYear] = useState<number>(currentYear);
   const [savingsData, setSavingsData] = useState<MonthlyAmount[]>([]);
   const [loadingData, setLoadingData] = useState<boolean>(true);
-  const [totalSaved, setTotalSaved] = useState<number>(0);
-  const [averageSaved, setAverageSaved] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   
   const { 
     fetchMonthlySavings, 
     loading, 
-    error: fetchError,
-    calculateAverageSavings 
+    error: fetchError
   } = useMonthlySavings();
+  
+  // Process data with our utility hook
+  const { total: totalSaved, average: averageSaved } = useMonthlyDataProcessor(savingsData);
   
   useEffect(() => {
     // Set any error from the hook to our local state
@@ -48,24 +51,18 @@ const SavingsAnalysisPage = () => {
         const data = await fetchMonthlySavings(profile.id, selectedYear);
         
         if (data && data.data) {
-          const completeSavingsData = ensureCompleteSavingsData(data.data);
+          logger.info("Savings data loaded successfully for year:", selectedYear);
+          const completeSavingsData = ensureCompleteMonthlyData(data.data);
           setSavingsData(completeSavingsData);
-          
-          // Calculate statistics
-          const total = completeSavingsData.reduce((sum, item) => sum + item.amount, 0);
-          setTotalSaved(total);
-          setAverageSaved(calculateAverageSavings(completeSavingsData));
         } else {
           setSavingsData([]);
-          setTotalSaved(0);
-          setAverageSaved(0);
           toast({
             title: "No Data Found",
             description: "No savings data found for the selected year.",
           });
         }
       } catch (err) {
-        console.error("Error loading savings data:", err);
+        logger.error("Error loading savings data:", err);
         setError(err instanceof Error ? err.message : "Failed to load savings data");
         toast({
           title: "Error",
@@ -78,7 +75,7 @@ const SavingsAnalysisPage = () => {
     };
     
     loadData();
-  }, [profile?.id, selectedYear, fetchMonthlySavings, calculateAverageSavings, toast]);
+  }, [profile?.id, selectedYear, fetchMonthlySavings, toast]);
   
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
@@ -90,18 +87,15 @@ const SavingsAnalysisPage = () => {
     try {
       const data = await fetchMonthlySavings(profile.id, selectedYear);
       if (data && data.data) {
-        const completeSavingsData = ensureCompleteSavingsData(data.data);
+        const completeSavingsData = ensureCompleteMonthlyData(data.data);
         setSavingsData(completeSavingsData);
-        const total = completeSavingsData.reduce((sum, item) => sum + item.amount, 0);
-        setTotalSaved(total);
-        setAverageSaved(calculateAverageSavings(completeSavingsData));
         toast({
           title: "Data Refreshed",
           description: "Savings data has been refreshed successfully.",
         });
       }
     } catch (err) {
-      console.error("Error refreshing data:", err);
+      logger.error("Error refreshing data:", err);
       setError(err instanceof Error ? err.message : "Failed to refresh data");
       toast({
         title: "Error",
