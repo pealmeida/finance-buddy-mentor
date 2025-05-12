@@ -14,7 +14,6 @@ import { useMonthlyDataProcessor } from '@/hooks/useMonthlyDataProcessor';
 import { ensureCompleteMonthlyData } from '@/utils/dataUtils';
 
 const SavingsAnalysisPage = () => {
-  // Fix the error by passing true as the argument to useSimpleAuthCheck
   const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck(true);
   const { profile, loading: profileLoading } = useProfileData();
   const { toast } = useToast();
@@ -31,11 +30,9 @@ const SavingsAnalysisPage = () => {
     error: fetchError
   } = useMonthlySavings();
   
-  // Process data with our utility hook
   const { total: totalSaved, average: averageSaved } = useMonthlyDataProcessor(savingsData);
   
   useEffect(() => {
-    // Set any error from the hook to our local state
     if (fetchError) {
       setError(fetchError);
     }
