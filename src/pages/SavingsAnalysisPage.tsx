@@ -15,6 +15,7 @@ import { useMonthlyDataProcessor } from '@/hooks/useMonthlyDataProcessor';
 import { ensureCompleteMonthlyData } from '@/utils/dataUtils';
 
 const SavingsAnalysisPage = () => {
+  // Fix the error by passing true as the argument to useSimpleAuthCheck
   const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck(true);
   const { profile, loading: profileLoading } = useProfileData();
   const { toast } = useToast();

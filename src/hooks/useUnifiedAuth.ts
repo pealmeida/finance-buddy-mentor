@@ -101,7 +101,23 @@ export const useUnifiedAuth = (
         if (error) throw new Error(error.message);
         
         if (data) {
-          setUserProfile(data as UserProfile);
+          // Create a complete user profile with defaults for missing properties
+          // This fixes the TypeScript error by ensuring all required UserProfile properties exist
+          const completeProfile: UserProfile = {
+            id: data.id,
+            email: data.email,
+            name: data.name,
+            age: data.age,
+            // Add default values for the missing properties
+            monthlyIncome: 0,
+            riskProfile: 'moderate',
+            hasEmergencyFund: false,
+            hasDebts: false,
+            financialGoals: [],
+            investments: []
+          };
+          
+          setUserProfile(completeProfile);
         }
       } catch (err) {
         console.error("Error loading user profile:", err);
