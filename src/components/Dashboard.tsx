@@ -10,26 +10,16 @@ import MarketTrends from './dashboard/MarketTrends';
 import ExpensesSummary from './dashboard/ExpensesSummary';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
-import { useMonthlyDataProcessor } from '@/hooks/useMonthlyDataProcessor';
-import { logger } from '@/utils/logger';
-import { useToast } from '@/components/ui/use-toast';
 
 interface DashboardProps {
   userProfile: UserProfile;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ userProfile }) => {
-  const { fetchMonthlySavings } = useMonthlySavings();
-  const { fetchMonthlyExpenses } = useMonthlyExpenses();
-  const { toast } = useToast();
+  const { fetchMonthlySavings, calculateAverageSavings } = useMonthlySavings();
+  const { fetchMonthlyExpenses, calculateAverageExpenses } = useMonthlyExpenses();
   const [savingsProgress, setSavingsProgress] = useState<number>(75); // Default value
   const [expensesRatio, setExpensesRatio] = useState<number>(50); // Default value
-  const [savingsData, setSavingsData] = useState<any[]>([]);
-  const [expensesData, setExpensesData] = useState<any[]>([]);
-  
-  // Use our data processor hook for type-safe data handling
-  const processedSavings = useMonthlyDataProcessor(savingsData);
-  const processedExpenses = useMonthlyDataProcessor(expensesData);
   
   // Calculate key metrics for child components
   const monthlyIncome = userProfile.monthlyIncome;
@@ -37,52 +27,63 @@ const Dashboard: React.FC<DashboardProps> = ({ userProfile }) => {
 
   useEffect(() => {
     const calculateFinancialMetrics = async () => {
-      if (!userProfile.id) {
-        logger.warn("No user profile ID available, skipping metrics calculation");
-        return;
-      }
+      if (!userProfile.id) return;
       
       try {
         const currentYear = new Date().getFullYear();
         
         // Fetch savings data
         const savingsData = await fetchMonthlySavings(userProfile.id, currentYear);
-        if (savingsData?.data) {
-          setSavingsData(savingsData.data);
+        
+        if (savingsData && savingsData.data) {
+          // Ensure we convert any JSON data to the proper MonthlyAmount type
+          const typedSavingsData = Array.isArray(savingsData.data) 
+            ? savingsData.data.map(item => ({
+                month: typeof item.month === 'number' ? item.month : parseInt(String(item.month)),
+                amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount))
+              }))
+            : [];
+          
+          const avgSavings = calculateAverageSavings(typedSavingsData);
+          const progress = Math.min((avgSavings / recommendedSavings) * 100, 100);
+          setSavingsProgress(progress);
         }
         
         // Fetch expenses data
         const expensesData = await fetchMonthlyExpenses(userProfile.id, currentYear);
-        if (expensesData?.data) {
-          setExpensesData(expensesData.data);
-        }
         
+        if (expensesData && savingsData) {
+          // Ensure we convert any JSON data to the proper MonthlyAmount type 
+          const typedExpensesData = Array.isArray(expensesData.data) 
+            ? expensesData.data.map(item => ({
+                month: typeof item.month === 'number' ? item.month : parseInt(String(item.month)),
+                amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount))
+              }))
+            : [];
+          
+          const typedSavingsData = Array.isArray(savingsData.data) 
+            ? savingsData.data.map(item => ({
+                month: typeof item.month === 'number' ? item.month : parseInt(String(item.month)),
+                amount: typeof item.amount === 'number' ? item.amount : parseFloat(String(item.amount))
+              }))
+            : [];
+          
+          const avgExpenses = calculateAverageExpenses(typedExpensesData);
+          const avgSavings = calculateAverageSavings(typedSavingsData);
+          
+          // Calculate what percentage of income is being spent
+          if (monthlyIncome > 0) {
+            const expenseRatio = Math.min((avgExpenses / monthlyIncome) * 100, 100);
+            setExpensesRatio(expenseRatio);
+          }
+        }
       } catch (error) {
-        logger.error("Error calculating financial metrics:", error);
-        toast({
-          title: "Error loading data",
-          description: "Could not load your financial data. Please try refreshing.",
-          variant: "destructive"
-        });
+        console.error("Error calculating financial metrics:", error);
       }
     };
     
     calculateFinancialMetrics();
-  }, [userProfile.id, fetchMonthlyExpenses, fetchMonthlySavings, toast]);
-
-  // Calculate progress and ratios based on processed data
-  useEffect(() => {
-    // Calculate savings progress
-    const avgSavings = processedSavings.average;
-    const progress = Math.min((avgSavings / recommendedSavings) * 100, 100);
-    setSavingsProgress(progress);
-    
-    // Calculate expense ratio if we have income
-    if (monthlyIncome > 0) {
-      const expenseRatio = Math.min((processedExpenses.average / monthlyIncome) * 100, 100);
-      setExpensesRatio(expenseRatio);
-    }
-  }, [processedSavings, processedExpenses, recommendedSavings, monthlyIncome]);
+  }, [userProfile.id, recommendedSavings, monthlyIncome]);
 
   return (
     <div className="w-full max-w-6xl mx-auto py-8 px-4 sm:px-6 animate-fade-in">

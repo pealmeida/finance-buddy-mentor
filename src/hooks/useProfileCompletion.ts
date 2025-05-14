@@ -5,7 +5,6 @@ import { UserProfile } from '@/types/finance';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useProfileSaving } from './useProfileSaving';
-import { logger } from '@/utils/logger';
 
 export function useProfileCompletion(onProfileComplete: (profile: UserProfile) => void) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,10 +14,7 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
 
   const handleProfileComplete = async (profile: UserProfile, isEditMode: boolean = false) => {
     try {
-      if (isSubmitting) {
-        logger.info('Preventing duplicate submission');
-        return;
-      }
+      if (isSubmitting) return; // Prevent duplicate submissions
 
       setIsSubmitting(true);
 
@@ -33,7 +29,7 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
       let profileWithId: UserProfile = { ...profile };
 
       if (session?.user) {
-        logger.info('Session user found, using their ID for the profile:', session.user.id);
+        console.log('Session user found, using their ID for the profile:', session.user.id);
         profileWithId = {
           ...profile,
           id: session.user.id,
@@ -42,16 +38,16 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
         };
 
         // Save profile to Supabase
-        logger.info('About to save profile to Supabase');
+        console.log('About to save profile to Supabase:', profileWithId);
         const success = await saveProfile(profileWithId);
 
         if (!success) {
           throw new Error("Failed to save profile to database");
         }
-        logger.info('Profile saved to Supabase successfully');
+        console.log('Profile saved to Supabase successfully');
       } else {
         // No auth session, use existing ID if available or placeholder
-        logger.info('No session found, using local profile data');
+        console.log('No session found, using local profile data');
         profileWithId = {
           ...profile,
           id: profile.id || 'user-id',
@@ -70,9 +66,6 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
         duration: 3000,
       });
 
-      // Set a flag to prevent immediate redirection back to onboarding
-      localStorage.setItem('profileJustCompleted', 'true');
-
       // Refresh the user token and navigate to the dashboard page
       try {
         // Refresh the session to update the token
@@ -80,15 +73,15 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
 
         // Use a small timeout to ensure the UI is updated before navigation
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/dashboard'); // Use React Router navigation to avoid signing out
         }, 300);
       } catch (refreshError) {
-        logger.error("Error refreshing session:", refreshError);
+        console.error("Error refreshing session:", refreshError);
         // Navigate anyway even if token refresh fails
         navigate('/dashboard');
       }
     } catch (err) {
-      logger.error("Error completing profile:", err);
+      console.error("Error completing profile:", err);
       toast({
         title: "Error saving profile",
         description: err instanceof Error ? err.message : "An unexpected error occurred",
@@ -104,7 +97,7 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
         // Navigate to dashboard
         navigate('/dashboard');
       } catch (refreshError) {
-        logger.error("Error refreshing session:", refreshError);
+        console.error("Error refreshing session:", refreshError);
         // Navigate anyway even if token refresh fails
         navigate('/dashboard');
       }
