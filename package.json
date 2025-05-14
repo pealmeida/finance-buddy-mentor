@@ -82,5 +82,18 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"
-  }
+  },
+  "description": "**URL**: https://lovable.dev/projects/59a2da54-0273-4293-b3c3-a20172c1ff42",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pealmeida/finance-buddy-mentor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pealmeida/finance-buddy-mentor/issues"
+  },
+  "homepage": "https://github.com/pealmeida/finance-buddy-mentor#readme"
 }
