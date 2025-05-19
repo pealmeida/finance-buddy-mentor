@@ -7,6 +7,7 @@ import GoalList from './GoalList';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Loader2, RefreshCcw } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { useTranslation } from 'react-i18next';
 
 interface GoalsManagementProps {
   goals: FinancialGoal[];
@@ -14,6 +15,7 @@ interface GoalsManagementProps {
 }
 
 const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
+  const { t } = useTranslation();
   const [editingGoal, setEditingGoal] = useState<FinancialGoal | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -23,14 +25,12 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
   // Update parent component's state when goals change
   useEffect(() => {
     if (goals) {
-      console.log('Goals updated in GoalsManagement:', goals);
       onGoalsChange(goals);
     }
   }, [goals, onGoalsChange]);
 
   // Ensure goals are loaded when component mounts
   useEffect(() => {
-    console.log('Component mounted, loading goals...');
     const loadData = async () => {
       try {
         await refreshGoals();
@@ -48,7 +48,6 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
   };
 
   const handleEditGoal = (goal: FinancialGoal) => {
-    console.log('Editing goal:', goal);
     setEditingGoal({
       ...goal,
       // Ensure targetDate is a Date object
@@ -60,7 +59,6 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
   const handleSaveGoal = async (goal: FinancialGoal) => {
     try {
       setIsSaving(true);
-      console.log('Saving goal:', goal);
       
       // Make sure to format dates correctly
       const formattedGoal = {
@@ -69,18 +67,16 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
       };
       
       if (editingGoal) {
-        console.log('Editing existing goal');
         await editGoal(formattedGoal);
         toast({
-          title: "Goal Updated",
-          description: "Your financial goal has been successfully updated."
+          title: t('goals.goalUpdated', "Goal Updated"),
+          description: t('goals.goalUpdatedDescription', "Your financial goal has been successfully updated.")
         });
       } else {
-        console.log('Adding new goal');
         await addGoal(formattedGoal);
         toast({
-          title: "Goal Added",
-          description: "Your new financial goal has been created."
+          title: t('goals.goalAdded', "Goal Added"),
+          description: t('goals.goalAddedDescription', "Your new financial goal has been created.")
         });
       }
       
@@ -93,8 +89,8 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
     } catch (err) {
       console.error("Error saving goal:", err);
       toast({
-        title: "Error",
-        description: "There was a problem saving your goal. Please try again.",
+        title: t('common.error', "Error"),
+        description: t('goals.savingError', "There was a problem saving your goal. Please try again."),
         variant: "destructive"
       });
     } finally {
@@ -104,13 +100,12 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
 
   const handleDeleteGoal = async (goalId: string) => {
     try {
-      console.log('Deleting goal:', goalId);
       await removeGoal(goalId);
     } catch (err) {
       console.error("Error deleting goal:", err);
       toast({
-        title: "Error",
-        description: "There was a problem deleting your goal. Please try again.",
+        title: t('common.error', "Error"),
+        description: t('goals.deletingError', "There was a problem deleting your goal. Please try again."),
         variant: "destructive"
       });
     }
@@ -125,8 +120,8 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
     try {
       await refreshGoals();
       toast({
-        title: "Goals Refreshed",
-        description: "Your financial goals have been refreshed."
+        title: t('goals.goalsRefreshed', "Goals Refreshed"),
+        description: t('goals.goalsRefreshedDescription', "Your financial goals have been refreshed.")
       });
     } catch (err) {
       console.error("Error refreshing goals:", err);
@@ -144,13 +139,13 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 p-4 rounded-md text-red-700">
-        <p>Error loading goals: {error}</p>
+        <p>{t('goals.loadingError', 'Error loading goals')}: {error}</p>
         <Button 
           variant="outline"
           onClick={() => refreshGoals()}
           className="mt-2"
         >
-          Try Again
+          {t('common.tryAgain', 'Try Again')}
         </Button>
       </div>
     );
@@ -168,7 +163,7 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
       ) : (
         <>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Your Financial Goals</h2>
+            <h2 className="text-xl font-semibold">{t('goals.yourFinancialGoals', 'Your Financial Goals')}</h2>
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -177,22 +172,22 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ onGoalsChange }) => {
                 disabled={loading}
               >
                 <RefreshCcw size={16} className={loading ? "animate-spin" : ""} />
-                Refresh
+                {t('common.refresh', 'Refresh')}
               </Button>
               <Button 
                 onClick={handleAddGoal} 
                 className="flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark"
               >
                 <PlusCircle size={16} />
-                Add New Goal
+                {t('goals.addNewGoal', 'Add New Goal')}
               </Button>
             </div>
           </div>
           
           {goals.length === 0 ? (
             <div className="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-gray-500">You don't have any financial goals yet.</p>
-              <p className="text-gray-400 text-sm mt-1">Click the 'Add New Goal' button to get started.</p>
+              <p className="text-gray-500">{t('goals.noGoalsYet', "You don't have any financial goals yet.")}</p>
+              <p className="text-gray-400 text-sm mt-1">{t('goals.clickToAdd', "Click the 'Add New Goal' button to get started.")}</p>
             </div>
           ) : (
             <GoalList 

@@ -21,11 +21,14 @@
     "authRequired": "Authentication Required",
     "pleaseSignIn": "Please sign in to access this feature",
     "authError": "Authentication Error",
-    "signInAgain": "Please sign in again"
+    "signInAgain": "Please sign in again",
+    "checkingAuthentication": "Checking authentication..."
   },
   "common": {
     "cancel": "Cancel",
     "save": "Save",
+    "saving": "Saving...",
+    "delete": "Delete",
     "loading": "Loading...",
     "refresh": "Refresh",
     "edit": "Edit",
@@ -39,7 +42,10 @@
     "dataRefreshed": "Data Refreshed",
     "failedToRefreshData": "Failed to refresh data.",
     "onTrack": "On Track",
-    "amountSavedIn": "Amount saved in"
+    "amountSavedIn": "Amount saved in",
+    "actions": "Actions",
+    "tryAgain": "Try Again",
+    "backToDashboard": "Back to Dashboard"
   },
   "expenses": {
     "monthlyExpenses": "Monthly Expenses",
@@ -78,7 +84,63 @@
       "totalSaved": "Total Saved",
       "averageSaved": "Average Monthly",
       "recommendedSavings": "Recommended Savings"
-    }
+    },
+    "trackMonthlySavings": "Track your monthly savings to visualize your progress throughout the year."
+  },
+  "goals": {
+    "noGoalsYet": "No financial goals yet",
+    "addGoal": "Add a Goal",
+    "setGoal": "Set a Goal",
+    "financialGoals": "Financial Goals",
+    "yourFinancialGoals": "Your Financial Goals",
+    "addNewGoal": "Add New Goal",
+    "clickToAdd": "Click the 'Add New Goal' button to get started.",
+    "goal": "Goal",
+    "progress": "Progress",
+    "targetDate": "Target Date",
+    "priority": "Priority",
+    "priority": {
+      "high": "High",
+      "medium": "Medium", 
+      "low": "Low"
+    },
+    "deleteGoal": "Delete Financial Goal",
+    "deleteConfirmation": "Are you sure you want to delete this financial goal? This action cannot be undone.",
+    "createNewGoal": "Create New Goal",
+    "editGoal": "Edit Goal",
+    "goalName": "Goal Name",
+    "goalNamePlaceholder": "e.g., Emergency Fund, Down Payment, Retirement",
+    "nameRequired": "Goal name is required",
+    "targetAmount": "Target Amount",
+    "currentAmount": "Current Amount",
+    "targetAmountRequired": "Target amount is required",
+    "currentAmountRequired": "Current amount is required",
+    "targetDateRequired": "Target date is required",
+    "amountPositive": "Amount must be positive",
+    "amountNotNegative": "Amount cannot be negative",
+    "saveGoal": "Save Goal",
+    "goalUpdated": "Goal Updated",
+    "goalUpdatedDescription": "Your financial goal has been successfully updated.",
+    "goalAdded": "Goal Added",
+    "goalAddedDescription": "Your new financial goal has been created.",
+    "savingError": "There was a problem saving your goal. Please try again.",
+    "deletingError": "There was a problem deleting your goal. Please try again.",
+    "goalsRefreshed": "Goals Refreshed",
+    "goalsRefreshedDescription": "Your financial goals have been refreshed.",
+    "loadingError": "Error loading goals",
+    "addToGetStarted": "Add a goal to get started on your financial journey"
+  },
+  "investments": {
+    "description": "Manage and track your investment portfolio in one place.",
+    "userProfileError": "User profile is not available. Please log in to view your investments.",
+    "portfolioTitle": "Investment Portfolio",
+    "portfolioDescription": "Manage your investments and track their performance.",
+    "addInvestment": "Add Investment",
+    "loadingData": "Loading investments data...",
+    "noInvestmentsYet": "No Investments Yet",
+    "startBuilding": "Start building your portfolio by adding your first investment.",
+    "addFirstInvestment": "Add Your First Investment",
+    "editInvestment": "Edit Investment"
   },
   "dashboard": {
     "financialOverview": "Financial Overview",
@@ -87,11 +149,6 @@
     "marketTrends": "Market Trends",
     "expensesSummary": "Expenses Summary",
     "investmentStrategy": "Investment Strategy"
-  },
-  "goals": {
-    "noGoalsYet": "No financial goals yet",
-    "addGoal": "Add a Goal",
-    "setGoal": "Set a Goal"
   },
   "errors": {
     "errorCalculating": "Error calculating financial metrics:"

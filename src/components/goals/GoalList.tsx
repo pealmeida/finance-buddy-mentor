@@ -23,6 +23,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useTranslation } from 'react-i18next';
 
 interface GoalListProps {
   goals: FinancialGoal[];
@@ -31,12 +32,14 @@ interface GoalListProps {
 }
 
 const GoalList: React.FC<GoalListProps> = ({ goals, onEdit, onDelete }) => {
+  const { t } = useTranslation();
+  
   if (!goals || goals.length === 0) {
     return (
       <div className="text-center py-12">
         <Target className="mx-auto h-12 w-12 text-gray-300" />
-        <p className="mt-4 text-gray-500">No financial goals yet</p>
-        <p className="text-sm text-gray-400">Add a goal to get started on your financial journey</p>
+        <p className="mt-4 text-gray-500">{t('goals.noGoalsYet', 'No financial goals yet')}</p>
+        <p className="text-sm text-gray-400">{t('goals.addToGetStarted', 'Add a goal to get started on your financial journey')}</p>
       </div>
     );
   }
@@ -46,11 +49,11 @@ const GoalList: React.FC<GoalListProps> = ({ goals, onEdit, onDelete }) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Goal</TableHead>
-            <TableHead>Progress</TableHead>
-            <TableHead>Target Date</TableHead>
-            <TableHead>Priority</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t('goals.goal', 'Goal')}</TableHead>
+            <TableHead>{t('goals.progress', 'Progress')}</TableHead>
+            <TableHead>{t('goals.targetDate', 'Target Date')}</TableHead>
+            <TableHead>{t('goals.priority', 'Priority')}</TableHead>
+            <TableHead className="text-right">{t('common.actions', 'Actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -95,7 +98,7 @@ const GoalList: React.FC<GoalListProps> = ({ goals, onEdit, onDelete }) => {
                 </TableCell>
                 <TableCell>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${priorityClass}`}>
-                    {goal.priority.charAt(0).toUpperCase() + goal.priority.slice(1)}
+                    {t(`goals.priority.${goal.priority}`, goal.priority.charAt(0).toUpperCase() + goal.priority.slice(1))}
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
@@ -121,18 +124,18 @@ const GoalList: React.FC<GoalListProps> = ({ goals, onEdit, onDelete }) => {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Financial Goal</AlertDialogTitle>
+                          <AlertDialogTitle>{t('goals.deleteGoal', 'Delete Financial Goal')}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete this financial goal? This action cannot be undone.
+                            {t('goals.deleteConfirmation', 'Are you sure you want to delete this financial goal? This action cannot be undone.')}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel>{t('common.cancel', 'Cancel')}</AlertDialogCancel>
                           <AlertDialogAction
                             className="bg-red-600 hover:bg-red-700"
                             onClick={() => onDelete(goal.id)}
                           >
-                            Delete
+                            {t('common.delete', 'Delete')}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import { FinancialGoal, UserProfile } from '@/types/finance';
 import GoalsManagement from '@/components/goals/GoalsManagement';
 import { useToast } from '@/components/ui/use-toast';
+import { useTranslation } from 'react-i18next';
 
 interface GoalsPageProps {
   userProfile: UserProfile;
@@ -12,6 +13,7 @@ interface GoalsPageProps {
 }
 
 const GoalsPage: React.FC<GoalsPageProps> = ({ userProfile, onProfileUpdate }) => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -36,9 +38,9 @@ const GoalsPage: React.FC<GoalsPageProps> = ({ userProfile, onProfileUpdate }) =
             className="mr-4 text-gray-500 hover:text-gray-700"
             onClick={handleGoBack}
           >
-            &larr; Back to Dashboard
+            &larr; {t('common.backToDashboard', 'Back to Dashboard')}
           </button>
-          <h1 className="text-3xl font-semibold text-gray-800">Financial Goals</h1>
+          <h1 className="text-3xl font-semibold text-gray-800">{t('goals.financialGoals', 'Financial Goals')}</h1>
         </div>
         
         <div className="bg-white shadow-md rounded-lg p-6">

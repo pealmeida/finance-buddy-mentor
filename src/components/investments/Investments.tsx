@@ -8,6 +8,7 @@ import { Plus, RefreshCw, AlertCircle, Loader2 } from 'lucide-react';
 import InvestmentForm from './InvestmentForm';
 import InvestmentCard from './InvestmentCard';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useTranslation } from 'react-i18next';
 
 interface InvestmentsProps {
   profile: UserProfile;
@@ -20,6 +21,7 @@ const Investments: React.FC<InvestmentsProps> = ({
   onSave,
   isSaving = false
 }) => {
+  const { t } = useTranslation();
   const [isAddingInvestment, setIsAddingInvestment] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedInvestment, setSelectedInvestment] = useState<Investment | null>(null);
@@ -107,7 +109,7 @@ const Investments: React.FC<InvestmentsProps> = ({
     return (
       <Alert variant="destructive">
         <AlertDescription>
-          User profile is not available. Please log in to view your investments.
+          {t('investments.userProfileError', 'User profile is not available. Please log in to view your investments.')}
         </AlertDescription>
       </Alert>
     );
@@ -117,9 +119,9 @@ const Investments: React.FC<InvestmentsProps> = ({
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-semibold">Investment Portfolio</h2>
+          <h2 className="text-2xl font-semibold">{t('investments.portfolioTitle', 'Investment Portfolio')}</h2>
           <p className="text-gray-600">
-            Manage your investments and track their performance.
+            {t('investments.portfolioDescription', 'Manage your investments and track their performance.')}
           </p>
         </div>
         
@@ -130,7 +132,7 @@ const Investments: React.FC<InvestmentsProps> = ({
             className="flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
-            Add Investment
+            {t('investments.addInvestment', 'Add Investment')}
           </Button>
           
           <Button
@@ -140,7 +142,7 @@ const Investments: React.FC<InvestmentsProps> = ({
             className="flex items-center gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            {isLoading ? 'Loading...' : 'Refresh'}
+            {isLoading ? t('common.loading', 'Loading...') : t('common.refresh', 'Refresh')}
           </Button>
         </div>
       </div>
@@ -153,7 +155,7 @@ const Investments: React.FC<InvestmentsProps> = ({
       ) : isLoading ? (
         <div className="flex justify-center items-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-          <span className="ml-2">Loading investments data...</span>
+          <span className="ml-2">{t('investments.loadingData', 'Loading investments data...')}</span>
         </div>
       ) : (
         <>
@@ -167,15 +169,15 @@ const Investments: React.FC<InvestmentsProps> = ({
           
           {investments.length === 0 && !isAddingInvestment ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-              <h3 className="text-gray-600 font-medium mb-2">No Investments Yet</h3>
-              <p className="text-gray-500 mb-4">Start building your portfolio by adding your first investment.</p>
+              <h3 className="text-gray-600 font-medium mb-2">{t('investments.noInvestmentsYet', 'No Investments Yet')}</h3>
+              <p className="text-gray-500 mb-4">{t('investments.startBuilding', 'Start building your portfolio by adding your first investment.')}</p>
               <Button 
                 onClick={() => setIsAddingInvestment(true)}
                 variant="outline"
                 className="bg-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Your First Investment
+                {t('investments.addFirstInvestment', 'Add Your First Investment')}
               </Button>
             </div>
           ) : (
@@ -186,6 +188,7 @@ const Investments: React.FC<InvestmentsProps> = ({
                   investment={investment}
                   onEdit={handleEditInvestment}
                   onDelete={handleDeleteInvestment}
+                  deleteConfirmationId={deleteConfirmationId}
                 />
               ))}
             </div>
@@ -197,7 +200,7 @@ const Investments: React.FC<InvestmentsProps> = ({
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit Investment</DialogTitle>
+            <DialogTitle>{t('investments.editInvestment', 'Edit Investment')}</DialogTitle>
           </DialogHeader>
           {selectedInvestment && (
             <InvestmentForm

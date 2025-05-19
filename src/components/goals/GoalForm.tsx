@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Loader2 } from 'lucide-react';
 import { format, isValid } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
+import { useTranslation } from 'react-i18next';
 
 interface GoalFormProps {
   goal: FinancialGoal | null;
@@ -18,6 +19,7 @@ interface GoalFormProps {
 }
 
 const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving }) => {
+  const { t } = useTranslation();
   const isNewGoal = !goal || !goal.id;
   
   // Format date for the form input
@@ -43,14 +45,11 @@ const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving })
     priority: goal?.priority || 'medium' as 'low' | 'medium' | 'high'
   };
 
-  console.log('GoalForm defaultValues:', defaultValues);
-
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
     defaultValues
   });
 
   const onSubmit = (data: any) => {
-    console.log('Form submitted with data:', data);
     const formattedGoal: FinancialGoal = {
       ...data,
       id: isNewGoal ? uuidv4() : goal!.id,
@@ -59,51 +58,50 @@ const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving })
       targetDate: new Date(data.targetDate)
     };
     
-    console.log('Formatted goal for save:', formattedGoal);
     onSave(formattedGoal);
   };
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">
-        {isNewGoal ? 'Create New Goal' : 'Edit Goal'}
+        {isNewGoal ? t('goals.createNewGoal', 'Create New Goal') : t('goals.editGoal', 'Edit Goal')}
       </h2>
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="name">Goal Name</Label>
+          <Label htmlFor="name">{t('goals.goalName', 'Goal Name')}</Label>
           <Input
             id="name"
-            placeholder="e.g., Emergency Fund, Down Payment, Retirement"
-            {...register("name", { required: "Goal name is required" })}
+            placeholder={t('goals.goalNamePlaceholder', 'e.g., Emergency Fund, Down Payment, Retirement')}
+            {...register("name", { required: t('goals.nameRequired', 'Goal name is required') as string })}
           />
           {errors.name && <p className="text-red-500 text-sm">{errors.name.message as string}</p>}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="targetAmount">Target Amount ($)</Label>
+            <Label htmlFor="targetAmount">{t('goals.targetAmount', 'Target Amount')} ($)</Label>
             <Input
               id="targetAmount"
               type="number"
               placeholder="10000"
               {...register("targetAmount", { 
-                required: "Target amount is required",
-                min: { value: 1, message: "Amount must be positive" }
+                required: t('goals.targetAmountRequired', 'Target amount is required') as string,
+                min: { value: 1, message: t('goals.amountPositive', 'Amount must be positive') as string }
               })}
             />
             {errors.targetAmount && <p className="text-red-500 text-sm">{errors.targetAmount.message as string}</p>}
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="currentAmount">Current Amount ($)</Label>
+            <Label htmlFor="currentAmount">{t('goals.currentAmount', 'Current Amount')} ($)</Label>
             <Input
               id="currentAmount"
               type="number"
               placeholder="0"
               {...register("currentAmount", { 
-                required: "Current amount is required",
-                min: { value: 0, message: "Amount cannot be negative" }
+                required: t('goals.currentAmountRequired', 'Current amount is required') as string,
+                min: { value: 0, message: t('goals.amountNotNegative', 'Amount cannot be negative') as string }
               })}
             />
             {errors.currentAmount && <p className="text-red-500 text-sm">{errors.currentAmount.message as string}</p>}
@@ -111,17 +109,17 @@ const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving })
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="targetDate">Target Date</Label>
+          <Label htmlFor="targetDate">{t('goals.targetDate', 'Target Date')}</Label>
           <Input
             id="targetDate"
             type="date"
-            {...register("targetDate", { required: "Target date is required" })}
+            {...register("targetDate", { required: t('goals.targetDateRequired', 'Target date is required') as string })}
           />
           {errors.targetDate && <p className="text-red-500 text-sm">{errors.targetDate.message as string}</p>}
         </div>
         
         <div className="space-y-3">
-          <Label>Priority</Label>
+          <Label>{t('goals.priority', 'Priority')}</Label>
           <div className="flex flex-col space-y-2">
             <RadioGroup
               defaultValue={defaultValues.priority}
@@ -130,15 +128,15 @@ const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving })
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="low" id="low" />
-                <Label htmlFor="low">Low Priority</Label>
+                <Label htmlFor="low">{t('goals.priority.low', 'Low Priority')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="medium" id="medium" />
-                <Label htmlFor="medium">Medium Priority</Label>
+                <Label htmlFor="medium">{t('goals.priority.medium', 'Medium Priority')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="high" id="high" />
-                <Label htmlFor="high">High Priority</Label>
+                <Label htmlFor="high">{t('goals.priority.high', 'High Priority')}</Label>
               </div>
             </RadioGroup>
           </div>
@@ -151,7 +149,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving })
             onClick={onCancel}
             disabled={isSaving}
           >
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </Button>
           <Button
             type="submit"
@@ -161,10 +159,10 @@ const GoalForm: React.FC<GoalFormProps> = ({ goal, onSave, onCancel, isSaving })
             {isSaving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
+                {t('common.saving', 'Saving...')}
               </>
             ) : (
-              'Save Goal'
+              t('goals.saveGoal', 'Save Goal')
             )}
           </Button>
         </div>

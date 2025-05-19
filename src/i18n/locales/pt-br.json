@@ -21,11 +21,14 @@
     "authRequired": "Autenticação Necessária",
     "pleaseSignIn": "Por favor, faça login para acessar este recurso",
     "authError": "Erro de Autenticação",
-    "signInAgain": "Por favor, faça login novamente"
+    "signInAgain": "Por favor, faça login novamente",
+    "checkingAuthentication": "Verificando autenticação..."
   },
   "common": {
     "cancel": "Cancelar",
     "save": "Salvar",
+    "saving": "Salvando...",
+    "delete": "Excluir",
     "loading": "Carregando...",
     "refresh": "Atualizar",
     "edit": "Editar",
@@ -39,7 +42,10 @@
     "dataRefreshed": "Dados Atualizados",
     "failedToRefreshData": "Falha ao atualizar dados.",
     "onTrack": "No Caminho Certo",
-    "amountSavedIn": "Valor economizado em"
+    "amountSavedIn": "Valor economizado em",
+    "actions": "Ações",
+    "tryAgain": "Tentar Novamente",
+    "backToDashboard": "Voltar para o Painel"
   },
   "expenses": {
     "monthlyExpenses": "Despesas Mensais",
@@ -78,7 +84,63 @@
       "totalSaved": "Total Economizado",
       "averageSaved": "Média Mensal",
       "recommendedSavings": "Economias Recomendadas"
-    }
+    },
+    "trackMonthlySavings": "Acompanhe suas economias mensais para visualizar seu progresso ao longo do ano."
+  },
+  "goals": {
+    "noGoalsYet": "Ainda não há metas financeiras",
+    "addGoal": "Adicionar uma Meta",
+    "setGoal": "Definir uma Meta",
+    "financialGoals": "Metas Financeiras",
+    "yourFinancialGoals": "Suas Metas Financeiras",
+    "addNewGoal": "Adicionar Nova Meta",
+    "clickToAdd": "Clique no botão 'Adicionar Nova Meta' para começar.",
+    "goal": "Meta",
+    "progress": "Progresso",
+    "targetDate": "Data Alvo",
+    "priority": "Prioridade",
+    "priority": {
+      "high": "Alta",
+      "medium": "Média", 
+      "low": "Baixa"
+    },
+    "deleteGoal": "Excluir Meta Financeira",
+    "deleteConfirmation": "Tem certeza que deseja excluir esta meta financeira? Esta ação não pode ser desfeita.",
+    "createNewGoal": "Criar Nova Meta",
+    "editGoal": "Editar Meta",
+    "goalName": "Nome da Meta",
+    "goalNamePlaceholder": "ex: Fundo de Emergência, Entrada para Casa, Aposentadoria",
+    "nameRequired": "Nome da meta é obrigatório",
+    "targetAmount": "Valor Alvo",
+    "currentAmount": "Valor Atual",
+    "targetAmountRequired": "Valor alvo é obrigatório",
+    "currentAmountRequired": "Valor atual é obrigatório",
+    "targetDateRequired": "Data alvo é obrigatória",
+    "amountPositive": "O valor deve ser positivo",
+    "amountNotNegative": "O valor não pode ser negativo",
+    "saveGoal": "Salvar Meta",
+    "goalUpdated": "Meta Atualizada",
+    "goalUpdatedDescription": "Sua meta financeira foi atualizada com sucesso.",
+    "goalAdded": "Meta Adicionada",
+    "goalAddedDescription": "Sua nova meta financeira foi criada.",
+    "savingError": "Houve um problema ao salvar sua meta. Por favor, tente novamente.",
+    "deletingError": "Houve um problema ao excluir sua meta. Por favor, tente novamente.",
+    "goalsRefreshed": "Metas Atualizadas",
+    "goalsRefreshedDescription": "Suas metas financeiras foram atualizadas.",
+    "loadingError": "Erro ao carregar metas",
+    "addToGetStarted": "Adicione uma meta para começar sua jornada financeira"
+  },
+  "investments": {
+    "description": "Gerencie e acompanhe seu portfólio de investimentos em um só lugar.",
+    "userProfileError": "Perfil de usuário não disponível. Por favor, faça login para ver seus investimentos.",
+    "portfolioTitle": "Portfólio de Investimentos",
+    "portfolioDescription": "Gerencie seus investimentos e acompanhe seu desempenho.",
+    "addInvestment": "Adicionar Investimento",
+    "loadingData": "Carregando dados de investimentos...",
+    "noInvestmentsYet": "Ainda Não Há Investimentos",
+    "startBuilding": "Comece a construir seu portfólio adicionando seu primeiro investimento.",
+    "addFirstInvestment": "Adicione Seu Primeiro Investimento",
+    "editInvestment": "Editar Investimento"
   },
   "dashboard": {
     "financialOverview": "Visão Geral Financeira",
@@ -87,11 +149,6 @@
     "marketTrends": "Tendências de Mercado",
     "expensesSummary": "Resumo de Despesas",
     "investmentStrategy": "Estratégia de Investimento"
-  },
-  "goals": {
-    "noGoalsYet": "Ainda não há metas financeiras",
-    "addGoal": "Adicionar uma Meta",
-    "setGoal": "Definir uma Meta"
   },
   "errors": {
     "errorCalculating": "Erro ao calcular métricas financeiras:"
