@@ -11,15 +11,25 @@ interface SavingsAnalysisPageProps {
 }
 
 const SavingsAnalysisPage: React.FC<SavingsAnalysisPageProps> = ({ userProfile }) => {
+  // Default values for required props - we should adapt these based on the actual component needs
+  const defaultYear = new Date().getFullYear();
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       <Header />
       
       <div className="container mx-auto py-8 px-4">
-        <SavingsAnalysisHeader />
+        <SavingsAnalysisHeader 
+          selectedYear={defaultYear}
+          handleYearChange={() => {}}
+          loadingData={false}
+        />
         
         <Card className="mt-6 p-6">
-          <SavingsAnalysisTabs userProfile={userProfile} />
+          <SavingsAnalysisTabs 
+            selectedYear={defaultYear}
+            handleYearChange={() => {}}
+          />
         </Card>
       </div>
     </div>

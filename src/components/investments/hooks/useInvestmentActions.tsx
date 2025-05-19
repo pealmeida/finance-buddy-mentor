@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { UserProfile, Investment } from '@/types/finance';
-import { useInvestmentsData } from '@/hooks/useInvestmentsData';
+import { useInvestmentsData } from '@/hooks/investments/useInvestmentsData';
 import { useTranslation } from 'react-i18next';
 
 export const useInvestmentActions = (profile: UserProfile, onSave?: (updatedProfile: UserProfile) => void) => {
