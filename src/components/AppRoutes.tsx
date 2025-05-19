@@ -70,7 +70,7 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
       } />
 
       <Route path="/savings-analysis" element={
-        authRedirect || completeRedirect || <SavingsAnalysisPage />
+        authRedirect || completeRedirect || <SavingsAnalysisPage userProfile={userProfile as UserProfile} />
       } />
       
       <Route path="/" element={<Navigate to={homeRedirectPath} replace />} />
