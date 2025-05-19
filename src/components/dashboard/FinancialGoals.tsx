@@ -7,12 +7,14 @@ import { Progress } from '@/components/ui/progress';
 import { UserProfile, FinancialGoal } from '@/types/finance';
 import { fetchUserGoals } from '@/services/goalService';
 import { useToast } from '@/components/ui/use-toast';
+import { useTranslation } from 'react-i18next';
 
 interface FinancialGoalsProps {
   userProfile: UserProfile;
 }
 
 const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [goals, setGoals] = useState<FinancialGoal[]>(userProfile.financialGoals);
@@ -48,7 +50,7 @@ const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
     return (
       <div className="glass-panel rounded-2xl p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Financial Goals</h2>
+          <h2 className="text-xl font-semibold">{t('dashboard.financialGoals')}</h2>
         </div>
         <div className="flex justify-center items-center py-10">
           <Loader2 className="h-8 w-8 animate-spin text-finance-blue" />
@@ -60,10 +62,10 @@ const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
   return (
     <div className="glass-panel rounded-2xl p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Financial Goals</h2>
+        <h2 className="text-xl font-semibold">{t('dashboard.financialGoals')}</h2>
         <Link to="/goals">
           <Button variant="ghost" className="text-finance-blue flex items-center gap-1 text-sm">
-            View All <ChevronRight className="h-4 w-4" />
+            {t('common.viewAll', 'View All')} <ChevronRight className="h-4 w-4" />
           </Button>
         </Link>
       </div>
@@ -91,7 +93,7 @@ const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
                     ${goal.currentAmount.toLocaleString()} of ${goal.targetAmount.toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-500">
-                    By {new Date(goal.targetDate).toLocaleDateString()}
+                    {t('common.by', 'By')} {new Date(goal.targetDate).toLocaleDateString()}
                   </p>
                 </div>
               </div>
@@ -101,14 +103,14 @@ const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
       ) : (
         <div className="text-center py-10 text-gray-500">
           <Target className="h-10 w-10 mx-auto mb-2 text-gray-300" />
-          <p>No financial goals yet</p>
+          <p>{t('goals.noGoalsYet', 'No financial goals yet')}</p>
           <Button 
             variant="outline" 
             className="mt-4 text-finance-blue border-finance-blue hover:bg-finance-blue hover:text-white transition-all duration-300"
             onClick={handleAddGoal}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add a Goal
+            {t('goals.addGoal', 'Add a Goal')}
           </Button>
         </div>
       )}

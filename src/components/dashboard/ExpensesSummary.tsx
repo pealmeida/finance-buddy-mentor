@@ -8,6 +8,7 @@ import { Wallet, ArrowRight } from 'lucide-react';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { Link } from 'react-router-dom';
 import { MONTHS } from '@/constants/months';
+import { useTranslation } from 'react-i18next';
 
 interface ExpensesSummaryProps {
   userProfile: UserProfile;
@@ -18,6 +19,7 @@ const ExpensesSummary: React.FC<ExpensesSummaryProps> = ({
   userProfile,
   expensesRatio
 }) => {
+  const { t } = useTranslation();
   const { calculateAverageExpenses } = useMonthlyExpenses();
   const [expensesData, setExpensesData] = React.useState<MonthlyAmount[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -82,11 +84,11 @@ const ExpensesSummary: React.FC<ExpensesSummaryProps> = ({
   // Get status and color based on expenses ratio
   const getStatusInfo = () => {
     if (expensesRatio > 70) {
-      return { label: 'High', color: 'destructive' as const };
+      return { label: t('expenses.highSpending', 'High'), color: 'destructive' as const };
     } else if (expensesRatio > 50) {
-      return { label: 'Moderate', color: 'secondary' as const };
+      return { label: t('expenses.moderateSpending', 'Moderate'), color: 'secondary' as const };
     } else {
-      return { label: 'Low', color: 'outline' as const };
+      return { label: t('expenses.lowSpending', 'Low'), color: 'outline' as const };
     }
   };
   
@@ -98,17 +100,17 @@ const ExpensesSummary: React.FC<ExpensesSummaryProps> = ({
         <CardTitle className="text-lg font-medium">
           <div className="flex items-center gap-2">
             <Wallet className="h-5 w-5 text-red-500" />
-            Recent Expenses
+            {t('dashboard.expensesSummary')}
           </div>
         </CardTitle>
         <Badge variant={status.color}>
-          {status.label} Spending
+          {status.label} {t('expenses.spending', 'Spending')}
         </Badge>
       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="h-[200px] flex items-center justify-center">
-            <p className="text-gray-500">Loading expense data...</p>
+            <p className="text-gray-500">{t('expenses.loadingExpenses')}</p>
           </div>
         ) : expensesData.length > 0 ? (
           <div className="h-[200px] mt-2">
@@ -118,8 +120,8 @@ const ExpensesSummary: React.FC<ExpensesSummaryProps> = ({
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip 
-                  formatter={(value) => [`$${value}`, 'Amount']}
-                  labelFormatter={(label) => `Month: ${label}`}
+                  formatter={(value) => [`$${value}`, t('common.amount')]}
+                  labelFormatter={(label) => `${t('common.month')}: ${label}`}
                 />
                 <Bar dataKey="amount" fill="#ef4444" radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -127,7 +129,7 @@ const ExpensesSummary: React.FC<ExpensesSummaryProps> = ({
           </div>
         ) : (
           <div className="h-[200px] flex items-center justify-center">
-            <p className="text-gray-500">No recent expense data available</p>
+            <p className="text-gray-500">{t('expenses.noExpensesData')}</p>
           </div>
         )}
         
@@ -136,7 +138,7 @@ const ExpensesSummary: React.FC<ExpensesSummaryProps> = ({
             to="/monthly-expenses" 
             className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
           >
-            View detailed expenses <ArrowRight className="ml-1 h-4 w-4" />
+            {t('expenses.viewDetailed', 'View detailed expenses')} <ArrowRight className="ml-1 h-4 w-4" />
           </Link>
         </div>
       </CardContent>

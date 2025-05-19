@@ -31,20 +31,47 @@
     "edit": "Editar",
     "month": "Mês",
     "amount": "Valor",
-    "backToAll": "Voltar para Todos os Meses"
+    "backToAll": "Voltar para Todos os Meses",
+    "viewAll": "Ver Todos",
+    "by": "Até",
+    "noDataFound": "Dados Não Encontrados",
+    "error": "Erro",
+    "dataRefreshed": "Dados Atualizados",
+    "failedToRefreshData": "Falha ao atualizar dados.",
+    "onTrack": "No Caminho Certo",
+    "amountSavedIn": "Valor economizado em"
   },
   "expenses": {
     "monthlyExpenses": "Despesas Mensais",
     "loadingExpenses": "Carregando dados de despesas...",
     "clickBarInfo": "Clique em qualquer barra para ver despesas detalhadas",
     "noExpensesData": "Não há dados de despesas disponíveis para o ano selecionado.",
-    "errorLoadingData": "Erro ao carregar dados:"
+    "errorLoadingData": "Erro ao carregar dados:",
+    "highSpending": "Alto",
+    "moderateSpending": "Moderado",
+    "lowSpending": "Baixo",
+    "spending": "Gasto",
+    "viewDetailed": "Ver despesas detalhadas"
   },
   "savings": {
     "monthlySavings": "Economias Mensais",
     "loadingSavings": "Carregando dados de economias...",
     "clickBarInfo": "Clique em qualquer barra para ver economias detalhadas",
     "noSavingsData": "Não há dados de economias disponíveis para o ano selecionado.",
+    "chartView": "Visualização de Gráfico",
+    "tableView": "Visualização de Tabela",
+    "monthlySavingsData": "Dados de Economias Mensais",
+    "detailedBreakdown": "Detalhamento das suas economias em",
+    "monthlySavingsFor": "Economias mensais para",
+    "amountSaved": "Valor Economizado",
+    "comparisonToAverage": "Comparação com a Média",
+    "aboveAverage": "acima da média",
+    "belowAverage": "abaixo da média",
+    "average": "Na média",
+    "dataRefreshedSuccessfully": "Os dados de economias foram atualizados com sucesso.",
+    "averageSavingsPerMonth": "Média de economias por mês",
+    "yearlyGoal": "Meta Anual",
+    "progressTowardsGoal": "Progresso em direção à sua meta anual",
     "analysis": {
       "title": "Análise de Economias",
       "subtitle": "Analise e acompanhe seu progresso de economias ao longo do tempo",
@@ -58,7 +85,13 @@
     "personalizedInsights": "Insights Personalizados",
     "financialGoals": "Metas Financeiras",
     "marketTrends": "Tendências de Mercado",
-    "expensesSummary": "Resumo de Despesas"
+    "expensesSummary": "Resumo de Despesas",
+    "investmentStrategy": "Estratégia de Investimento"
+  },
+  "goals": {
+    "noGoalsYet": "Ainda não há metas financeiras",
+    "addGoal": "Adicionar uma Meta",
+    "setGoal": "Definir uma Meta"
   },
   "errors": {
     "errorCalculating": "Erro ao calcular métricas financeiras:"

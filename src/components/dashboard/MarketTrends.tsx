@@ -1,12 +1,15 @@
 
 import React from 'react';
 import { Separator } from '@/components/ui/separator';
+import { useTranslation } from 'react-i18next';
 
 const MarketTrends: React.FC = () => {
+  const { t } = useTranslation();
+  
   return (
     <div className="glass-panel rounded-2xl p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Current Market Trends</h2>
+        <h2 className="text-xl font-semibold">{t('dashboard.marketTrends')}</h2>
       </div>
       
       <div className="space-y-4">

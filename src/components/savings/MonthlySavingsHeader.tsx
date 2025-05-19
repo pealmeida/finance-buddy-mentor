@@ -3,6 +3,7 @@ import React from 'react';
 import { CircleDollarSign } from 'lucide-react';
 import YearSelector from './YearSelector';
 import SaveAllButton from './SaveAllButton';
+import { useTranslation } from 'react-i18next';
 
 interface MonthlySavingsHeaderProps {
   selectedYear: number;
@@ -19,12 +20,14 @@ const MonthlySavingsHeader: React.FC<MonthlySavingsHeaderProps> = ({
   disabled,
   isSaving
 }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-semibold flex items-center gap-2">
           <CircleDollarSign className="text-finance-blue" />
-          Monthly Savings
+          {t('savings.monthlySavings')}
         </h2>
         <div className="flex gap-4 items-center">
           <YearSelector
@@ -42,7 +45,7 @@ const MonthlySavingsHeader: React.FC<MonthlySavingsHeaderProps> = ({
       </div>
       
       <p className="text-gray-600">
-        Track your monthly savings to visualize your progress throughout the year.
+        {t('savings.trackMonthlySavings', 'Track your monthly savings to visualize your progress throughout the year.')}
       </p>
     </>
   );

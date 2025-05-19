@@ -4,6 +4,7 @@ import { UserProfile } from '@/types/finance';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { BrainCircuit, BarChart3 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface PersonalizedInsightsProps {
   userProfile: UserProfile;
@@ -16,6 +17,8 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
   savingsProgress,
   expensesRatio
 }) => {
+  const { t } = useTranslation();
+  
   // Generate personalized insights based on user data
   const getPersonalizedInsight = (): string => {
     const name = userProfile.name?.split(' ')[0] || 'there';
@@ -63,13 +66,13 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
         <CardTitle className="text-lg font-medium">
           <div className="flex items-center gap-2">
             <BrainCircuit className="h-5 w-5 text-purple-500" />
-            Personalized Insights
+            {t('dashboard.personalizedInsights')}
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <h3 className="text-md font-medium mb-2">Savings Progress</h3>
+          <h3 className="text-md font-medium mb-2">{t('savings.analysis.title')}</h3>
           <Progress value={savingsProgress} className="h-2" indicatorClassName="bg-green-500" />
           <p className="mt-2 text-sm text-gray-600">
             {getPersonalizedInsight()}
@@ -77,7 +80,7 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
         </div>
         
         <div>
-          <h3 className="text-md font-medium mb-2">Expense Analysis</h3>
+          <h3 className="text-md font-medium mb-2">{t('expenses.monthlyExpenses')}</h3>
           <div className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4 text-red-500" />
             <div className="w-full bg-gray-200 rounded-full h-2">
@@ -93,7 +96,7 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
         </div>
         
         <div>
-          <h3 className="text-md font-medium mb-2">Investment Strategy</h3>
+          <h3 className="text-md font-medium mb-2">{t('dashboard.investmentStrategy', 'Investment Strategy')}</h3>
           <p className="text-sm text-gray-600">
             {getRiskBasedAdvice()}
           </p>

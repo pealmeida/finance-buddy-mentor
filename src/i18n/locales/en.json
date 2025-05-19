@@ -31,20 +31,47 @@
     "edit": "Edit",
     "month": "Month",
     "amount": "Amount",
-    "backToAll": "Back to All Months"
+    "backToAll": "Back to All Months",
+    "viewAll": "View All",
+    "by": "By",
+    "noDataFound": "No Data Found",
+    "error": "Error",
+    "dataRefreshed": "Data Refreshed",
+    "failedToRefreshData": "Failed to refresh data.",
+    "onTrack": "On Track",
+    "amountSavedIn": "Amount saved in"
   },
   "expenses": {
     "monthlyExpenses": "Monthly Expenses",
     "loadingExpenses": "Loading expenses data...",
     "clickBarInfo": "Click on any bar to view detailed expenses",
     "noExpensesData": "No expenses data available for the selected year.",
-    "errorLoadingData": "Error loading data:"
+    "errorLoadingData": "Error loading data:",
+    "highSpending": "High",
+    "moderateSpending": "Moderate",
+    "lowSpending": "Low",
+    "spending": "Spending",
+    "viewDetailed": "View detailed expenses"
   },
   "savings": {
     "monthlySavings": "Monthly Savings",
     "loadingSavings": "Loading savings data...",
     "clickBarInfo": "Click on any bar to view detailed savings",
     "noSavingsData": "No savings data available for the selected year.",
+    "chartView": "Chart View",
+    "tableView": "Table View",
+    "monthlySavingsData": "Monthly Savings Data",
+    "detailedBreakdown": "Detailed breakdown of your savings in",
+    "monthlySavingsFor": "Monthly savings for",
+    "amountSaved": "Amount Saved",
+    "comparisonToAverage": "Comparison to Average",
+    "aboveAverage": "above average",
+    "belowAverage": "below average",
+    "average": "Average",
+    "dataRefreshedSuccessfully": "Savings data has been refreshed successfully.",
+    "averageSavingsPerMonth": "Average savings per month",
+    "yearlyGoal": "Yearly Goal",
+    "progressTowardsGoal": "Progress towards your yearly goal",
     "analysis": {
       "title": "Savings Analysis",
       "subtitle": "Analyze and track your savings progress over time",
@@ -58,7 +85,13 @@
     "personalizedInsights": "Personalized Insights",
     "financialGoals": "Financial Goals",
     "marketTrends": "Market Trends",
-    "expensesSummary": "Expenses Summary"
+    "expensesSummary": "Expenses Summary",
+    "investmentStrategy": "Investment Strategy"
+  },
+  "goals": {
+    "noGoalsYet": "No financial goals yet",
+    "addGoal": "Add a Goal",
+    "setGoal": "Set a Goal"
   },
   "errors": {
     "errorCalculating": "Error calculating financial metrics:"

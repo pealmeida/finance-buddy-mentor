@@ -4,6 +4,7 @@ import { MonthlyAmount } from '@/types/finance';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MonthlySavingsContent from '@/components/savings/MonthlySavingsContent';
 import SavingsAnalysisTable from './SavingsAnalysisTable';
+import { useTranslation } from 'react-i18next';
 
 interface SavingsAnalysisTabsProps {
   loadingData: boolean;
@@ -22,11 +23,13 @@ const SavingsAnalysisTabs: React.FC<SavingsAnalysisTabsProps> = ({
   error,
   refreshData
 }) => {
+  const { t } = useTranslation();
+  
   return (
     <Tabs defaultValue="chart">
       <TabsList className="mb-4">
-        <TabsTrigger value="chart">Chart View</TabsTrigger>
-        <TabsTrigger value="table">Table View</TabsTrigger>
+        <TabsTrigger value="chart">{t('savings.chartView', 'Chart View')}</TabsTrigger>
+        <TabsTrigger value="table">{t('savings.tableView', 'Table View')}</TabsTrigger>
       </TabsList>
       
       <TabsContent value="chart" className="p-4 bg-white rounded-lg shadow">

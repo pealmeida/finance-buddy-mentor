@@ -12,6 +12,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
 
 interface SavingsAnalysisTableProps {
   loadingData: boolean;
@@ -26,12 +27,14 @@ const SavingsAnalysisTable: React.FC<SavingsAnalysisTableProps> = ({
   averageSaved,
   selectedYear
 }) => {
+  const { t } = useTranslation();
+  
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Monthly Savings Data</CardTitle>
+        <CardTitle>{t('savings.monthlySavingsData', 'Monthly Savings Data')}</CardTitle>
         <CardDescription>
-          Detailed breakdown of your savings in {selectedYear}
+          {t('savings.detailedBreakdown', 'Detailed breakdown of your savings in')} {selectedYear}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -41,12 +44,12 @@ const SavingsAnalysisTable: React.FC<SavingsAnalysisTableProps> = ({
           </div>
         ) : (
           <Table>
-            <TableCaption>Monthly savings for {selectedYear}</TableCaption>
+            <TableCaption>{t('savings.monthlySavingsFor', 'Monthly savings for')} {selectedYear}</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead>Month</TableHead>
-                <TableHead>Amount Saved</TableHead>
-                <TableHead>Comparison to Average</TableHead>
+                <TableHead>{t('common.month')}</TableHead>
+                <TableHead>{t('savings.amountSaved', 'Amount Saved')}</TableHead>
+                <TableHead>{t('savings.comparisonToAverage', 'Comparison to Average')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -58,11 +61,15 @@ const SavingsAnalysisTable: React.FC<SavingsAnalysisTableProps> = ({
                   <TableCell>${item.amount.toLocaleString()}</TableCell>
                   <TableCell>
                     {item.amount > averageSaved ? (
-                      <span className="text-green-600">${(item.amount - averageSaved).toFixed(2)} above average</span>
+                      <span className="text-green-600">
+                        ${(item.amount - averageSaved).toFixed(2)} {t('savings.aboveAverage', 'above average')}
+                      </span>
                     ) : item.amount < averageSaved ? (
-                      <span className="text-red-600">${(averageSaved - item.amount).toFixed(2)} below average</span>
+                      <span className="text-red-600">
+                        ${(averageSaved - item.amount).toFixed(2)} {t('savings.belowAverage', 'below average')}
+                      </span>
                     ) : (
-                      <span className="text-gray-600">Average</span>
+                      <span className="text-gray-600">{t('savings.average', 'Average')}</span>
                     )}
                   </TableCell>
                 </TableRow>

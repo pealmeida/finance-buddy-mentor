@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSimpleAuthCheck } from '@/hooks/useSimpleAuthCheck';
 import { useProfileData } from '@/hooks/useProfileData';
@@ -62,7 +63,7 @@ const SavingsAnalysisPage = () => {
           setTotalSaved(0);
           setAverageSaved(0);
           toast({
-            title: "No Data Found",
+            title: t('common.noDataFound', 'No Data Found'),
             description: t('savings.noSavingsData'),
           });
         }
@@ -70,7 +71,7 @@ const SavingsAnalysisPage = () => {
         console.error("Error loading savings data:", err);
         setError(err instanceof Error ? err.message : "Failed to load savings data");
         toast({
-          title: "Error",
+          title: t('common.error', 'Error'),
           description: t('savings.loadingSavings'),
           variant: "destructive"
         });
@@ -98,16 +99,16 @@ const SavingsAnalysisPage = () => {
         setTotalSaved(total);
         setAverageSaved(calculateAverageSavings(completeSavingsData));
         toast({
-          title: "Data Refreshed",
-          description: "Savings data has been refreshed successfully.",
+          title: t('common.dataRefreshed', 'Data Refreshed'),
+          description: t('savings.dataRefreshedSuccessfully', 'Savings data has been refreshed successfully.'),
         });
       }
     } catch (err) {
       console.error("Error refreshing data:", err);
       setError(err instanceof Error ? err.message : "Failed to refresh data");
       toast({
-        title: "Error",
-        description: "Failed to refresh data.",
+        title: t('common.error', 'Error'),
+        description: t('common.failedToRefreshData', 'Failed to refresh data.'),
         variant: "destructive"
       });
     } finally {
