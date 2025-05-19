@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSimpleAuthCheck } from '@/hooks/useSimpleAuthCheck';
 import { useProfileData } from '@/hooks/useProfileData';
