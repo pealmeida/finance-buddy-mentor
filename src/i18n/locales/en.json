@@ -1,0 +1,66 @@
+
+{
+  "app": {
+    "name": "Finance Buddy",
+    "tagline": "Your personal finance companion"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "goals": "Goals",
+    "savings": "Savings",
+    "expenses": "Expenses",
+    "investments": "Investments",
+    "profile": "Profile",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out"
+  },
+  "auth": {
+    "signOutConfirm": "Sign out",
+    "signOutQuestion": "Are you sure you want to sign out of your account?",
+    "authRequired": "Authentication Required",
+    "pleaseSignIn": "Please sign in to access this feature",
+    "authError": "Authentication Error",
+    "signInAgain": "Please sign in again"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "loading": "Loading...",
+    "refresh": "Refresh",
+    "edit": "Edit",
+    "month": "Month",
+    "amount": "Amount",
+    "backToAll": "Back to All Months"
+  },
+  "expenses": {
+    "monthlyExpenses": "Monthly Expenses",
+    "loadingExpenses": "Loading expenses data...",
+    "clickBarInfo": "Click on any bar to view detailed expenses",
+    "noExpensesData": "No expenses data available for the selected year.",
+    "errorLoadingData": "Error loading data:"
+  },
+  "savings": {
+    "monthlySavings": "Monthly Savings",
+    "loadingSavings": "Loading savings data...",
+    "clickBarInfo": "Click on any bar to view detailed savings",
+    "noSavingsData": "No savings data available for the selected year.",
+    "analysis": {
+      "title": "Savings Analysis",
+      "subtitle": "Analyze and track your savings progress over time",
+      "totalSaved": "Total Saved",
+      "averageSaved": "Average Monthly",
+      "recommendedSavings": "Recommended Savings"
+    }
+  },
+  "dashboard": {
+    "financialOverview": "Financial Overview",
+    "personalizedInsights": "Personalized Insights",
+    "financialGoals": "Financial Goals",
+    "marketTrends": "Market Trends",
+    "expensesSummary": "Expenses Summary"
+  },
+  "errors": {
+    "errorCalculating": "Error calculating financial metrics:"
+  }
+}

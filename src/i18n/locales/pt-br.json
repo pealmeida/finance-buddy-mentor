@@ -1,0 +1,66 @@
+
+{
+  "app": {
+    "name": "Finance Buddy",
+    "tagline": "Seu companheiro de finanças pessoais"
+  },
+  "navigation": {
+    "dashboard": "Painel",
+    "goals": "Metas",
+    "savings": "Economias",
+    "expenses": "Despesas",
+    "investments": "Investimentos",
+    "profile": "Perfil",
+    "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "signOut": "Sair"
+  },
+  "auth": {
+    "signOutConfirm": "Sair",
+    "signOutQuestion": "Tem certeza que deseja sair da sua conta?",
+    "authRequired": "Autenticação Necessária",
+    "pleaseSignIn": "Por favor, faça login para acessar este recurso",
+    "authError": "Erro de Autenticação",
+    "signInAgain": "Por favor, faça login novamente"
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "loading": "Carregando...",
+    "refresh": "Atualizar",
+    "edit": "Editar",
+    "month": "Mês",
+    "amount": "Valor",
+    "backToAll": "Voltar para Todos os Meses"
+  },
+  "expenses": {
+    "monthlyExpenses": "Despesas Mensais",
+    "loadingExpenses": "Carregando dados de despesas...",
+    "clickBarInfo": "Clique em qualquer barra para ver despesas detalhadas",
+    "noExpensesData": "Não há dados de despesas disponíveis para o ano selecionado.",
+    "errorLoadingData": "Erro ao carregar dados:"
+  },
+  "savings": {
+    "monthlySavings": "Economias Mensais",
+    "loadingSavings": "Carregando dados de economias...",
+    "clickBarInfo": "Clique em qualquer barra para ver economias detalhadas",
+    "noSavingsData": "Não há dados de economias disponíveis para o ano selecionado.",
+    "analysis": {
+      "title": "Análise de Economias",
+      "subtitle": "Analise e acompanhe seu progresso de economias ao longo do tempo",
+      "totalSaved": "Total Economizado",
+      "averageSaved": "Média Mensal",
+      "recommendedSavings": "Economias Recomendadas"
+    }
+  },
+  "dashboard": {
+    "financialOverview": "Visão Geral Financeira",
+    "personalizedInsights": "Insights Personalizados",
+    "financialGoals": "Metas Financeiras",
+    "marketTrends": "Tendências de Mercado",
+    "expensesSummary": "Resumo de Despesas"
+  },
+  "errors": {
+    "errorCalculating": "Erro ao calcular métricas financeiras:"
+  }
+}

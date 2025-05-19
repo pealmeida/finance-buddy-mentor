@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { MonthlyAmount } from "@/types/finance";
 import { MONTHS_SHORT } from "@/constants/months";
@@ -13,6 +14,7 @@ import {
   Cell,
 } from "recharts";
 import { Info } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface MonthlyExpensesChartProps {
   data: MonthlyAmount[];
@@ -23,6 +25,7 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
   data,
   onSelectMonth,
 }) => {
+  const { t } = useTranslation();
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   const chartData = data.map((item) => ({
@@ -62,10 +65,10 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
   return (
     <div className='space-y-4'>
       <div className='flex items-center justify-between'>
-        <h3 className='font-medium text-lg'>Monthly Expenses</h3>
+        <h3 className='font-medium text-lg'>{t('expenses.monthlyExpenses')}</h3>
         <div className='flex items-center gap-1 text-sm text-gray-500'>
           <Info className='h-4 w-4' />
-          Click on any bar to view detailed expenses
+          {t('expenses.clickBarInfo')}
         </div>
       </div>
 
@@ -87,18 +90,18 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
               axisLine={{ stroke: "#e5e7eb" }}
             />
             <Tooltip
-              formatter={(value) => [`$${value}`, "Amount"]}
-              labelFormatter={(label) => `Month: ${label}`}
+              formatter={(value) => [`$${value}`, t('common.amount')]}
+              labelFormatter={(label) => `${t('common.month')}: ${label}`}
               cursor={{ fill: "rgba(239, 68, 68, 0.1)" }}
             />
             <Legend
               formatter={(value) => (
-                <span className='text-gray-700'>Monthly Expenses</span>
+                <span className='text-gray-700'>{t('expenses.monthlyExpenses')}</span>
               )}
             />
             <Bar
               dataKey='amount'
-              name='Expenses'
+              name={t('expenses.monthlyExpenses')}
               fill='#ef4444'
               radius={[4, 4, 0, 0]}
               style={{ cursor: "pointer" }}

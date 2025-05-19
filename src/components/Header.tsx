@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,12 +16,15 @@ import {
 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import LanguageSelector from "./LanguageSelector";
 
 interface HeaderProps {
   onboardingComplete?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
+  const { t } = useTranslation();
   const { userProfile, handleProfileUpdate } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,12 +44,12 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
   };
 
   const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
-    { name: "Goals", href: "/goals", icon: Target },
-    { name: "Savings", href: "/monthly-savings", icon: PiggyBank },
-    { name: "Expenses", href: "/monthly-expenses", icon: Wallet },
-    { name: "Investments", href: "/investments", icon: LineChart },
-    { name: "Profile", href: "/profile", icon: User },
+    { name: t('navigation.dashboard'), href: "/dashboard", icon: BarChart3 },
+    { name: t('navigation.goals'), href: "/goals", icon: Target },
+    { name: t('navigation.savings'), href: "/monthly-savings", icon: PiggyBank },
+    { name: t('navigation.expenses'), href: "/monthly-expenses", icon: Wallet },
+    { name: t('navigation.investments'), href: "/investments", icon: LineChart },
+    { name: t('navigation.profile'), href: "/profile", icon: User },
   ];
 
   return (
@@ -55,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
           <div className='flex'>
             <div className='flex flex-shrink-0 items-center'>
               <Link to='/' className='text-xl font-bold text-blue-600'>
-                Finance Buddy
+                {t('app.name')}
               </Link>
             </div>
 
@@ -82,8 +86,10 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
             )}
           </div>
 
-          {/* User dropdown and mobile menu button */}
+          {/* User dropdown, language selector and mobile menu button */}
           <div className='flex items-center'>
+            <LanguageSelector />
+            
             {userProfile ? (
               <>
                 <Button
@@ -91,7 +97,7 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
                   className='hidden sm:ml-3 sm:flex'
                   onClick={() => setLogoutDialog(true)}>
                   <LogOut className='mr-2 h-4 w-4' />
-                  Sign out
+                  {t('navigation.signOut')}
                 </Button>
 
                 {/* Mobile menu button */}
@@ -111,10 +117,10 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
             ) : (
               <div className='flex space-x-4'>
                 <Link to='/login'>
-                  <Button variant='ghost'>Sign in</Button>
+                  <Button variant='ghost'>{t('navigation.signIn')}</Button>
                 </Link>
                 <Link to='/signup'>
-                  <Button>Sign up</Button>
+                  <Button>{t('navigation.signUp')}</Button>
                 </Link>
               </div>
             )}
@@ -152,7 +158,7 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
                 className='block w-full border-l-4 border-transparent py-2 pl-3 pr-4 text-left text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'>
                 <div className='flex items-center'>
                   <LogOut className='mr-3 h-5 w-5' />
-                  Sign out
+                  {t('navigation.signOut')}
                 </div>
               </button>
             </div>
@@ -165,10 +171,10 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
         <DialogContent className='sm:max-w-md'>
           <div className='text-center sm:text-left'>
             <h3 className='text-lg font-medium leading-6 text-gray-900'>
-              Sign out
+              {t('navigation.signOut')}
             </h3>
             <p className='mt-2 text-sm text-gray-500'>
-              Are you sure you want to sign out of your account?
+              {t('auth.signOutQuestion')}
             </p>
           </div>
 
@@ -177,13 +183,13 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = true }) => {
               variant='destructive'
               onClick={handleSignOut}
               className='w-full sm:ml-3 sm:w-auto'>
-              Sign out
+              {t('auth.signOutConfirm')}
             </Button>
             <Button
               variant='outline'
               onClick={() => setLogoutDialog(false)}
               className='mt-3 w-full sm:mt-0 sm:w-auto'>
-              Cancel
+              {t('common.cancel')}
             </Button>
           </div>
         </DialogContent>

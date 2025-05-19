@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { MonthlyAmount } from "@/types/finance";
 import MonthlyExpensesChart from "./MonthlyExpensesChart";
@@ -8,6 +9,7 @@ import { MONTHS } from "@/constants/months";
 import { AlertCircle, Loader2, RefreshCw } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface MonthlyExpensesContentProps {
   loadingData: boolean;
@@ -30,6 +32,7 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
   onRefresh,
   error,
 }) => {
+  const { t } = useTranslation();
   // State to track which month's detailed expenses to show
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
@@ -63,7 +66,7 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
       <div className='p-8 bg-white rounded-lg shadow-md flex justify-center items-center h-64'>
         <div className='flex items-center gap-2 text-red-500'>
           <Loader2 className='h-6 w-6 animate-spin' />
-          <p>Loading expenses data...</p>
+          <p>{t('expenses.loadingExpenses')}</p>
         </div>
       </div>
     );
@@ -74,7 +77,7 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
       <div className='p-8 bg-white rounded-lg shadow-md space-y-4'>
         <Alert variant='destructive'>
           <AlertCircle className='h-4 w-4' />
-          <AlertDescription>Error loading data: {error}</AlertDescription>
+          <AlertDescription>{t('expenses.errorLoadingData')} {error}</AlertDescription>
         </Alert>
 
         {onRefresh && (
@@ -84,7 +87,7 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
               variant='outline'
               className='flex items-center gap-2'>
               <RefreshCw className='h-4 w-4' />
-              Retry Loading Data
+              {t('common.refresh')}
             </Button>
           </div>
         )}
@@ -99,7 +102,7 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
     return (
       <div className='p-8 bg-white rounded-lg shadow-md flex flex-col justify-center items-center h-64 space-y-4'>
         <p className='text-gray-500'>
-          No expenses data available for the selected year.
+          {t('expenses.noExpensesData')}
         </p>
 
         {onRefresh && (
@@ -108,7 +111,7 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
             variant='outline'
             className='flex items-center gap-2'>
             <RefreshCw className='h-4 w-4' />
-            Refresh
+            {t('common.refresh')}
           </Button>
         )}
       </div>
@@ -151,7 +154,7 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
           />
           <div className='flex justify-end mt-4'>
             <Button variant='outline' onClick={() => setSelectedMonth(null)}>
-              Back to All Months
+              {t('common.backToAll')}
             </Button>
           </div>
         </div>

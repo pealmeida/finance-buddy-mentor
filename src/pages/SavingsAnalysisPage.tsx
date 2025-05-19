@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSimpleAuthCheck } from '@/hooks/useSimpleAuthCheck';
 import { useProfileData } from '@/hooks/useProfileData';
@@ -10,8 +11,10 @@ import { Loader2 } from 'lucide-react';
 import SavingsAnalysisHeader from '@/components/savings/analysis/SavingsAnalysisHeader';
 import SavingsAnalysisStats from '@/components/savings/analysis/SavingsAnalysisStats';
 import SavingsAnalysisTabs from '@/components/savings/analysis/SavingsAnalysisTabs';
+import { useTranslation } from 'react-i18next';
 
 const SavingsAnalysisPage = () => {
+  const { t } = useTranslation();
   const { isAuthenticated, isLoading: authLoading } = useSimpleAuthCheck(true);
   const { profile, loading: profileLoading } = useProfileData();
   const { toast } = useToast();
@@ -61,7 +64,7 @@ const SavingsAnalysisPage = () => {
           setAverageSaved(0);
           toast({
             title: "No Data Found",
-            description: "No savings data found for the selected year.",
+            description: t('savings.noSavingsData'),
           });
         }
       } catch (err) {
@@ -69,7 +72,7 @@ const SavingsAnalysisPage = () => {
         setError(err instanceof Error ? err.message : "Failed to load savings data");
         toast({
           title: "Error",
-          description: "Failed to load savings data.",
+          description: t('savings.loadingSavings'),
           variant: "destructive"
         });
       } finally {
@@ -78,7 +81,7 @@ const SavingsAnalysisPage = () => {
     };
     
     loadData();
-  }, [profile?.id, selectedYear, fetchMonthlySavings, calculateAverageSavings, toast]);
+  }, [profile?.id, selectedYear, fetchMonthlySavings, calculateAverageSavings, toast, t]);
   
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
@@ -117,7 +120,7 @@ const SavingsAnalysisPage = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-        <span className="ml-2 text-blue-700">Loading profile data...</span>
+        <span className="ml-2 text-blue-700">{t('common.loading')}</span>
       </div>
     );
   }

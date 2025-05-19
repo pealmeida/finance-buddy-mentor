@@ -10,12 +10,14 @@ import MarketTrends from './dashboard/MarketTrends';
 import ExpensesSummary from './dashboard/ExpensesSummary';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
+import { useTranslation } from 'react-i18next';
 
 interface DashboardProps {
   userProfile: UserProfile;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ userProfile }) => {
+  const { t } = useTranslation();
   const { fetchMonthlySavings, calculateAverageSavings } = useMonthlySavings();
   const { fetchMonthlyExpenses, calculateAverageExpenses } = useMonthlyExpenses();
   const [savingsProgress, setSavingsProgress] = useState<number>(75); // Default value
@@ -78,12 +80,12 @@ const Dashboard: React.FC<DashboardProps> = ({ userProfile }) => {
           }
         }
       } catch (error) {
-        console.error("Error calculating financial metrics:", error);
+        console.error(t('errors.errorCalculating'), error);
       }
     };
     
     calculateFinancialMetrics();
-  }, [userProfile.id, recommendedSavings, monthlyIncome]);
+  }, [userProfile.id, recommendedSavings, monthlyIncome, fetchMonthlySavings, fetchMonthlyExpenses, calculateAverageSavings, calculateAverageExpenses, t]);
 
   return (
     <div className="w-full max-w-6xl mx-auto py-8 px-4 sm:px-6 animate-fade-in">

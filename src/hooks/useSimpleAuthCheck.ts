@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const useSimpleAuthCheck = (redirectToLogin = true) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -10,6 +11,7 @@ export const useSimpleAuthCheck = (redirectToLogin = true) => {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -23,8 +25,8 @@ export const useSimpleAuthCheck = (redirectToLogin = true) => {
         if (!data.session) {
           if (redirectToLogin) {
             toast({
-              title: "Authentication Required",
-              description: "Please sign in to access this feature",
+              title: t('auth.authRequired'),
+              description: t('auth.pleaseSignIn'),
               variant: "destructive"
             });
             navigate('/login');
@@ -40,8 +42,8 @@ export const useSimpleAuthCheck = (redirectToLogin = true) => {
         
         if (redirectToLogin) {
           toast({
-            title: "Authentication Error",
-            description: "Please sign in again",
+            title: t('auth.authError'),
+            description: t('auth.signInAgain'),
             variant: "destructive"
           });
           navigate('/login');
@@ -52,7 +54,7 @@ export const useSimpleAuthCheck = (redirectToLogin = true) => {
     };
 
     checkAuth();
-  }, [navigate, redirectToLogin, toast]);
+  }, [navigate, redirectToLogin, toast, t]);
 
   return { isAuthenticated, isLoading, error };
 };
