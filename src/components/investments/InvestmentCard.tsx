@@ -10,12 +10,14 @@ interface InvestmentCardProps {
   investment: Investment;
   onEdit: (investment: Investment) => void;
   onDelete: (id: string) => void;
+  deleteConfirmationId?: string | null;
 }
 
 const InvestmentCard: React.FC<InvestmentCardProps> = ({
   investment,
   onEdit,
-  onDelete
+  onDelete,
+  deleteConfirmationId
 }) => {
   // Map investment types to icons
   const getInvestmentIcon = () => {
@@ -41,6 +43,8 @@ const InvestmentCard: React.FC<InvestmentCardProps> = ({
     if (type === 'realEstate') return 'Real Estate';
     return type.charAt(0).toUpperCase() + type.slice(1);
   };
+
+  const isConfirmingDelete = deleteConfirmationId === investment.id;
 
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:shadow-md">
@@ -81,10 +85,10 @@ const InvestmentCard: React.FC<InvestmentCardProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => onDelete(investment.id)}
-            className="text-red-600 hover:bg-red-50 hover:text-red-700"
+            className={`${isConfirmingDelete ? 'bg-red-100 text-red-700' : 'text-red-600 hover:bg-red-50 hover:text-red-700'}`}
           >
             <Trash2 className="h-4 w-4 mr-1" />
-            Delete
+            {isConfirmingDelete ? 'Confirm Delete' : 'Delete'}
           </Button>
         </div>
       </CardContent>
