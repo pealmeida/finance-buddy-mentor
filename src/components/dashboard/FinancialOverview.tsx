@@ -1,18 +1,16 @@
+
 import React, { useEffect, useState } from 'react';
-import { TrendingUp, Wallet, LineChart, Shield } from 'lucide-react';
+import { TrendingUp, Wallet, LineChart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { UserProfile, FinancialGoal, MonthlyAmount, Investment } from '@/types/finance';
+import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 import InvestmentDistribution from './InvestmentDistribution';
+import MonthlySavings from './MonthlySavings';
+import EmergencyFund from './EmergencyFund';
+import FinancialGoalSection from './FinancialGoalSection';
 
 interface FinancialOverviewProps {
   userProfile: UserProfile;
-}
-
-interface InvestmentDistributionItem {
-  type: string;
-  percentage: number;
 }
 
 const FinancialOverview: React.FC<FinancialOverviewProps> = ({
@@ -26,7 +24,10 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
   const [averageSavings, setAverageSavings] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   
-  const [investmentDistribution, setInvestmentDistribution] = useState<InvestmentDistributionItem[]>([]);
+  const [investmentDistribution, setInvestmentDistribution] = useState<Array<{
+    type: string;
+    percentage: number;
+  }>>([]);
   const totalInvestments = userProfile.investments.reduce((sum, inv) => sum + inv.value, 0);
   const monthlyIncome = userProfile.monthlyIncome;
 
@@ -38,7 +39,6 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
   const emergencyFundTarget = monthlyExpenses * 6;
 
   // Calculate current emergency fund amount based on profile data
-  // For demo purposes, if they have an emergency fund, estimate it based on the target
   const emergencyFundPercentage = userProfile.hasEmergencyFund ? (userProfile.emergencyFundMonths || 0) / 6 * 100 : 30;
   const currentEmergencyFund = emergencyFundPercentage / 100 * emergencyFundTarget;
   
@@ -61,7 +61,7 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
       }
     };
     loadSavingsData();
-  }, [userProfile.id]);
+  }, [userProfile.id, fetchMonthlySavings, calculateAverageSavings]);
   
   useEffect(() => {
     // Generate investment distribution based on risk profile
@@ -153,38 +153,8 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
     }
   };
 
-  // Calculate savings progress based on average monthly savings
-  const savingsProgress = Math.min(averageSavings / recommendedSavings * 100, 100);
-
-  // Calculate progress for first financial goal if exists
+  // First financial goal
   const firstGoal = userProfile.financialGoals[0];
-  const goalProgress = firstGoal ? Math.min(firstGoal.currentAmount / firstGoal.targetAmount * 100, 100) : 0;
-  
-  // Render financial goal component if goal exists
-  const renderFirstGoalSection = () => {
-    const firstGoal = userProfile.financialGoals[0];
-    if (!firstGoal) return null;
-    
-    return (
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <p className="font-medium">{firstGoal.name}</p>
-          <p className="text-sm text-gray-500">
-            ${firstGoal.currentAmount.toLocaleString()} of ${firstGoal.targetAmount.toLocaleString()}
-          </p>
-        </div>
-        <Progress value={goalProgress} className="h-2 progress-animation" />
-        <div className="mt-1 flex items-center justify-between">
-          <p className="text-xs text-gray-500">
-            {goalProgress < 100 ? `${Math.round(goalProgress)}% completed` : "Goal achieved!"}
-          </p>
-          <p className="text-xs text-finance-blue">
-            Target date: {new Date(firstGoal.targetDate).toLocaleDateString()}
-          </p>
-        </div>
-      </div>
-    );
-  };
   
   return (
     <div className="glass-panel rounded-2xl p-6">
@@ -222,52 +192,24 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
       </div>
       
       <div className="mt-6 space-y-6">
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <p className="font-medium">Monthly Savings</p>
-            <p className="text-sm text-gray-500">
-              {loading ? 'Loading...' : `$${averageSavings.toLocaleString(undefined, {
-              maximumFractionDigits: 0
-            })} of $${recommendedSavings.toLocaleString(undefined, {
-              maximumFractionDigits: 0
-            })}`}
-            </p>
-          </div>
-          <Progress value={savingsProgress} className="h-2 progress-animation" />
-          <p className="mt-1 text-xs text-gray-500">
-            {savingsProgress < 100 ? `${Math.round(100 - savingsProgress)}% below recommended savings` : "Meeting recommended savings"}
-          </p>
-        </div>
+        {/* Using the extracted MonthlySavings component */}
+        <MonthlySavings
+          averageSavings={averageSavings}
+          recommendedSavings={recommendedSavings}
+          loading={loading}
+        />
         
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-2">
-              <Shield className="h-4 w-4 text-finance-blue" />
-              <p className="font-medium">Emergency Fund</p>
-            </div>
-            <p className="text-sm text-gray-500">
-              ${currentEmergencyFund.toLocaleString(undefined, {
-              maximumFractionDigits: 0
-            })} 
-              of ${emergencyFundTarget.toLocaleString(undefined, {
-              maximumFractionDigits: 0
-            })}
-            </p>
-          </div>
-          <Progress value={emergencyFundPercentage} className="h-2 progress-animation" />
-          <div className="mt-1 flex items-center justify-between">
-            <p className="text-xs text-gray-500">
-              {emergencyFundPercentage < 100 ? `${Math.round(emergencyFundPercentage)}% of 6 months target` : "Emergency fund complete!"}
-            </p>
-            <p className="text-xs text-finance-blue">
-              Recommended: 6 months of expenses
-            </p>
-          </div>
-        </div>
+        {/* Using the extracted EmergencyFund component */}
+        <EmergencyFund
+          currentEmergencyFund={currentEmergencyFund}
+          emergencyFundTarget={emergencyFundTarget}
+          emergencyFundPercentage={emergencyFundPercentage}
+        />
         
-        {renderFirstGoalSection()}
+        {/* Using the extracted FinancialGoalSection component */}
+        <FinancialGoalSection goal={firstGoal} />
         
-        {/* Investment Distribution - Now using the extracted component */}
+        {/* Investment Distribution - Using the previously extracted component */}
         <InvestmentDistribution 
           userProfile={userProfile}
           investmentDistribution={investmentDistribution}
