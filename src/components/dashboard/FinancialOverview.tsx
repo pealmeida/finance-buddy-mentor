@@ -36,6 +36,7 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
   // For demo purposes, if they have an emergency fund, estimate it based on the target
   const emergencyFundPercentage = userProfile.hasEmergencyFund ? (userProfile.emergencyFundMonths || 0) / 6 * 100 : 30;
   const currentEmergencyFund = emergencyFundPercentage / 100 * emergencyFundTarget;
+  
   useEffect(() => {
     const loadSavingsData = async () => {
       if (!userProfile.id) return;
@@ -56,6 +57,7 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
     };
     loadSavingsData();
   }, [userProfile.id]);
+  
   useEffect(() => {
     // Generate investment distribution based on risk profile
     const calculateInvestmentDistribution = () => {
@@ -152,6 +154,32 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
   // Calculate progress for first financial goal if exists
   const firstGoal = userProfile.financialGoals[0];
   const goalProgress = firstGoal ? Math.min(firstGoal.currentAmount / firstGoal.targetAmount * 100, 100) : 0;
+  
+  // Render financial goal component if goal exists
+  const renderFirstGoalSection = () => {
+    if (!firstGoal) return null;
+    
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <p className="font-medium">{firstGoal.name}</p>
+          <p className="text-sm text-gray-500">
+            ${firstGoal.currentAmount.toLocaleString()} of ${firstGoal.targetAmount.toLocaleString()}
+          </p>
+        </div>
+        <Progress value={goalProgress} className="h-2 progress-animation" />
+        <div className="mt-1 flex items-center justify-between">
+          <p className="text-xs text-gray-500">
+            {goalProgress < 100 ? `${Math.round(goalProgress)}% completed` : "Goal achieved!"}
+          </p>
+          <p className="text-xs text-finance-blue">
+            Target date: {new Date(firstGoal.targetDate).toLocaleDateString()}
+          </p>
+        </div>
+      </div>
+    );
+  };
+  
   return <div className="glass-panel rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold">Financial Overview</h2>
@@ -230,7 +258,7 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
           </div>
         </div>
         
-        {firstGoal}
+        {renderFirstGoalSection()}
         
         {/* Investment Distribution - Updated to match PersonalizedInsights style */}
         <div className="mt-2">
