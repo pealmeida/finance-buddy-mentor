@@ -13,7 +13,7 @@ const FinancialGoalSection: React.FC<FinancialGoalSectionProps> = ({ goal }) => 
   const goalProgress = Math.min(goal.currentAmount / goal.targetAmount * 100, 100);
   
   return (
-    <div>
+    <>
       <div className="flex items-center justify-between mb-2">
         <p className="font-medium">{goal.name}</p>
         <p className="text-sm text-gray-500">
@@ -29,7 +29,7 @@ const FinancialGoalSection: React.FC<FinancialGoalSectionProps> = ({ goal }) => 
           Target date: {new Date(goal.targetDate).toLocaleDateString()}
         </p>
       </div>
-    </div>
+    </>
   );
 };
 
