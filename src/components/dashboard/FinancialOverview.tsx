@@ -4,7 +4,6 @@ import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 import InvestmentDistribution from './InvestmentDistribution';
 import MonthlySavings from './MonthlySavings';
 import EmergencyFund from './EmergencyFund';
-import FinancialGoalSection from './FinancialGoalSection';
 import FinancialCardGrid from './FinancialCardGrid';
 
 interface FinancialOverviewProps {
@@ -151,8 +150,6 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
     }
   };
 
-  // First financial goal
-  const firstGoal = userProfile.financialGoals[0];
   
   return (
     <div className="glass-panel rounded-2xl p-6">
@@ -179,7 +176,6 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
           emergencyFundPercentage={emergencyFundPercentage}
         />
         
-        <FinancialGoalSection goal={firstGoal} />
         
         <InvestmentDistribution 
           userProfile={userProfile}
