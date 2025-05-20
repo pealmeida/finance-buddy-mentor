@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { TrendingUp, Wallet, LineChart, AlertTriangle, Shield } from 'lucide-react';
+import { TrendingUp, Wallet, LineChart, Shield } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { UserProfile, FinancialGoal, MonthlyAmount, Investment } from '@/types/finance';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
+import InvestmentDistribution from './InvestmentDistribution';
+
 interface FinancialOverviewProps {
   userProfile: UserProfile;
 }
-interface InvestmentDistribution {
+
+interface InvestmentDistributionItem {
   type: string;
   percentage: number;
 }
+
 const FinancialOverview: React.FC<FinancialOverviewProps> = ({
   userProfile
 }) => {
@@ -21,7 +25,8 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
   const [monthlySavingsData, setMonthlySavingsData] = useState<MonthlyAmount[]>([]);
   const [averageSavings, setAverageSavings] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const [investmentDistribution, setInvestmentDistribution] = useState<InvestmentDistribution[]>([]);
+  
+  const [investmentDistribution, setInvestmentDistribution] = useState<InvestmentDistributionItem[]>([]);
   const totalInvestments = userProfile.investments.reduce((sum, inv) => sum + inv.value, 0);
   const monthlyIncome = userProfile.monthlyIncome;
 
@@ -157,6 +162,7 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
   
   // Render financial goal component if goal exists
   const renderFirstGoalSection = () => {
+    const firstGoal = userProfile.financialGoals[0];
     if (!firstGoal) return null;
     
     return (
@@ -180,7 +186,8 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
     );
   };
   
-  return <div className="glass-panel rounded-2xl p-6">
+  return (
+    <div className="glass-panel rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold">Financial Overview</h2>
         <span className="text-sm text-gray-500">{new Date().toLocaleDateString()}</span>
@@ -260,35 +267,14 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
         
         {renderFirstGoalSection()}
         
-        {/* Investment Distribution - Updated to match PersonalizedInsights style */}
-        <div className="mt-2">
-          <div className="flex items-center justify-between mb-3">
-            <p className="font-medium">Investment Distribution</p>
-            <p className="text-xs text-gray-500">{userProfile.riskProfile} profile</p>
-          </div>
-          
-          <div className="flex items-center">
-            <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-              {investmentDistribution.length > 0 ? <div className="flex h-full">
-                  {investmentDistribution.map((item, index) => <div key={index} className={`h-full ${index === 0 ? 'bg-finance-blue' : index === 1 ? 'bg-finance-green' : index === 2 ? 'bg-finance-purple' : index === 3 ? 'bg-yellow-400' : 'bg-gray-400'}`} style={{
-                width: `${item.percentage}%`
-              }}></div>)}
-                </div> : <div className="bg-gray-300 h-full w-full"></div>}
-            </div>
-          </div>
-          
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
-            {investmentDistribution.map((item, index) => <span key={index}>
-                {item.type}: {item.percentage}%
-              </span>)}
-          </div>
-          
-          {userProfile.investments.length === 0 && <p className="text-xs text-gray-500 mt-2 flex items-center">
-              <AlertTriangle className="h-3 w-3 mr-1 text-amber-500" />
-              Recommended allocation based on your risk profile
-            </p>}
-        </div>
+        {/* Investment Distribution - Now using the extracted component */}
+        <InvestmentDistribution 
+          userProfile={userProfile}
+          investmentDistribution={investmentDistribution}
+        />
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default FinancialOverview;
