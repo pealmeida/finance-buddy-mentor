@@ -1,8 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
 import { UserProfile } from '@/types/finance';
-import InvestmentRecommendations from './InvestmentRecommendations';
-import SavingStrategies from './SavingStrategies';
 import FinancialOverview from './dashboard/FinancialOverview';
 import FinancialGoals from './dashboard/FinancialGoals';
 import PersonalizedInsights from './dashboard/PersonalizedInsights';
@@ -104,11 +101,6 @@ const Dashboard: React.FC<DashboardProps> = ({ userProfile }) => {
           />
           <MarketTrends />
         </div>
-      </div>
-      
-      <div className="mt-12 space-y-12">
-        <InvestmentRecommendations userProfile={userProfile} />
-        <SavingStrategies userProfile={userProfile} />
       </div>
     </div>
   );

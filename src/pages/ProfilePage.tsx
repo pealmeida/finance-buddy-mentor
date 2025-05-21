@@ -4,6 +4,8 @@ import { UserProfile } from '@/types/finance';
 import Header from '@/components/Header';
 import UserDataProvider from '@/components/profile/UserDataProvider';
 import PersonalInfoTab from '@/components/profile/PersonalInfoTab';
+import InvestmentRecommendations from '@/components/InvestmentRecommendations';
+import SavingStrategies from '@/components/SavingStrategies';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -82,6 +84,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
                   {isSubmitting ? 'Saving...' : 'Save Changes'}
                 </Button>
               </div>
+            </div>
+            
+            <div className="mt-12 space-y-12">
+              <InvestmentRecommendations userProfile={userProfile} />
+              <SavingStrategies userProfile={userProfile} />
             </div>
           </div>
         )}
