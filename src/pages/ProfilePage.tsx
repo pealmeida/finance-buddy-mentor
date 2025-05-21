@@ -7,8 +7,9 @@ import PersonalInfoTab from '@/components/profile/PersonalInfoTab';
 import InvestmentRecommendations from '@/components/InvestmentRecommendations';
 import SavingStrategies from '@/components/SavingStrategies';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, Pencil } from 'lucide-react';
+import { ChevronLeft, Pencil, User, LineChart, PiggyBank } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface ProfilePageProps {
   userProfile: UserProfile;
@@ -17,6 +18,7 @@ interface ProfilePageProps {
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState('personal-info');
   const navigate = useNavigate();
   
   const handleProfileUpdate = async (updatedProfile: UserProfile) => {
@@ -67,28 +69,59 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
               </div>
             </div>
             
-            <div className="w-full max-w-4xl mx-auto mt-8">
-              <PersonalInfoTab 
-                profile={profile} 
-                onInputChange={handleInputChange}
-                handleInputChange={handleInputChange}
-                isSubmitting={isSubmitting}
-              />
-              
-              <div className="mt-8 flex justify-end">
-                <Button 
-                  onClick={() => handleProfileUpdate(profile)}
-                  disabled={isSubmitting}
-                  className="bg-finance-blue hover:bg-finance-blue-dark text-white"
-                >
-                  {isSubmitting ? 'Saving...' : 'Save Changes'}
-                </Button>
-              </div>
-            </div>
-            
-            <div className="mt-12 space-y-12">
-              <InvestmentRecommendations userProfile={userProfile} />
-              <SavingStrategies userProfile={userProfile} />
+            <div className="w-full max-w-4xl mx-auto">
+              <Tabs defaultValue="personal-info" value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="w-full justify-start mb-6 bg-transparent p-0 space-x-6 border-b">
+                  <TabsTrigger 
+                    value="personal-info"
+                    className="flex items-center gap-2 px-1 py-3 data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none"
+                  >
+                    <User className="h-4 w-4" />
+                    <span className="font-medium">Personal Information</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="investments"
+                    className="flex items-center gap-2 px-1 py-3 data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none"
+                  >
+                    <LineChart className="h-4 w-4" />
+                    <span className="font-medium">Investment Recommendations</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="savings"
+                    className="flex items-center gap-2 px-1 py-3 data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none"
+                  >
+                    <PiggyBank className="h-4 w-4" />
+                    <span className="font-medium">Money-Saving Strategies</span>
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="personal-info" className="mt-6">
+                  <PersonalInfoTab 
+                    profile={profile} 
+                    onInputChange={handleInputChange}
+                    handleInputChange={handleInputChange}
+                    isSubmitting={isSubmitting}
+                  />
+                  
+                  <div className="mt-8 flex justify-end">
+                    <Button 
+                      onClick={() => handleProfileUpdate(profile)}
+                      disabled={isSubmitting}
+                      className="bg-finance-blue hover:bg-finance-blue-dark text-white"
+                    >
+                      {isSubmitting ? 'Saving...' : 'Save Changes'}
+                    </Button>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="investments" className="mt-6">
+                  <InvestmentRecommendations userProfile={userProfile} />
+                </TabsContent>
+                
+                <TabsContent value="savings" className="mt-6">
+                  <SavingStrategies userProfile={userProfile} />
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         )}
