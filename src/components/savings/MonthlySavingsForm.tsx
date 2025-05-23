@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Save, X } from 'lucide-react';
 import { MONTHS } from '@/constants/months';
+import { useTranslation } from 'react-i18next';
 
 interface MonthlySavingsFormProps {
   month: number;
@@ -19,6 +20,7 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
   onSave,
   onCancel
 }) => {
+  const { t } = useTranslation();
   const [value, setValue] = useState(amount);
   const [error, setError] = useState('');
   
@@ -34,9 +36,9 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
     const numValue = parseFloat(inputValue);
     
     if (isNaN(numValue)) {
-      setError('Please enter a valid number');
+      setError(t('common.enterValidNumber', 'Please enter a valid number'));
     } else if (numValue < 0) {
-      setError('Amount cannot be negative');
+      setError(t('common.amountNotNegative', 'Amount cannot be negative'));
     } else {
       setValue(numValue);
       setError('');
@@ -51,13 +53,13 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg border">
       <h3 className="text-xl font-semibold mb-4">
-        Edit Savings for {MONTHS[month - 1]}
+        {t('savings.editSavingsFor', 'Edit Savings for')} {MONTHS[month - 1]}
       </h3>
       
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="amount">Savings Amount ($)</Label>
+            <Label htmlFor="amount">{t('savings.savingsAmount', 'Savings Amount')} ($)</Label>
             <div className="mt-1 relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2">$</span>
               <Input
@@ -83,7 +85,7 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
               className="flex items-center gap-2"
             >
               <X size={16} />
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
@@ -91,7 +93,7 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
               disabled={!!error}
             >
               <Save size={16} />
-              Save
+              {t('common.save')}
             </Button>
           </div>
         </div>

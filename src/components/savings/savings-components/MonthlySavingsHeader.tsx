@@ -3,6 +3,7 @@ import React from 'react';
 import { CircleDollarSign, RefreshCw, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import YearSelector from '../YearSelector';
+import { useTranslation } from 'react-i18next';
 
 interface MonthlySavingsHeaderProps {
   selectedYear: number;
@@ -21,12 +22,14 @@ const MonthlySavingsHeader: React.FC<MonthlySavingsHeaderProps> = ({
   disabled,
   isSaving
 }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-semibold flex items-center gap-2">
           <CircleDollarSign className="text-finance-blue" />
-          Monthly Savings
+          {t('savings.monthlySavings')}
         </h2>
         <div className="flex gap-4 items-center">
           <YearSelector
@@ -41,11 +44,11 @@ const MonthlySavingsHeader: React.FC<MonthlySavingsHeaderProps> = ({
             disabled={disabled || isSaving}
           >
             {isSaving ? (
-              <>Saving...</>
+              <>{t('common.saving')}</>
             ) : (
               <>
                 <Save size={16} />
-                Save All
+                {t('common.save')} {t('common.viewAll')}
               </>
             )}
           </Button>
@@ -57,13 +60,13 @@ const MonthlySavingsHeader: React.FC<MonthlySavingsHeaderProps> = ({
             className="flex items-center gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${disabled ? 'animate-spin' : ''}`} />
-            {disabled ? 'Loading...' : 'Refresh'}
+            {disabled ? t('common.loading') : t('common.refresh')}
           </Button>
         </div>
       </div>
       
       <p className="text-gray-600">
-        Track your monthly savings to visualize your progress throughout the year.
+        {t('savings.trackMonthlySavings')}
       </p>
     </>
   );

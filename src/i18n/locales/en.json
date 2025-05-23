@@ -45,7 +45,9 @@
     "amountSavedIn": "Amount saved in",
     "actions": "Actions",
     "tryAgain": "Try Again",
-    "backToDashboard": "Back to Dashboard"
+    "backToDashboard": "Back to Dashboard",
+    "enterValidNumber": "Please enter a valid number",
+    "amountNotNegative": "Amount cannot be negative"
   },
   "expenses": {
     "monthlyExpenses": "Monthly Expenses",
@@ -57,7 +59,10 @@
     "moderateSpending": "Moderate",
     "lowSpending": "Low",
     "spending": "Spending",
-    "viewDetailed": "View detailed expenses"
+    "viewDetailed": "View detailed expenses",
+    "trackMonthlyExpenses": "Track your monthly expenses to visualize your spending patterns throughout the year.",
+    "editExpensesFor": "Edit Expenses for",
+    "expenseAmount": "Expense Amount"
   },
   "savings": {
     "monthlySavings": "Monthly Savings",
@@ -85,7 +90,9 @@
       "averageSaved": "Average Monthly",
       "recommendedSavings": "Recommended Savings"
     },
-    "trackMonthlySavings": "Track your monthly savings to visualize your progress throughout the year."
+    "trackMonthlySavings": "Track your monthly savings to visualize your progress throughout the year.",
+    "editSavingsFor": "Edit Savings for",
+    "savingsAmount": "Savings Amount"
   },
   "goals": {
     "noGoalsYet": "No financial goals yet",

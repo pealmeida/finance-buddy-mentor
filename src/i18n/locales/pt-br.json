@@ -45,7 +45,9 @@
     "amountSavedIn": "Valor economizado em",
     "actions": "Ações",
     "tryAgain": "Tentar Novamente",
-    "backToDashboard": "Voltar para o Painel"
+    "backToDashboard": "Voltar para o Painel",
+    "enterValidNumber": "Por favor, insira um número válido",
+    "amountNotNegative": "O valor não pode ser negativo"
   },
   "expenses": {
     "monthlyExpenses": "Despesas Mensais",
@@ -57,7 +59,10 @@
     "moderateSpending": "Moderado",
     "lowSpending": "Baixo",
     "spending": "Gasto",
-    "viewDetailed": "Ver despesas detalhadas"
+    "viewDetailed": "Ver despesas detalhadas",
+    "trackMonthlyExpenses": "Acompanhe suas despesas mensais para visualizar seus padrões de gastos ao longo do ano.",
+    "editExpensesFor": "Editar Despesas para",
+    "expenseAmount": "Valor da Despesa"
   },
   "savings": {
     "monthlySavings": "Economias Mensais",
@@ -85,7 +90,9 @@
       "averageSaved": "Média Mensal",
       "recommendedSavings": "Economias Recomendadas"
     },
-    "trackMonthlySavings": "Acompanhe suas economias mensais para visualizar seu progresso ao longo do ano."
+    "trackMonthlySavings": "Acompanhe suas economias mensais para visualizar seu progresso ao longo do ano.",
+    "editSavingsFor": "Editar Economias para",
+    "savingsAmount": "Valor da Economia"
   },
   "goals": {
     "noGoalsYet": "Ainda não há metas financeiras",

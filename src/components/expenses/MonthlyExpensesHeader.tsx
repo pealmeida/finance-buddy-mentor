@@ -3,6 +3,7 @@ import React from 'react';
 import { DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Save, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface MonthlyExpensesHeaderProps {
   selectedYear: number;
@@ -19,6 +20,7 @@ const MonthlyExpensesHeader: React.FC<MonthlyExpensesHeaderProps> = ({
   disabled,
   isSaving
 }) => {
+  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
 
@@ -27,7 +29,7 @@ const MonthlyExpensesHeader: React.FC<MonthlyExpensesHeaderProps> = ({
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-semibold flex items-center gap-2">
           <DollarSign className="text-red-500" />
-          Monthly Expenses
+          {t('expenses.monthlyExpenses')}
         </h2>
         <div className="flex gap-4 items-center">
           <div className="flex">
@@ -53,12 +55,12 @@ const MonthlyExpensesHeader: React.FC<MonthlyExpensesHeaderProps> = ({
             {isSaving ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Saving...
+                {t('common.saving')}
               </>
             ) : (
               <>
                 <Save className="h-4 w-4" />
-                Save All
+                {t('common.save')} {t('common.viewAll')}
               </>
             )}
           </Button>
@@ -66,7 +68,7 @@ const MonthlyExpensesHeader: React.FC<MonthlyExpensesHeaderProps> = ({
       </div>
       
       <p className="text-gray-600">
-        Track your monthly expenses to visualize your spending patterns throughout the year.
+        {t('expenses.trackMonthlyExpenses', 'Track your monthly expenses to visualize your spending patterns throughout the year.')}
       </p>
     </>
   );
