@@ -2,6 +2,7 @@
 import React from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { UserProfile } from '@/types/finance';
+import { useTranslation } from 'react-i18next';
 
 interface InvestmentDistributionProps {
   userProfile: UserProfile;
@@ -15,10 +16,12 @@ const InvestmentDistribution: React.FC<InvestmentDistributionProps> = ({
   userProfile,
   investmentDistribution
 }) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="mt-2">
       <div className="flex items-center justify-between mb-3">
-        <p className="font-medium">Investment Distribution</p>
+        <p className="font-medium">{t('dashboard.investmentDistribution', 'Investment Distribution')}</p>
         <p className="text-xs text-gray-500">{userProfile.riskProfile} profile</p>
       </div>
       
@@ -58,7 +61,7 @@ const InvestmentDistribution: React.FC<InvestmentDistributionProps> = ({
       {userProfile.investments.length === 0 && (
         <p className="text-xs text-gray-500 mt-2 flex items-center">
           <AlertTriangle className="h-3 w-3 mr-1 text-amber-500" />
-          Recommended allocation based on your risk profile
+          {t('dashboard.recommendedAllocation', 'Recommended allocation based on your risk profile')}
         </p>
       )}
     </div>

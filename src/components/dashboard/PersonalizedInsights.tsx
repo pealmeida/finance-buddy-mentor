@@ -22,28 +22,43 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
   // Generate personalized insights based on user data
   const getPersonalizedInsight = (): string => {
     const name = userProfile.name?.split(' ')[0] || 'there';
-    let insight = '';
     
     if (savingsProgress < 50) {
-      insight = `Hi ${name}, we noticed your monthly savings are below the recommended amount. Consider creating a budget to increase your savings rate.`;
+      return t('dashboard.savingsInsight.low', {
+        name,
+        defaultValue: `Hi ${name}, we noticed your monthly savings are below the recommended amount. Consider creating a budget to increase your savings rate.`
+      });
     } else if (savingsProgress >= 50 && savingsProgress < 100) {
-      insight = `Good job ${name}! You're making progress toward your savings goals, but there's still room for improvement.`;
+      return t('dashboard.savingsInsight.moderate', {
+        name,
+        defaultValue: `Good job ${name}! You're making progress toward your savings goals, but there's still room for improvement.`
+      });
     } else {
-      insight = `Excellent work ${name}! You're exceeding your savings targets. Consider investing the extra funds to maximize your returns.`;
+      return t('dashboard.savingsInsight.high', {
+        name,
+        defaultValue: `Excellent work ${name}! You're exceeding your savings targets. Consider investing the extra funds to maximize your returns.`
+      });
     }
-    
-    return insight;
   };
   
   const getExpenseInsight = (): string => {
     const name = userProfile.name?.split(' ')[0] || 'there';
     
     if (expensesRatio > 70) {
-      return `${name}, your expenses are high relative to your income. Consider identifying areas where you can cut back.`;
+      return t('dashboard.expenseInsight.high', {
+        name,
+        defaultValue: `${name}, your expenses are high relative to your income. Consider identifying areas where you can cut back.`
+      });
     } else if (expensesRatio > 50) {
-      return `${name}, your expenses are at a moderate level. Look for opportunities to reduce non-essential spending.`;
+      return t('dashboard.expenseInsight.moderate', {
+        name,
+        defaultValue: `${name}, your expenses are at a moderate level. Look for opportunities to reduce non-essential spending.`
+      });
     } else {
-      return `${name}, you're doing well at keeping your expenses in check. This gives you more flexibility for savings and investments.`;
+      return t('dashboard.expenseInsight.low', {
+        name,
+        defaultValue: `${name}, you're doing well at keeping your expenses in check. This gives you more flexibility for savings and investments.`
+      });
     }
   };
   
@@ -52,11 +67,20 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
     const riskProfile = userProfile.riskProfile.toLowerCase();
     
     if (riskProfile === 'conservative') {
-      return `As a conservative investor ${name}, focus on stable investments like bonds and dividend stocks to preserve capital.`;
+      return t('dashboard.investmentAdvice.conservative', {
+        name,
+        defaultValue: `As a conservative investor ${name}, focus on stable investments like bonds and dividend stocks to preserve capital.`
+      });
     } else if (riskProfile === 'moderate') {
-      return `With your moderate risk tolerance ${name}, a balanced portfolio of stocks and bonds could work well for you.`;
+      return t('dashboard.investmentAdvice.moderate', {
+        name,
+        defaultValue: `With your moderate risk tolerance ${name}, a balanced portfolio of stocks and bonds could work well for you.`
+      });
     } else {
-      return `As an aggressive investor ${name}, you might consider growth stocks and alternative investments for higher potential returns.`;
+      return t('dashboard.investmentAdvice.aggressive', {
+        name,
+        defaultValue: `As an aggressive investor ${name}, you might consider growth stocks and alternative investments for higher potential returns.`
+      });
     }
   };
   

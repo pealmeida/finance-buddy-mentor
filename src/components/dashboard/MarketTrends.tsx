@@ -20,7 +20,7 @@ const MarketTrends: React.FC = () => {
             </div>
             <div>
               <p className="font-medium">S&P 500</p>
-              <p className="text-xs text-gray-500">US Index</p>
+              <p className="text-xs text-gray-500">{t('dashboard.marketData.usIndex', 'US Index')}</p>
             </div>
           </div>
           <div className="text-right">
@@ -38,7 +38,7 @@ const MarketTrends: React.FC = () => {
             </div>
             <div>
               <p className="font-medium">Bitcoin</p>
-              <p className="text-xs text-gray-500">Cryptocurrency</p>
+              <p className="text-xs text-gray-500">{t('dashboard.marketData.cryptocurrency', 'Cryptocurrency')}</p>
             </div>
           </div>
           <div className="text-right">
@@ -56,7 +56,7 @@ const MarketTrends: React.FC = () => {
             </div>
             <div>
               <p className="font-medium">Gold</p>
-              <p className="text-xs text-gray-500">Commodity</p>
+              <p className="text-xs text-gray-500">{t('dashboard.marketData.commodity', 'Commodity')}</p>
             </div>
           </div>
           <div className="text-right">
@@ -74,7 +74,7 @@ const MarketTrends: React.FC = () => {
             </div>
             <div>
               <p className="font-medium">10-Year Treasury</p>
-              <p className="text-xs text-gray-500">Bond Yield</p>
+              <p className="text-xs text-gray-500">{t('dashboard.marketData.bondYield', 'Bond Yield')}</p>
             </div>
           </div>
           <div className="text-right">
