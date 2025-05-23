@@ -18,11 +18,22 @@ const LanguageSelector: React.FC = () => {
     localStorage.setItem("language", language);
   };
 
+  const getCurrentLanguageLabel = () => {
+    switch (i18n.language) {
+      case "pt-BR":
+        return "PT";
+      case "en":
+      default:
+        return "EN";
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="w-9 px-0">
-          <Globe className="h-5 w-5" />
+        <Button variant="ghost" className="flex items-center gap-2 px-3">
+          <Globe className="h-4 w-4" />
+          <span className="text-sm font-medium">{getCurrentLanguageLabel()}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
