@@ -6,57 +6,68 @@ import { useResponsive } from '@/hooks/use-responsive';
 interface ResponsiveContainerProps {
   children: React.ReactNode;
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  padding?: 'none' | 'sm' | 'md' | 'lg';
-  dynamicPadding?: boolean;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'constrained';
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'responsive';
+  maxWidth?: number;
 }
 
 const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
   children,
   className,
-  size = 'lg',
-  padding = 'md',
-  dynamicPadding = true
+  size = 'constrained',
+  padding = 'responsive',
+  maxWidth = 1024
 }) => {
-  const { isMobile, isTablet, isDesktop } = useResponsive();
+  const { isMobile, isTablet, isDesktop, screenSize } = useResponsive();
 
-  const sizeClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-2xl',
-    lg: 'max-w-4xl',
-    xl: 'max-w-6xl',
-    full: 'max-w-full'
+  const getSizeClasses = () => {
+    if (size === 'constrained') {
+      return 'w-full mx-auto';
+    }
+    
+    const sizeClasses = {
+      sm: 'max-w-sm',
+      md: 'max-w-2xl',
+      lg: 'max-w-4xl',
+      xl: 'max-w-6xl',
+      full: 'max-w-full'
+    };
+    return `${sizeClasses[size]} mx-auto`;
   };
 
   const getPaddingClasses = () => {
-    if (!dynamicPadding) {
-      const paddingClasses = {
-        none: 'px-0',
-        sm: 'px-4 sm:px-6',
-        md: 'px-4 sm:px-6 lg:px-8',
-        lg: 'px-4 sm:px-6 lg:px-8 xl:px-12'
-      };
-      return paddingClasses[padding];
+    if (padding === 'responsive') {
+      return 'responsive-container';
     }
+    
+    if (padding === 'none') return 'px-0';
+    
+    const paddingClasses = {
+      sm: 'px-4 sm:px-6',
+      md: 'px-4 sm:px-6 lg:px-8',
+      lg: 'px-4 sm:px-6 lg:px-8 xl:px-12'
+    };
+    return paddingClasses[padding];
+  };
 
-    // Dynamic padding based on screen size
-    if (isMobile) {
-      return 'px-4';
-    } else if (isTablet) {
-      return 'px-6';
-    } else if (isDesktop) {
-      return 'px-8 xl:px-12';
+  // Apply max-width constraint when size is constrained
+  const getConstraintStyles = () => {
+    if (size === 'constrained' && screenSize.width >= 1024) {
+      return { maxWidth: `${maxWidth}px` };
     }
-    return 'px-4 sm:px-6 lg:px-8';
+    return {};
   };
 
   return (
-    <div className={cn(
-      'w-full mx-auto',
-      sizeClasses[size],
-      getPaddingClasses(),
-      className
-    )}>
+    <div 
+      className={cn(
+        'w-full',
+        getSizeClasses(),
+        getPaddingClasses(),
+        className
+      )}
+      style={getConstraintStyles()}
+    >
       {children}
     </div>
   );

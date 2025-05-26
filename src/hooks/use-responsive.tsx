@@ -60,6 +60,16 @@ export function useResponsive(customBreakpoints?: Partial<BreakpointConfig>) {
   const isMobile = isBreakpointDown('md');
   const isTablet = isBreakpoint('md');
   const isDesktop = isBreakpointUp('lg');
+  const isConstrainedDesktop = isBreakpointUp('lg') && screenSize.width >= 1024;
+
+  // Media query utilities
+  const mediaQueries = {
+    isMobile: () => window.matchMedia('(max-width: 767px)').matches,
+    isTablet: () => window.matchMedia('(min-width: 768px) and (max-width: 1023px)').matches,
+    isDesktop: () => window.matchMedia('(min-width: 1024px)').matches,
+    isLargeDesktop: () => window.matchMedia('(min-width: 1280px)').matches,
+    isWithinConstraint: () => window.matchMedia('(max-width: 1024px)').matches,
+  };
 
   return {
     currentBreakpoint,
@@ -71,5 +81,7 @@ export function useResponsive(customBreakpoints?: Partial<BreakpointConfig>) {
     isMobile,
     isTablet,
     isDesktop,
+    isConstrainedDesktop,
+    mediaQueries,
   };
 }

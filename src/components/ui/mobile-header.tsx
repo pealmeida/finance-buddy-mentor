@@ -22,47 +22,56 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({
   actions
 }) => {
   const navigate = useNavigate();
-  const { isMobile, screenSize } = useResponsive();
+  const { isMobile, screenSize, isConstrainedDesktop } = useResponsive();
 
-  // Dynamic height based on screen size
-  const getHeaderHeight = () => {
-    if (screenSize.width < 375) return 'h-12'; // Very small phones
-    if (screenSize.width < 414) return 'h-14'; // Standard phones
-    return 'h-16'; // Larger phones and tablets
+  // Dynamic height based on screen size with media queries
+  const getHeaderClasses = () => {
+    return cn(
+      'sticky top-0 z-40 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80',
+      isMobile ? 'block' : 'md:hidden'
+    );
   };
 
-  // Dynamic font size for title
-  const getTitleSize = () => {
-    if (screenSize.width < 375) return 'text-base';
-    if (screenSize.width < 414) return 'text-lg';
-    return 'text-xl';
+  const getContainerClasses = () => {
+    return cn(
+      'container flex items-center justify-between',
+      'h-12 px-4', // Mobile base
+      'sm:h-14 sm:px-6', // Small screens
+      'md:h-16 md:px-8', // Medium screens
+      isConstrainedDesktop && 'lg:max-w-[1024px] lg:mx-auto' // Desktop constraint
+    );
+  };
+
+  const getTitleClasses = () => {
+    return cn(
+      'font-semibold truncate',
+      'text-base', // Mobile base
+      'sm:text-lg', // Small screens
+      'md:text-xl' // Medium and up
+    );
+  };
+
+  const getButtonSize = () => {
+    if (screenSize.width < 414) return 'sm';
+    return 'default';
   };
 
   return (
-    <header className={cn(
-      'sticky top-0 z-40 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80',
-      isMobile ? 'block' : 'md:hidden'
-    )}>
-      <div className={cn(
-        'container flex items-center justify-between px-4',
-        getHeaderHeight()
-      )}>
+    <header className={getHeaderClasses()}>
+      <div className={getContainerClasses()}>
         <div className="flex items-center space-x-3 flex-1 min-w-0">
           {showBack && (
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate(-1)}
-              className="h-8 w-8 flex-shrink-0"
+              className="h-8 w-8 flex-shrink-0 responsive-button"
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
           )}
           {showMenu && <MobileNav />}
-          <h1 className={cn(
-            'font-semibold truncate',
-            getTitleSize()
-          )}>
+          <h1 className={getTitleClasses()}>
             {title}
           </h1>
         </div>

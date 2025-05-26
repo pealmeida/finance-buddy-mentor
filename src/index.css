@@ -87,6 +87,169 @@
   }
 }
 
+/* Responsive layout utilities with CSS Media Queries */
+@layer utilities {
+  /* Mobile First - Base styles (up to 475px) */
+  .responsive-container {
+    @apply w-full px-4 mx-auto;
+  }
+
+  /* Small devices (476px - 639px) */
+  @media (min-width: 476px) {
+    .responsive-container {
+      @apply px-6;
+    }
+  }
+
+  /* Medium devices (640px - 767px) */
+  @media (min-width: 640px) {
+    .responsive-container {
+      @apply px-6;
+      max-width: 100%;
+    }
+  }
+
+  /* Large devices (768px - 1023px) */
+  @media (min-width: 768px) {
+    .responsive-container {
+      @apply px-8;
+      max-width: 100%;
+    }
+  }
+
+  /* Desktop devices (1024px and up) - Max width constraint */
+  @media (min-width: 1024px) {
+    .responsive-container {
+      @apply px-12;
+      max-width: 1024px;
+    }
+  }
+
+  /* Large desktop (1280px and up) */
+  @media (min-width: 1280px) {
+    .responsive-container {
+      max-width: 1024px; /* Keep max width at 1024px */
+    }
+  }
+
+  /* Extra large screens (1536px and up) */
+  @media (min-width: 1536px) {
+    .responsive-container {
+      max-width: 1024px; /* Keep max width at 1024px */
+    }
+  }
+
+  /* Responsive grid patterns */
+  .responsive-grid-1-2-3 {
+    @apply grid gap-4;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .responsive-grid-1-2-3 {
+      grid-template-columns: repeat(2, 1fr);
+      @apply gap-6;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .responsive-grid-1-2-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .responsive-grid-1-2-4 {
+    @apply grid gap-4;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .responsive-grid-1-2-4 {
+      grid-template-columns: repeat(2, 1fr);
+      @apply gap-6;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .responsive-grid-1-2-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* Responsive text sizing */
+  .responsive-heading {
+    @apply text-lg font-semibold;
+  }
+
+  @media (min-width: 640px) {
+    .responsive-heading {
+      @apply text-xl;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .responsive-heading {
+      @apply text-2xl;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .responsive-heading {
+      @apply text-3xl;
+    }
+  }
+
+  .responsive-subheading {
+    @apply text-base font-medium;
+  }
+
+  @media (min-width: 640px) {
+    .responsive-subheading {
+      @apply text-lg;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .responsive-subheading {
+      @apply text-xl;
+    }
+  }
+
+  /* Responsive spacing */
+  .responsive-section-spacing {
+    @apply py-4 space-y-4;
+  }
+
+  @media (min-width: 640px) {
+    .responsive-section-spacing {
+      @apply py-6 space-y-6;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .responsive-section-spacing {
+      @apply py-8 space-y-8;
+    }
+  }
+
+  /* Responsive card padding */
+  .responsive-card-padding {
+    @apply p-4;
+  }
+
+  @media (min-width: 640px) {
+    .responsive-card-padding {
+      @apply p-6;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .responsive-card-padding {
+      @apply p-8;
+    }
+  }
+}
+
 .glass-card {
   @apply bg-white/70 dark:bg-black/20 backdrop-blur-lg border border-white/20 dark:border-white/10;
 }
@@ -100,7 +263,26 @@
 }
 
 .finance-card {
-  @apply rounded-2xl glass-card subtle-shadow p-6 transition-all duration-300 hover:shadow-card-hover;
+  @apply rounded-2xl glass-card subtle-shadow transition-all duration-300 hover:shadow-card-hover;
+}
+
+/* Apply responsive padding to finance cards */
+@media (max-width: 475px) {
+  .finance-card {
+    @apply p-4;
+  }
+}
+
+@media (min-width: 476px) and (max-width: 767px) {
+  .finance-card {
+    @apply p-5;
+  }
+}
+
+@media (min-width: 768px) {
+  .finance-card {
+    @apply p-6;
+  }
 }
 
 /* Custom animations */
@@ -126,4 +308,21 @@
 
 .blur-load.loaded {
   filter: blur(0);
+}
+
+/* Responsive button sizing */
+.responsive-button {
+  @apply px-3 py-2 text-sm;
+}
+
+@media (min-width: 640px) {
+  .responsive-button {
+    @apply px-4 py-2 text-base;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-button {
+    @apply px-6 py-3;
+  }
 }

@@ -6,6 +6,7 @@ import { useResponsive } from '@/hooks/use-responsive';
 interface ResponsiveGridProps {
   children: React.ReactNode;
   className?: string;
+  pattern?: '1-2-3' | '1-2-4' | '1-3-6' | 'custom';
   cols?: {
     xs?: number;
     sm?: number;
@@ -22,33 +23,73 @@ interface ResponsiveGridProps {
     xl?: number;
     '2xl'?: number;
   };
+  constrainOnDesktop?: boolean;
 }
 
 const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
   children,
   className,
+  pattern = 'custom',
   cols = { xs: 1, sm: 2, md: 2, lg: 3, xl: 4, '2xl': 4 },
-  gap = { xs: 3, sm: 4, md: 4, lg: 6, xl: 6, '2xl': 8 }
+  gap = { xs: 3, sm: 4, md: 4, lg: 6, xl: 6, '2xl': 8 },
+  constrainOnDesktop = true
 }) => {
-  const { currentBreakpoint } = useResponsive();
+  const { currentBreakpoint, isConstrainedDesktop } = useResponsive();
 
-  const getCurrentCols = () => {
-    return cols[currentBreakpoint] || cols.lg || 3;
+  const getPatternClasses = () => {
+    switch (pattern) {
+      case '1-2-3':
+        return 'responsive-grid-1-2-3';
+      case '1-2-4':
+        return 'responsive-grid-1-2-4';
+      case '1-3-6':
+        return cn(
+          'grid gap-4',
+          'grid-cols-1',
+          'sm:grid-cols-3',
+          'lg:grid-cols-6'
+        );
+      default:
+        return getCustomGridClasses();
+    }
   };
 
-  const getCurrentGap = () => {
-    return gap[currentBreakpoint] || gap.lg || 6;
+  const getCustomGridClasses = () => {
+    const getCurrentCols = () => {
+      // Apply constraint logic for desktop if enabled
+      if (constrainOnDesktop && isConstrainedDesktop) {
+        return Math.min(cols[currentBreakpoint] || cols.lg || 3, 4);
+      }
+      return cols[currentBreakpoint] || cols.lg || 3;
+    };
+
+    const getCurrentGap = () => {
+      return gap[currentBreakpoint] || gap.lg || 6;
+    };
+
+    return cn(
+      'grid w-full',
+      `grid-cols-${getCurrentCols()}`,
+      `gap-${getCurrentGap()}`
+    );
   };
 
-  const gridClasses = cn(
-    'grid w-full',
-    `grid-cols-${getCurrentCols()}`,
-    `gap-${getCurrentGap()}`,
-    className
-  );
+  // Apply max-width constraint when on desktop
+  const getContainerStyles = () => {
+    if (constrainOnDesktop && isConstrainedDesktop) {
+      return { maxWidth: '1024px', margin: '0 auto' };
+    }
+    return {};
+  };
 
   return (
-    <div className={gridClasses}>
+    <div 
+      className={cn(
+        getPatternClasses(),
+        className
+      )}
+      style={getContainerStyles()}
+    >
       {children}
     </div>
   );

@@ -159,6 +159,9 @@ export default {
 			},
 			backdropBlur: {
 				'xs': '2px',
+			},
+			maxWidth: {
+				'constrained': '1024px',
 			}
 		}
 	},
