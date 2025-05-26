@@ -39,9 +39,9 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
   const getPatternClasses = () => {
     switch (pattern) {
       case '1-2-3':
-        return 'responsive-grid-1-2-3';
+        return 'menu-consistent-grid-1-2-3';
       case '1-2-4':
-        return 'responsive-grid-1-2-4';
+        return 'menu-consistent-grid-1-2-4';
       case '1-3-6':
         return cn(
           'grid gap-4',
@@ -68,7 +68,7 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
     };
 
     return cn(
-      'grid w-full',
+      'grid w-full menu-consistent-grid',
       `grid-cols-${getCurrentCols()}`,
       `gap-${getCurrentGap()}`
     );

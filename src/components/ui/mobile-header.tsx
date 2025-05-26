@@ -24,7 +24,6 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({
   const navigate = useNavigate();
   const { isMobile, screenSize, isConstrainedDesktop } = useResponsive();
 
-  // Dynamic height based on screen size with media queries
   const getHeaderClasses = () => {
     return cn(
       'sticky top-0 z-40 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80',
@@ -34,7 +33,7 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({
 
   const getContainerClasses = () => {
     return cn(
-      'container flex items-center justify-between',
+      'menu-consistent-container flex items-center justify-between',
       'h-12 px-4', // Mobile base
       'sm:h-14 sm:px-6', // Small screens
       'md:h-16 md:px-8', // Medium screens
@@ -51,11 +50,6 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({
     );
   };
 
-  const getButtonSize = () => {
-    if (screenSize.width < 414) return 'sm';
-    return 'default';
-  };
-
   return (
     <header className={getHeaderClasses()}>
       <div className={getContainerClasses()}>
@@ -65,7 +59,7 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({
               variant="ghost"
               size="icon"
               onClick={() => navigate(-1)}
-              className="h-8 w-8 flex-shrink-0 responsive-button"
+              className="h-8 w-8 flex-shrink-0 menu-consistent-button"
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>

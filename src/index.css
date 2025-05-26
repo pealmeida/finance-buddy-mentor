@@ -87,8 +87,121 @@
   }
 }
 
-/* Responsive layout utilities with CSS Media Queries */
+/* Menu-consistent utilities - matching mobile navigation margins and sizing */
 @layer utilities {
+  /* Menu-consistent container - matching mobile nav styling */
+  .menu-consistent-container {
+    @apply container mx-auto;
+    max-width: 1024px;
+  }
+
+  /* Menu-consistent padding that matches navigation */
+  .menu-consistent-padding {
+    @apply px-4;
+  }
+
+  @media (min-width: 640px) {
+    .menu-consistent-padding {
+      @apply px-6;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .menu-consistent-padding {
+      @apply px-8;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .menu-consistent-padding {
+      @apply px-8;
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+  }
+
+  /* Menu-consistent button sizing */
+  .menu-consistent-button {
+    @apply h-8 w-8;
+  }
+
+  @media (min-width: 640px) {
+    .menu-consistent-button {
+      @apply h-9 w-9;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .menu-consistent-button {
+      @apply h-10 w-10;
+    }
+  }
+
+  /* Menu-consistent spacing for content */
+  .menu-consistent-spacing {
+    @apply space-y-4;
+  }
+
+  @media (min-width: 640px) {
+    .menu-consistent-spacing {
+      @apply space-y-6;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .menu-consistent-spacing {
+      @apply space-y-8;
+    }
+  }
+
+  /* Menu-consistent grid patterns */
+  .menu-consistent-grid {
+    @apply w-full;
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+
+  .menu-consistent-grid-1-2-3 {
+    @apply grid gap-4 w-full;
+    grid-template-columns: 1fr;
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 640px) {
+    .menu-consistent-grid-1-2-3 {
+      grid-template-columns: repeat(2, 1fr);
+      @apply gap-6;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .menu-consistent-grid-1-2-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .menu-consistent-grid-1-2-4 {
+    @apply grid gap-4 w-full;
+    grid-template-columns: 1fr;
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 640px) {
+    .menu-consistent-grid-1-2-4 {
+      grid-template-columns: repeat(2, 1fr);
+      @apply gap-6;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .menu-consistent-grid-1-2-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* Responsive layout utilities with CSS Media Queries */
   /* Mobile First - Base styles (up to 475px) */
   .responsive-container {
     @apply w-full px-4 mx-auto;

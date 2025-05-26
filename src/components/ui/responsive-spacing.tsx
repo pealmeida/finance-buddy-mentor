@@ -45,6 +45,7 @@ const ResponsiveSpacing: React.FC<ResponsiveSpacingProps> = ({
   };
 
   const spacingClasses = cn(
+    'menu-consistent-spacing',
     getPadding(),
     getMargin(),
     className

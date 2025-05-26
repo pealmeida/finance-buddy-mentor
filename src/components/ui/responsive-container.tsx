@@ -37,7 +37,7 @@ const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
 
   const getPaddingClasses = () => {
     if (padding === 'responsive') {
-      return 'responsive-container';
+      return 'menu-consistent-padding';
     }
     
     if (padding === 'none') return 'px-0';
