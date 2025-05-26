@@ -85,7 +85,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userProfile }) => {
   }, [userProfile.id, recommendedSavings, monthlyIncome, fetchMonthlySavings, fetchMonthlyExpenses, calculateAverageSavings, calculateAverageExpenses, t]);
 
   return (
-    <div className="w-full max-w-6xl mx-auto py-8 px-4 sm:px-6 animate-fade-in">
+    <div className="w-full max-w-[1400px] mx-auto py-8 px-4 sm:px-6 animate-fade-in">
       <div className="flex flex-col md:flex-row gap-8">
         <div className="w-full md:w-3/5 space-y-8">
           <FinancialOverview userProfile={userProfile} />

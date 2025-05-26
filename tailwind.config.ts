@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -161,7 +160,7 @@ export default {
 				'xs': '2px',
 			},
 			maxWidth: {
-				'constrained': '1024px',
+				'constrained': '1400px',
 			}
 		}
 	},

@@ -16,7 +16,7 @@ const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
   className,
   size = 'constrained',
   padding = 'responsive',
-  maxWidth = 1024
+  maxWidth = 1400
 }) => {
   const { isMobile, isTablet, isDesktop, screenSize } = useResponsive();
 

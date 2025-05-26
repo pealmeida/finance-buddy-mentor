@@ -77,7 +77,7 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
   // Apply max-width constraint when on desktop
   const getContainerStyles = () => {
     if (constrainOnDesktop && isConstrainedDesktop) {
-      return { maxWidth: '1024px', margin: '0 auto' };
+      return { maxWidth: '1400px', margin: '0 auto' };
     }
     return {};
   };

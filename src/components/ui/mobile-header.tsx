@@ -37,7 +37,7 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({
       'h-12 px-4', // Mobile base
       'sm:h-14 sm:px-6', // Small screens
       'md:h-16 md:px-8', // Medium screens
-      isConstrainedDesktop && 'lg:max-w-[1024px] lg:mx-auto' // Desktop constraint
+      isConstrainedDesktop && 'lg:max-w-[1400px] lg:mx-auto' // Desktop constraint
     );
   };
 
