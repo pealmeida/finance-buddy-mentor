@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface InvestmentHeaderProps {
   onAddClick: () => void;
@@ -18,34 +19,38 @@ const InvestmentHeader: React.FC<InvestmentHeaderProps> = ({
   isSaving
 }) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
   return (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
-        <h2 className="text-2xl font-semibold">{t('investments.portfolioTitle', 'Investment Portfolio')}</h2>
-        <p className="text-gray-600">
+        <h2 className="text-xl md:text-2xl font-semibold">{t('investments.portfolioTitle', 'Investment Portfolio')}</h2>
+        <p className="text-gray-600 text-sm md:text-base">
           {t('investments.portfolioDescription', 'Manage your investments and track their performance.')}
         </p>
       </div>
       
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 w-full md:w-auto">
         <Button
           onClick={onAddClick}
           disabled={isLoading || isSaving}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 flex-1 md:flex-none text-sm"
+          size={isMobile ? "sm" : "default"}
         >
           <Plus className="h-4 w-4" />
-          {t('investments.addInvestment', 'Add Investment')}
+          <span className="hidden sm:inline">{t('investments.addInvestment', 'Add Investment')}</span>
+          <span className="sm:hidden">Add</span>
         </Button>
         
         <Button
           variant="outline"
           onClick={onRefreshClick}
           disabled={isLoading}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 text-sm"
+          size={isMobile ? "sm" : "default"}
         >
           <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-          {isLoading ? t('common.loading', 'Loading...') : t('common.refresh', 'Refresh')}
+          <span className="hidden sm:inline">{isLoading ? t('common.loading', 'Loading...') : t('common.refresh', 'Refresh')}</span>
         </Button>
       </div>
     </div>
