@@ -2,6 +2,7 @@
 import React from 'react';
 import { Investment } from '@/types/finance';
 import InvestmentCard from './InvestmentCard';
+import ResponsiveGrid from '@/components/ui/responsive-grid';
 
 interface InvestmentGridProps {
   investments: Investment[];
@@ -17,7 +18,24 @@ const InvestmentGrid: React.FC<InvestmentGridProps> = ({
   deleteConfirmationId
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+    <ResponsiveGrid
+      cols={{
+        xs: 1,
+        sm: 1,
+        md: 2,
+        lg: 2,
+        xl: 3,
+        '2xl': 3
+      }}
+      gap={{
+        xs: 3,
+        sm: 4,
+        md: 4,
+        lg: 6,
+        xl: 6,
+        '2xl': 8
+      }}
+    >
       {investments.map((investment) => (
         <InvestmentCard
           key={investment.id}
@@ -27,7 +45,7 @@ const InvestmentGrid: React.FC<InvestmentGridProps> = ({
           deleteConfirmationId={deleteConfirmationId}
         />
       ))}
-    </div>
+    </ResponsiveGrid>
   );
 };
 
