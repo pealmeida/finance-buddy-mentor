@@ -23,7 +23,6 @@ const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
 }) => {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
-  const [editingMonth, setEditingMonth] = useState<number | null>(null);
   const [expensesData, setExpensesData] = useState<MonthlyAmount[]>(initializeEmptyExpensesData());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +34,6 @@ const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
     saveMonthlyExpenses
   } = useMonthlyExpenses();
 
-  // Fetch expenses data when component mounts or year changes
   useEffect(() => {
     const loadExpensesData = async () => {
       if (!profile?.id) return;
@@ -49,7 +47,6 @@ const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
         
         if (savedData && savedData.data) {
           console.log("Setting expenses data from fetch:", savedData.data);
-          // Ensure data is complete and in the right format
           const completeData = ensureCompleteExpensesData(savedData.data);
           setExpensesData(completeData);
         } else {
@@ -76,21 +73,8 @@ const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
-    setEditingMonth(null);
   };
 
-  const handleEditMonth = (month: number) => {
-    setEditingMonth(month);
-  };
-
-  const handleSaveAmount = (month: number, amount: number) => {
-    setExpensesData(prev => 
-      prev.map(item => item.month === month ? { ...item, amount } : item)
-    );
-    setEditingMonth(null);
-  };
-
-  // New handler for updating expenses data from detailed view
   const handleUpdateExpensesData = (updatedData: MonthlyAmount[]) => {
     setExpensesData(updatedData);
   };
@@ -217,10 +201,6 @@ const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
         <MonthlyExpensesContent
           loadingData={loading}
           expensesData={expensesData}
-          editingMonth={editingMonth}
-          onEditMonth={handleEditMonth}
-          onSaveAmount={handleSaveAmount}
-          onCancelEdit={() => setEditingMonth(null)}
           onRefresh={handleRefresh}
           onUpdateExpensesData={handleUpdateExpensesData}
           error={error}
