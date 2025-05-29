@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { ExpenseItem, MonthlyAmount } from "@/types/finance";
 import {
@@ -26,10 +27,11 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { Plus, Edit, Trash2, XCircle } from "lucide-react";
+import { Plus, Edit, Trash2, XCircle, Calculator } from "lucide-react";
 import ExpenseItemForm from "./ExpenseItemForm";
 import { v4 as uuidv4 } from "uuid";
 import { MONTHS } from "@/constants/months";
+import { useDetailedExpensesCalculation } from "@/hooks/expenses/useDetailedExpensesCalculation";
 
 interface DetailedExpensesListProps {
   monthData: MonthlyAmount;
@@ -47,42 +49,27 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null);
 
+  const {
+    addExpenseItem,
+    updateExpenseItem,
+    removeExpenseItem,
+    calculateTotalFromItems
+  } = useDetailedExpensesCalculation();
+
   const handleAddExpense = (expense: Omit<ExpenseItem, "id">) => {
     const newExpense: ExpenseItem = {
       ...expense,
       id: uuidv4(),
     };
 
-    const items = [...(monthData.items || []), newExpense];
-    const totalAmount = items.reduce((sum, item) => sum + item.amount, 0);
-
-    onUpdateMonthData({
-      ...monthData,
-      amount: totalAmount,
-      items,
-    });
-
+    const updatedMonthData = addExpenseItem(monthData, newExpense);
+    onUpdateMonthData(updatedMonthData);
     setIsAddDialogOpen(false);
   };
 
   const handleUpdateExpense = (updatedExpense: ExpenseItem) => {
-    if (!monthData.items) return;
-
-    const updatedItems = monthData.items.map((item) =>
-      item.id === updatedExpense.id ? updatedExpense : item
-    );
-
-    const totalAmount = updatedItems.reduce(
-      (sum, item) => sum + item.amount,
-      0
-    );
-
-    onUpdateMonthData({
-      ...monthData,
-      amount: totalAmount,
-      items: updatedItems,
-    });
-
+    const updatedMonthData = updateExpenseItem(monthData, updatedExpense);
+    onUpdateMonthData(updatedMonthData);
     setEditingExpense(null);
   };
 
@@ -92,21 +79,10 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
   };
 
   const confirmDelete = () => {
-    if (!expenseToDelete || !monthData.items) return;
+    if (!expenseToDelete) return;
 
-    const updatedItems = monthData.items.filter(
-      (item) => item.id !== expenseToDelete
-    );
-    const totalAmount = updatedItems.reduce(
-      (sum, item) => sum + item.amount,
-      0
-    );
-
-    onUpdateMonthData({
-      ...monthData,
-      amount: totalAmount,
-      items: updatedItems,
-    });
+    const updatedMonthData = removeExpenseItem(monthData, expenseToDelete);
+    onUpdateMonthData(updatedMonthData);
 
     setIsDeleteConfirmOpen(false);
     setExpenseToDelete(null);
@@ -128,11 +104,13 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
 
   const items = monthData.items || [];
   const monthName = MONTHS[monthData.month - 1];
+  const calculatedTotal = calculateTotalFromItems(items);
+  const hasDiscrepancy = Math.abs(calculatedTotal - monthData.amount) > 0.01;
 
   return (
     <Card className='w-full'>
       <CardHeader>
-        <CardTitle className='flex justify-between'>
+        <CardTitle className='flex justify-between items-center'>
           <span>Detailed Expenses for {monthName}</span>
           <Button
             size='sm'
@@ -142,8 +120,26 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
             Add Expense
           </Button>
         </CardTitle>
-        <CardDescription>
-          Total: ${monthData.amount.toLocaleString()}
+        <CardDescription className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span>Total: ${monthData.amount.toLocaleString()}</span>
+            {items.length > 0 && (
+              <div className="flex items-center gap-2 text-sm">
+                <Calculator className="h-4 w-4" />
+                <span>Calculated: ${calculatedTotal.toLocaleString()}</span>
+                {hasDiscrepancy && (
+                  <Badge variant="destructive" className="text-xs">
+                    Discrepancy
+                  </Badge>
+                )}
+              </div>
+            )}
+          </div>
+          {items.length > 0 && (
+            <div className="text-sm text-gray-600">
+              {items.length} expense {items.length === 1 ? 'item' : 'items'} recorded
+            </div>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -165,12 +161,14 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {items.map((expense) => (
+              {items
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .map((expense) => (
                 <TableRow key={expense.id}>
                   <TableCell>
                     {format(new Date(expense.date), "MMM dd, yyyy")}
                   </TableCell>
-                  <TableCell>{expense.description}</TableCell>
+                  <TableCell className="font-medium">{expense.description}</TableCell>
                   <TableCell>
                     <Badge className={getCategoryBadgeColor(expense.category)}>
                       {expense.category.charAt(0).toUpperCase() +
@@ -201,6 +199,24 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
               ))}
             </TableBody>
           </Table>
+        )}
+
+        {/* Summary section */}
+        {items.length > 0 && (
+          <div className="mt-6 pt-4 border-t">
+            <div className="flex justify-between items-center text-lg font-semibold">
+              <span>Total Calculated:</span>
+              <span className={hasDiscrepancy ? "text-orange-600" : "text-green-600"}>
+                ${calculatedTotal.toLocaleString()}
+              </span>
+            </div>
+            {hasDiscrepancy && (
+              <div className="text-sm text-orange-600 mt-1">
+                Note: There's a discrepancy between the stored total (${monthData.amount.toLocaleString()}) 
+                and calculated total. The calculated total will be saved.
+              </div>
+            )}
+          </div>
         )}
       </CardContent>
 

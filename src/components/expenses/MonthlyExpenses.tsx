@@ -90,6 +90,11 @@ const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
     setEditingMonth(null);
   };
 
+  // New handler for updating expenses data from detailed view
+  const handleUpdateExpensesData = (updatedData: MonthlyAmount[]) => {
+    setExpensesData(updatedData);
+  };
+
   const handleSaveAll = async () => {
     if (!profile?.id) {
       toast({
@@ -217,6 +222,7 @@ const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
           onSaveAmount={handleSaveAmount}
           onCancelEdit={() => setEditingMonth(null)}
           onRefresh={handleRefresh}
+          onUpdateExpensesData={handleUpdateExpensesData}
           error={error}
         />
       )}

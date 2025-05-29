@@ -20,6 +20,7 @@ interface MonthlyExpensesContentProps {
   onCancelEdit: () => void;
   onRefresh?: () => void;
   error?: string | null;
+  onUpdateExpensesData?: (updatedData: MonthlyAmount[]) => void;
 }
 
 const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
@@ -31,6 +32,7 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
   onCancelEdit,
   onRefresh,
   error,
+  onUpdateExpensesData,
 }) => {
   const { t } = useTranslation();
   // State to track which month's detailed expenses to show
@@ -47,18 +49,27 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
       item.month === updatedData.month ? updatedData : item
     );
 
-    // Update the parent component
-    const originalMonth = expensesData.find(
-      (item) => item.month === updatedData.month
-    );
-    if (originalMonth && originalMonth.amount !== updatedData.amount) {
-      onSaveAmount(updatedData.month, updatedData.amount);
+    // Update the parent component's data
+    if (onUpdateExpensesData) {
+      onUpdateExpensesData(updatedExpensesData);
     }
+
+    // Also call the original save amount handler for backend sync
+    onSaveAmount(updatedData.month, updatedData.amount);
   };
 
   // Handle selecting a month to view detailed expenses
   const handleSelectMonth = (month: number) => {
     setSelectedMonth(month);
+  };
+
+  // Handle editing month amount (for quick edits without detailed view)
+  const handleQuickEditMonth = (month: number) => {
+    if (selectedMonth !== null) {
+      // If we're in detailed view, don't allow quick edit
+      return;
+    }
+    onEditMonth(month);
   };
 
   if (loadingData) {
@@ -133,7 +144,7 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
         />
       </div>
 
-      {editingMonth !== null && (
+      {editingMonth !== null && selectedMonth === null && (
         <MonthlyExpensesForm
           month={editingMonth}
           amount={
@@ -154,7 +165,7 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
           />
           <div className='flex justify-end mt-4'>
             <Button variant='outline' onClick={() => setSelectedMonth(null)}>
-              {t('common.backToAll')}
+              {t('common.backToOverview', 'Back to Overview')}
             </Button>
           </div>
         </div>
@@ -168,7 +179,9 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
               key={item.month}
               item={item}
               monthName={MONTHS[item.month - 1]}
-              onEdit={() => handleSelectMonth(item.month)}
+              onEdit={() => handleQuickEditMonth(item.month)}
+              onViewDetails={() => handleSelectMonth(item.month)}
+              showDetailedButton={true}
             />
           ))}
         </div>

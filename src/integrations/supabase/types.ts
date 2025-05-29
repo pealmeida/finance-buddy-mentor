@@ -296,6 +296,10 @@ export type Database = {
         Args: { "": string } | { "": unknown }
         Returns: unknown
       }
+      calculate_month_total_from_items: {
+        Args: { items: Json }
+        Returns: number
+      }
       halfvec_avg: {
         Args: { "": number[] }
         Returns: unknown
@@ -373,6 +377,14 @@ export type Database = {
       sparsevec_typmod_in: {
         Args: { "": unknown[] }
         Returns: number
+      }
+      update_monthly_totals: {
+        Args: { expense_record_id: string }
+        Returns: undefined
+      }
+      validate_monthly_expenses_data: {
+        Args: { data_input: Json }
+        Returns: boolean
       }
       vector_avg: {
         Args: { "": number[] }
