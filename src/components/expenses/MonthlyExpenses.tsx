@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 import MonthlyExpensesHeader from './MonthlyExpensesHeader';
 import MonthlyExpensesContent from './MonthlyExpensesContent';
 import { initializeEmptyExpensesData, ensureCompleteExpensesData } from '@/hooks/expenses/utils/expensesDataUtils';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { v4 as uuidv4 } from 'uuid';
 
 interface MonthlyExpensesProps {

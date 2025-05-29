@@ -13,17 +13,14 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface MonthlyExpensesChartProps {
   data: MonthlyAmount[];
-  onSelectMonth?: (month: number) => void;
 }
 
 const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
   data,
-  onSelectMonth = () => {},
 }) => {
   const { t } = useTranslation();
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
@@ -32,27 +29,7 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
     name: MONTHS_SHORT[item.month - 1],
     month: item.month,
     amount: item.amount,
-    hasDetails: Array.isArray(item.items) && item.items.length > 0,
   }));
-
-  // Define a type for the chart click event data
-  type ChartClickEvent = {
-    activePayload?: Array<{
-      payload: {
-        month: number;
-        name: string;
-        amount: number;
-        hasDetails?: boolean;
-      };
-    }>;
-  };
-
-  const handleBarClick = (data: ChartClickEvent) => {
-    if (data && data.activePayload && data.activePayload[0]) {
-      const clickedData = data.activePayload[0].payload;
-      onSelectMonth(clickedData.month);
-    }
-  };
 
   const handleMouseEnter = (_data: unknown, index: number) => {
     setHoverIndex(index);
@@ -66,20 +43,13 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
     <div className='space-y-4'>
       <div className='flex items-center justify-between'>
         <h3 className='font-medium text-lg'>{t('expenses.monthlyExpenses')}</h3>
-        {onSelectMonth !== (() => {}) && (
-          <div className='flex items-center gap-1 text-sm text-gray-500'>
-            <Info className='h-4 w-4' />
-            {t('expenses.clickBarInfo')}
-          </div>
-        )}
       </div>
 
       <div className='w-full h-80'>
         <ResponsiveContainer width='100%' height='100%'>
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            onClick={handleBarClick}>
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray='3 3' vertical={false} />
             <XAxis
               dataKey='name'
@@ -106,18 +76,12 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
               name={t('expenses.monthlyExpenses')}
               fill='#ef4444'
               radius={[4, 4, 0, 0]}
-              style={{ cursor: onSelectMonth !== (() => {}) ? "pointer" : "default" }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}>
               {chartData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={hoverIndex === index ? "#dc2626" : "#ef4444"}
-                  style={{
-                    filter: entry.hasDetails
-                      ? "drop-shadow(0 0 4px rgba(220, 38, 38, 0.3))"
-                      : "none",
-                  }}
                 />
               ))}
             </Bar>
