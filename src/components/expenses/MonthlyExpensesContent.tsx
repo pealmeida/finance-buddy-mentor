@@ -1,8 +1,10 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { MonthlyAmount } from "@/types/finance";
 import MonthlyExpensesChart from "./MonthlyExpensesChart";
+import MonthlyExpensesForm from "./MonthlyExpensesForm";
 import MonthlyCard from "./MonthlyCard";
+import DetailedExpensesList from "./DetailedExpensesList";
 import { MONTHS } from "@/constants/months";
 import { AlertCircle, Loader2, RefreshCw } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -12,21 +14,63 @@ import { useTranslation } from "react-i18next";
 interface MonthlyExpensesContentProps {
   loadingData: boolean;
   expensesData: MonthlyAmount[];
+  editingMonth: number | null;
+  onEditMonth: (month: number) => void;
+  onSaveAmount: (month: number, amount: number) => void;
+  onCancelEdit: () => void;
   onRefresh?: () => void;
   error?: string | null;
+  onUpdateExpensesData?: (updatedData: MonthlyAmount[]) => void;
 }
 
 const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
   loadingData,
   expensesData,
+  editingMonth,
+  onEditMonth,
+  onSaveAmount,
+  onCancelEdit,
   onRefresh,
   error,
+  onUpdateExpensesData,
 }) => {
   const { t } = useTranslation();
+  // State to track which month's detailed expenses to show
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
   // Log the data to assist with debugging
   console.log("MonthlyExpensesContent received data:", expensesData);
   console.log("Loading state:", loadingData);
+
+  // Handle updating a month's detailed expenses
+  const handleUpdateMonthData = (updatedData: MonthlyAmount) => {
+    // Create a new array with the updated month data
+    const updatedExpensesData = expensesData.map((item) =>
+      item.month === updatedData.month ? updatedData : item
+    );
+
+    // Update the parent component's data
+    if (onUpdateExpensesData) {
+      onUpdateExpensesData(updatedExpensesData);
+    }
+
+    // Also call the original save amount handler for backend sync
+    onSaveAmount(updatedData.month, updatedData.amount);
+  };
+
+  // Handle selecting a month to view detailed expenses
+  const handleSelectMonth = (month: number) => {
+    setSelectedMonth(month);
+  };
+
+  // Handle editing month amount (for quick edits without detailed view)
+  const handleQuickEditMonth = (month: number) => {
+    if (selectedMonth !== null) {
+      // If we're in detailed view, don't allow quick edit
+      return;
+    }
+    onEditMonth(month);
+  };
 
   if (loadingData) {
     return (
@@ -85,21 +129,63 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
     );
   }
 
+  // Get the selected month data if applicable
+  const selectedMonthData =
+    selectedMonth !== null
+      ? expensesData.find((item) => item.month === selectedMonth)
+      : null;
+
   return (
     <>
       <div className='p-4 bg-white rounded-lg shadow-md'>
-        <MonthlyExpensesChart data={expensesData} />
+        <MonthlyExpensesChart
+          data={expensesData}
+          onSelectMonth={handleSelectMonth}
+        />
       </div>
 
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6'>
-        {expensesData.map((item) => (
-          <MonthlyCard
-            key={item.month}
-            item={item}
-            monthName={MONTHS[item.month - 1]}
+      {editingMonth !== null && selectedMonth === null && (
+        <MonthlyExpensesForm
+          month={editingMonth}
+          amount={
+            expensesData.find((item) => item.month === editingMonth)?.amount ||
+            0
+          }
+          onSave={onSaveAmount}
+          onCancel={onCancelEdit}
+        />
+      )}
+
+      {/* Detailed expenses view for selected month */}
+      {selectedMonth !== null && selectedMonthData && (
+        <div className='mt-6'>
+          <DetailedExpensesList
+            monthData={selectedMonthData}
+            onUpdateMonthData={handleUpdateMonthData}
           />
-        ))}
-      </div>
+          <div className='flex justify-end mt-4'>
+            <Button variant='outline' onClick={() => setSelectedMonth(null)}>
+              {t('common.backToOverview', 'Back to Overview')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Only show the grid of months when not viewing a specific month's details */}
+      {selectedMonth === null && (
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6'>
+          {expensesData.map((item) => (
+            <MonthlyCard
+              key={item.month}
+              item={item}
+              monthName={MONTHS[item.month - 1]}
+              onEdit={() => handleQuickEditMonth(item.month)}
+              onViewDetails={() => handleSelectMonth(item.month)}
+              showDetailedButton={true}
+            />
+          ))}
+        </div>
+      )}
     </>
   );
 };

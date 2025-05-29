@@ -2,18 +2,25 @@
 import React from 'react';
 import { MonthlyAmount } from '@/types/finance';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Receipt } from 'lucide-react';
+import { Edit, Eye, Receipt } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface MonthlyCardProps {
   item: MonthlyAmount;
   monthName: string;
+  onEdit: () => void;
+  onViewDetails?: () => void;
+  showDetailedButton?: boolean;
 }
 
 const MonthlyCard: React.FC<MonthlyCardProps> = ({
   item,
-  monthName
+  monthName,
+  onEdit,
+  onViewDetails,
+  showDetailedButton = false
 }) => {
   const { t } = useTranslation();
   const hasDetailedItems = item.items && item.items.length > 0;
@@ -59,6 +66,30 @@ const MonthlyCard: React.FC<MonthlyCardProps> = ({
             )}
           </div>
         )}
+        
+        <div className="flex gap-2">
+          <Button
+            onClick={onEdit}
+            variant="outline"
+            size="sm"
+            className="flex-1"
+          >
+            <Edit className="h-4 w-4 mr-1" />
+            {t('common.edit', 'Edit')}
+          </Button>
+          
+          {showDetailedButton && onViewDetails && (
+            <Button
+              onClick={onViewDetails}
+              variant="default"
+              size="sm"
+              className="flex-1"
+            >
+              <Eye className="h-4 w-4 mr-1" />
+              {t('expenses.viewDetails', 'Details')}
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

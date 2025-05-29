@@ -23,6 +23,7 @@ const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
 }) => {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [editingMonth, setEditingMonth] = useState<number | null>(null);
   const [expensesData, setExpensesData] = useState<MonthlyAmount[]>(initializeEmptyExpensesData());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -75,6 +76,23 @@ const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
+    setEditingMonth(null);
+  };
+
+  const handleEditMonth = (month: number) => {
+    setEditingMonth(month);
+  };
+
+  const handleSaveAmount = (month: number, amount: number) => {
+    setExpensesData(prev => 
+      prev.map(item => item.month === month ? { ...item, amount } : item)
+    );
+    setEditingMonth(null);
+  };
+
+  // New handler for updating expenses data from detailed view
+  const handleUpdateExpensesData = (updatedData: MonthlyAmount[]) => {
+    setExpensesData(updatedData);
   };
 
   const handleSaveAll = async () => {
@@ -199,7 +217,12 @@ const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
         <MonthlyExpensesContent
           loadingData={loading}
           expensesData={expensesData}
+          editingMonth={editingMonth}
+          onEditMonth={handleEditMonth}
+          onSaveAmount={handleSaveAmount}
+          onCancelEdit={() => setEditingMonth(null)}
           onRefresh={handleRefresh}
+          onUpdateExpensesData={handleUpdateExpensesData}
           error={error}
         />
       )}

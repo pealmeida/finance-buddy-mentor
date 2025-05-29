@@ -18,12 +18,12 @@ import { useTranslation } from "react-i18next";
 
 interface MonthlyExpensesChartProps {
   data: MonthlyAmount[];
-  onSelectMonth?: (month: number) => void;
+  onSelectMonth: (month: number) => void;
 }
 
 const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
   data,
-  onSelectMonth = () => {},
+  onSelectMonth,
 }) => {
   const { t } = useTranslation();
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
@@ -66,12 +66,10 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
     <div className='space-y-4'>
       <div className='flex items-center justify-between'>
         <h3 className='font-medium text-lg'>{t('expenses.monthlyExpenses')}</h3>
-        {onSelectMonth !== (() => {}) && (
-          <div className='flex items-center gap-1 text-sm text-gray-500'>
-            <Info className='h-4 w-4' />
-            {t('expenses.clickBarInfo')}
-          </div>
-        )}
+        <div className='flex items-center gap-1 text-sm text-gray-500'>
+          <Info className='h-4 w-4' />
+          {t('expenses.clickBarInfo')}
+        </div>
       </div>
 
       <div className='w-full h-80'>
@@ -106,7 +104,7 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
               name={t('expenses.monthlyExpenses')}
               fill='#ef4444'
               radius={[4, 4, 0, 0]}
-              style={{ cursor: onSelectMonth !== (() => {}) ? "pointer" : "default" }}
+              style={{ cursor: "pointer" }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}>
               {chartData.map((entry, index) => (
