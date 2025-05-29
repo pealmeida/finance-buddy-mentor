@@ -109,7 +109,10 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
   return (
     <>
       <div className='p-4 bg-white rounded-lg shadow-md'>
-        <MonthlyExpensesChart data={expensesData} />
+        <MonthlyExpensesChart 
+          data={expensesData} 
+          onSelectMonth={handleAmountClick}
+        />
       </div>
 
       {/* Detailed expenses view for selected month */}
