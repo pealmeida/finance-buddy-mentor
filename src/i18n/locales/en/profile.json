@@ -1,0 +1,12 @@
+
+{
+  "title": "Profile Settings",
+  "personalInfo": "Personal Information",
+  "emailAddress": "Email Address",
+  "fullName": "Full Name",
+  "age": "Age",
+  "preferredCurrency": "Preferred Currency",
+  "saveChanges": "Save Changes",
+  "saving": "Saving...",
+  "welcome": "Welcome"
+}

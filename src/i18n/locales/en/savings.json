@@ -1,0 +1,25 @@
+
+{
+  "title": "Savings",
+  "addSaving": "Add Saving",
+  "editSaving": "Edit Saving",
+  "savingName": "Saving Name",
+  "amount": "Amount",
+  "date": "Date",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "confirmDelete": "Are you sure you want to delete this saving?",
+  "noSavings": "No savings to display",
+  "totalSavings": "Total Savings",
+  "monthlySavings": "Monthly Savings",
+  "yearlySavings": "Yearly Savings",
+  "analysis": {
+    "title": "Savings Analysis",
+    "totalSaved": "Total Saved",
+    "averageSaved": "Average Saved",
+    "averageSavingsPerMonth": "Average savings per month"
+  },
+  "yearlyGoal": "Yearly Goal",
+  "progressTowardsGoal": "Progress towards your yearly goal"
+}

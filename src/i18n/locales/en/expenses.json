@@ -1,0 +1,43 @@
+
+{
+  "title": "Expenses",
+  "addExpense": "Add Expense",
+  "editExpense": "Edit Expense",
+  "expenseName": "Expense Name",
+  "amount": "Amount",
+  "category": "Category",
+  "date": "Date",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "confirmDelete": "Are you sure you want to delete this expense?",
+  "noExpenses": "No expenses to display",
+  "noExpensesData": "No expenses data available",
+  "totalExpenses": "Total Expenses",
+  "monthlyExpenses": "Monthly Expenses",
+  "yearlyExpenses": "Yearly Expenses",
+  "expenseCategories": "Expense Categories",
+  "food": "Food",
+  "transportation": "Transportation",
+  "housing": "Housing",
+  "utilities": "Utilities",
+  "entertainment": "Entertainment",
+  "other": "Other",
+  "trackMonthlyExpenses": "Track your monthly expenses to visualize your spending patterns throughout the year.",
+  "clickBarInfo": "Click on bars to view details",
+  "categories": {
+    "housing": "Housing",
+    "food": "Food",
+    "transportation": "Transportation",
+    "utilities": "Utilities",
+    "entertainment": "Entertainment",
+    "healthcare": "Healthcare",
+    "other": "Other"
+  },
+  "table": {
+    "date": "Date",
+    "description": "Description",
+    "category": "Category",
+    "amount": "Amount"
+  }
+}

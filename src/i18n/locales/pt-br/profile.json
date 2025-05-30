@@ -1,0 +1,12 @@
+
+{
+  "title": "Configurações do Perfil",
+  "personalInfo": "Informações Pessoais",
+  "emailAddress": "Endereço de Email",
+  "fullName": "Nome Completo",
+  "age": "Idade",
+  "preferredCurrency": "Moeda Preferida",
+  "saveChanges": "Salvar Alterações",
+  "saving": "Salvando...",
+  "welcome": "Bem-vindo"
+}

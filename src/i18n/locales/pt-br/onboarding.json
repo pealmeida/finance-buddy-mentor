@@ -1,0 +1,23 @@
+
+{
+  "personalInfo": "Informações Pessoais",
+  "riskProfile": "Perfil de Risco",
+  "financialGoals": "Objetivos Financeiros",
+  "investments": "Investimentos",
+  "debts": "Dívidas",
+  "review": "Revisar",
+  "age": "Idade",
+  "monthlyIncome": "Renda Mensal",
+  "riskTolerance": "Tolerância ao Risco",
+  "conservative": "Conservador",
+  "moderate": "Moderado",
+  "aggressive": "Agressivo",
+  "emergencyFund": "Fundo de Emergência",
+  "debtsDetails": "Detalhes das Dívidas",
+  "investmentPreferences": "Preferências de Investimento",
+  "next": "Próximo",
+  "previous": "Anterior",
+  "complete": "Concluir",
+  "cancel": "Cancelar",
+  "preferredCurrency": "Moeda Preferida"
+}

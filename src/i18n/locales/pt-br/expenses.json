@@ -1,0 +1,41 @@
+
+{
+  "title": "Despesas",
+  "addExpense": "Adicionar Despesa",
+  "editExpense": "Editar Despesa",
+  "category": "Categoria",
+  "amount": "Valor",
+  "date": "Data",
+  "description": "Descrição",
+  "save": "Salvar",
+  "cancel": "Cancelar",
+  "delete": "Excluir",
+  "noExpenses": "Nenhuma despesa registrada ainda.",
+  "noExpensesData": "Nenhum dado de despesas disponível",
+  "food": "Alimentação",
+  "transport": "Transporte",
+  "housing": "Moradia",
+  "entertainment": "Entretenimento",
+  "utilities": "Serviços",
+  "health": "Saúde",
+  "other": "Outros",
+  "monthlyExpenses": "Despesas Mensais",
+  "yearlyExpenses": "Despesas Anuais",
+  "trackMonthlyExpenses": "Acompanhe suas despesas mensais para visualizar seus padrões de gastos ao longo do ano.",
+  "clickBarInfo": "Clique nas barras para ver detalhes",
+  "categories": {
+    "housing": "Moradia",
+    "food": "Alimentação",
+    "transportation": "Transporte",
+    "utilities": "Serviços",
+    "entertainment": "Entretenimento",
+    "healthcare": "Saúde",
+    "other": "Outros"
+  },
+  "table": {
+    "date": "Data",
+    "description": "Descrição",
+    "category": "Categoria",
+    "amount": "Valor"
+  }
+}

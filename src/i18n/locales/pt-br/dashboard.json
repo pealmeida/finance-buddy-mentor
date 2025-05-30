@@ -1,0 +1,36 @@
+
+{
+  "welcome": "Bem-vindo(a)",
+  "totalExpenses": "Despesas Totais",
+  "totalSavings": "Poupança Total",
+  "investmentOverview": "Visão Geral dos Investimentos",
+  "financialOverview": "Visão Geral Financeira",
+  "financialGoals": "Objetivos Financeiros",
+  "debtsOverview": "Visão Geral das Dívidas",
+  "emergencyFundStatus": "Status do Fundo de Emergência",
+  "debts": "Dívidas",
+  "investments": "Investimentos",
+  "savings": "Poupanças",
+  "expenses": "Despesas",
+  "goals": "Metas",
+  "monthlyIncome": "Renda Mensal",
+  "monthlySavings": "Poupança Mensal",
+  "emergencyFund": "Fundo de Emergência",
+  "emergencyFundProgress": "da meta de 6 meses",
+  "emergencyFundTarget": "Fundo de emergência completo!",
+  "emergencyFundRecommended": "Recomendado: 6 meses de despesas",
+  "belowRecommended": "abaixo da poupança recomendada",
+  "meetingRecommended": "Atingindo a poupança recomendada",
+  "investmentDistribution": "Distribuição de Investimentos",
+  "recommendedAllocation": "Alocação recomendada baseada no seu perfil de risco",
+  "riskProfile": "perfil de risco",
+  "marketTrends": "Tendências do Mercado",
+  "expensesSummary": "Resumo de Despesas",
+  "personalizedInsights": "Insights Personalizados",
+  "marketData": {
+    "usIndex": "Índice dos EUA",
+    "cryptocurrency": "Criptomoeda",
+    "commodity": "Commodity",
+    "bondYield": "Rendimento de Títulos"
+  }
+}
