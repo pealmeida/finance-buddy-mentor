@@ -6,8 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useOnboarding } from '@/context/OnboardingContext';
+import { useTranslation } from 'react-i18next';
 
 const InvestmentsStep: React.FC = () => {
+  const { t } = useTranslation();
   const { 
     profile, 
     currentInvestment, 
@@ -18,12 +20,12 @@ const InvestmentsStep: React.FC = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">Current Investments</h2>
-      <p className="text-gray-600 mb-6">List your existing investments</p>
+      <h2 className="text-2xl font-semibold mb-6">{t('onboarding.currentInvestments')}</h2>
+      <p className="text-gray-600 mb-6">{t('onboarding.listExistingInvestments')}</p>
       
       <div className="space-y-4 mb-6">
         <div className="space-y-2">
-          <Label htmlFor="investmentType">Investment Type</Label>
+          <Label htmlFor="investmentType">{t('onboarding.investmentType')}</Label>
           <select
             id="investmentType"
             value={currentInvestment.type}
@@ -32,28 +34,28 @@ const InvestmentsStep: React.FC = () => {
             })}
             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
-            <option value="stocks">Stocks</option>
-            <option value="bonds">Bonds</option>
-            <option value="realEstate">Real Estate</option>
-            <option value="cash">Cash / Savings</option>
-            <option value="crypto">Cryptocurrency</option>
-            <option value="other">Other</option>
+            <option value="stocks">{t('onboarding.stocks')}</option>
+            <option value="bonds">{t('onboarding.bonds')}</option>
+            <option value="realEstate">{t('onboarding.realEstate')}</option>
+            <option value="cash">{t('onboarding.cash')}</option>
+            <option value="crypto">{t('onboarding.crypto')}</option>
+            <option value="other">{t('onboarding.other')}</option>
           </select>
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="investmentName">Investment Name</Label>
+          <Label htmlFor="investmentName">{t('onboarding.investmentName')}</Label>
           <Input 
             id="investmentName" 
             value={currentInvestment.name} 
             onChange={(e) => updateCurrentInvestment({ name: e.target.value })}
-            placeholder="S&P 500 ETF, Bitcoin, etc."
+            placeholder={t('onboarding.investmentNamePlaceholder')}
             className="transition-all duration-300 focus:ring-2 focus:ring-finance-blue"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="investmentValue">Current Value ($)</Label>
+          <Label htmlFor="investmentValue">{t('onboarding.currentValue')}</Label>
           <div className="relative">
             <DollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input 
@@ -72,7 +74,7 @@ const InvestmentsStep: React.FC = () => {
           disabled={!currentInvestment.name || currentInvestment.value <= 0}
           className="w-full bg-finance-blue hover:bg-finance-blue-dark transition-all duration-300"
         >
-          Add Investment
+          {t('onboarding.addInvestment')}
         </Button>
       </div>
       
@@ -80,7 +82,7 @@ const InvestmentsStep: React.FC = () => {
       
       {profile.investments && profile.investments.length > 0 ? (
         <div className="space-y-4">
-          <h3 className="font-medium">Your Investments</h3>
+          <h3 className="font-medium">{t('onboarding.yourInvestments')}</h3>
           {profile.investments.map((investment) => (
             <div key={investment.id} className="flex items-center justify-between p-4 rounded-lg border hover:bg-gray-50 transition-all duration-300">
               <div className="flex items-center space-x-3">
@@ -98,14 +100,14 @@ const InvestmentsStep: React.FC = () => {
                 onClick={() => removeInvestment(investment.id)}
                 className="text-gray-500 hover:text-red-500 transition-colors"
               >
-                Remove
+                {t('onboarding.remove')}
               </Button>
             </div>
           ))}
         </div>
       ) : (
         <div className="text-center py-10 text-gray-500">
-          No investments added yet
+          {t('onboarding.noInvestmentsAdded')}
         </div>
       )}
     </div>

@@ -6,9 +6,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { RiskProfile } from '@/types/finance';
 import { useOnboarding } from '@/context/OnboardingContext';
+import { useTranslation } from 'react-i18next';
 import DebtDetailsForm from './DebtDetailsForm';
 
 const RiskProfileStep: React.FC = () => {
+  const { t } = useTranslation();
   const { profile, updateProfile } = useOnboarding();
 
   const handleEmergencyFundMonthsChange = (value: number[]) => {
@@ -19,8 +21,8 @@ const RiskProfileStep: React.FC = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">Risk Profile</h2>
-      <p className="text-gray-600 mb-6">How comfortable are you with investment risk?</p>
+      <h2 className="text-2xl font-semibold mb-6">{t('onboarding.riskProfile')}</h2>
+      <p className="text-gray-600 mb-6">{t('onboarding.riskComfortLevel')}</p>
       
       <RadioGroup 
         value={profile.riskProfile} 
@@ -30,24 +32,24 @@ const RiskProfileStep: React.FC = () => {
         <div className="flex items-start space-x-3 rounded-lg border p-4 hover:bg-gray-50 transition-all duration-300">
           <RadioGroupItem value="conservative" id="conservative" className="mt-1" />
           <div>
-            <Label htmlFor="conservative" className="text-base font-medium">Conservative</Label>
-            <p className="text-sm text-gray-500">Prioritize preserving capital with lower returns and minimal risk</p>
+            <Label htmlFor="conservative" className="text-base font-medium">{t('onboarding.conservative')}</Label>
+            <p className="text-sm text-gray-500">{t('onboarding.conservativeDesc')}</p>
           </div>
         </div>
         
         <div className="flex items-start space-x-3 rounded-lg border p-4 hover:bg-gray-50 transition-all duration-300">
           <RadioGroupItem value="moderate" id="moderate" className="mt-1" />
           <div>
-            <Label htmlFor="moderate" className="text-base font-medium">Moderate</Label>
-            <p className="text-sm text-gray-500">Balance between growth and capital preservation with medium risk</p>
+            <Label htmlFor="moderate" className="text-base font-medium">{t('onboarding.moderate')}</Label>
+            <p className="text-sm text-gray-500">{t('onboarding.moderateDesc')}</p>
           </div>
         </div>
         
         <div className="flex items-start space-x-3 rounded-lg border p-4 hover:bg-gray-50 transition-all duration-300">
           <RadioGroupItem value="aggressive" id="aggressive" className="mt-1" />
           <div>
-            <Label htmlFor="aggressive" className="text-base font-medium">Aggressive</Label>
-            <p className="text-sm text-gray-500">Maximize long-term growth with higher risk tolerance</p>
+            <Label htmlFor="aggressive" className="text-base font-medium">{t('onboarding.aggressive')}</Label>
+            <p className="text-sm text-gray-500">{t('onboarding.aggressiveDesc')}</p>
           </div>
         </div>
       </RadioGroup>
@@ -66,7 +68,7 @@ const RiskProfileStep: React.FC = () => {
                   });
                 }}
               />
-              <Label htmlFor="emergency" className="text-base">I have an emergency fund (3-6 months of expenses)</Label>
+              <Label htmlFor="emergency" className="text-base">{t('onboarding.emergencyFund')}</Label>
             </div>
             {profile.hasEmergencyFund && (
               <span className="font-medium text-sm text-gray-700">
@@ -77,7 +79,7 @@ const RiskProfileStep: React.FC = () => {
           
           {profile.hasEmergencyFund && (
             <div className="px-8 pt-2">
-              <Label className="mb-2 block text-sm text-gray-600">How many months of expenses do you have saved?</Label>
+              <Label className="mb-2 block text-sm text-gray-600">{t('onboarding.emergencyFundMonths')}</Label>
               <Slider
                 defaultValue={[profile.emergencyFundMonths || 3]}
                 value={[profile.emergencyFundMonths || 3]}
@@ -103,15 +105,13 @@ const RiskProfileStep: React.FC = () => {
               onCheckedChange={(checked) => {
                 updateProfile({ 
                   hasDebts: !!checked,
-                  // Reset debt details if unchecking
                   debtDetails: !checked ? [] : profile.debtDetails 
                 });
               }}
             />
-            <Label htmlFor="debts" className="text-base">I have high-interest debts (credit cards, personal loans)</Label>
+            <Label htmlFor="debts" className="text-base">{t('onboarding.hasDebts')}</Label>
           </div>
           
-          {/* Show debt details form when hasDebts is checked */}
           {profile.hasDebts && <DebtDetailsForm />}
         </div>
       </div>

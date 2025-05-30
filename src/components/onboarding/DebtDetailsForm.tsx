@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { DebtDetail } from "@/types/finance";
 import { Label } from "@/components/ui/label";
@@ -11,11 +12,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PlusCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import DebtDetailItem from "./DebtDetailItem";
 import { useOnboarding } from "@/context/OnboardingContext";
 import { v4 as uuidv4 } from "uuid";
 
 const DebtDetailsForm: React.FC = () => {
+  const { t } = useTranslation();
   const { profile, updateProfile } = useOnboarding();
   const [currentDebt, setCurrentDebt] = useState<Omit<DebtDetail, "id">>({
     type: "creditCard",
@@ -47,7 +50,6 @@ const DebtDetailsForm: React.FC = () => {
       debtDetails: [...(profile.debtDetails || []), newDebt],
     });
 
-    // Reset form
     setCurrentDebt({
       type: "creditCard",
       name: "",
@@ -64,9 +66,8 @@ const DebtDetailsForm: React.FC = () => {
 
   return (
     <div className='px-8 pt-2 pb-4 border rounded-lg bg-gray-50 mt-4'>
-      <h3 className='text-base font-medium mb-4'>Your Debts</h3>
+      <h3 className='text-base font-medium mb-4'>{t('onboarding.yourDebts')}</h3>
 
-      {/* List of existing debts */}
       {profile.debtDetails && profile.debtDetails.length > 0 && (
         <div className='mb-4'>
           {profile.debtDetails.map((debt) => (
@@ -75,40 +76,39 @@ const DebtDetailsForm: React.FC = () => {
         </div>
       )}
 
-      {/* Add new debt form */}
       <div className='space-y-4'>
         <div className='grid grid-cols-2 gap-4'>
           <div>
-            <Label htmlFor='debt-type'>Type</Label>
+            <Label htmlFor='debt-type'>{t('onboarding.debtType')}</Label>
             <Select
               value={currentDebt.type}
               onValueChange={(value) => handleDebtChange("type", value)}>
               <SelectTrigger id='debt-type'>
-                <SelectValue placeholder='Select debt type' />
+                <SelectValue placeholder={t('onboarding.selectDebtType')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='creditCard'>Credit Card</SelectItem>
-                <SelectItem value='personalLoan'>Personal Loan</SelectItem>
-                <SelectItem value='studentLoan'>Student Loan</SelectItem>
-                <SelectItem value='other'>Other</SelectItem>
+                <SelectItem value='creditCard'>{t('onboarding.creditCard')}</SelectItem>
+                <SelectItem value='personalLoan'>{t('onboarding.personalLoan')}</SelectItem>
+                <SelectItem value='studentLoan'>{t('onboarding.studentLoan')}</SelectItem>
+                <SelectItem value='other'>{t('onboarding.other')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label htmlFor='debt-name'>Name/Description</Label>
+            <Label htmlFor='debt-name'>{t('onboarding.debtName')}</Label>
             <Input
               id='debt-name'
               value={currentDebt.name}
               onChange={(e) => handleDebtChange("name", e.target.value)}
-              placeholder='e.g., Chase Credit Card'
+              placeholder={t('onboarding.debtNamePlaceholder')}
             />
           </div>
         </div>
 
         <div className='grid grid-cols-2 gap-4'>
           <div>
-            <Label htmlFor='debt-amount'>Amount ($)</Label>
+            <Label htmlFor='debt-amount'>{t('onboarding.debtAmount')}</Label>
             <Input
               id='debt-amount'
               type='number'
@@ -121,7 +121,7 @@ const DebtDetailsForm: React.FC = () => {
           </div>
 
           <div>
-            <Label htmlFor='debt-interest'>Interest Rate (%)</Label>
+            <Label htmlFor='debt-interest'>{t('onboarding.debtInterestRate')}</Label>
             <Input
               id='debt-interest'
               type='number'
@@ -140,7 +140,7 @@ const DebtDetailsForm: React.FC = () => {
           onClick={addDebt}
           disabled={!currentDebt.name || currentDebt.amount <= 0}
           className='w-full flex items-center gap-2'>
-          <PlusCircle className='h-4 w-4' /> Add Debt
+          <PlusCircle className='h-4 w-4' /> {t('onboarding.addDebt')}
         </Button>
       </div>
     </div>

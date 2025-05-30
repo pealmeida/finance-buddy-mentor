@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useOnboarding } from '@/context/OnboardingContext';
+import { useTranslation } from 'react-i18next';
 import GoalForm from '@/components/goals/GoalForm';
 import GoalList from '@/components/goals/GoalList';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { v4 as uuidv4 } from 'uuid';
 
 const FinancialGoalsStep: React.FC = () => {
+  const { t } = useTranslation();
   const { profile, updateProfile } = useOnboarding();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<FinancialGoal | null>(null);
@@ -34,7 +36,6 @@ const FinancialGoalsStep: React.FC = () => {
     try {
       setIsSaving(true);
       
-      // Make sure to format dates correctly
       const formattedGoal = {
         ...goal,
         targetDate: goal.targetDate instanceof Date ? goal.targetDate : new Date(goal.targetDate)
@@ -43,41 +44,37 @@ const FinancialGoalsStep: React.FC = () => {
       let updatedGoals: FinancialGoal[];
       
       if (editingGoal) {
-        // Edit existing goal
         updatedGoals = (profile.financialGoals || []).map(g => 
           g.id === formattedGoal.id ? formattedGoal : g
         );
         toast({
-          title: "Goal Updated",
-          description: "Your financial goal has been updated in your profile."
+          title: t('goals.goalUpdated'),
+          description: t('goals.goalUpdatedDescription')
         });
       } else {
-        // Add new goal with a unique ID
         const newGoal = {
           ...formattedGoal,
           id: uuidv4()
         };
         updatedGoals = [...(profile.financialGoals || []), newGoal];
         toast({
-          title: "Goal Added",
-          description: "Your new financial goal has been added to your profile."
+          title: t('goals.goalAdded'),
+          description: t('goals.goalAddedDescription')
         });
       }
       
-      // Update onboarding context with updated goals
       updateProfile({
         ...profile,
         financialGoals: updatedGoals
       });
       
-      // Reset form state
       setIsFormOpen(false);
       setEditingGoal(null);
     } catch (err) {
       console.error("Error saving goal:", err);
       toast({
-        title: "Error",
-        description: "There was a problem saving your goal. Please try again.",
+        title: t('common.error'),
+        description: t('goals.errorSavingGoal'),
         variant: "destructive"
       });
     } finally {
@@ -87,24 +84,22 @@ const FinancialGoalsStep: React.FC = () => {
 
   const handleDeleteGoal = (goalId: string) => {
     try {
-      // Filter out the deleted goal
       const updatedGoals = (profile.financialGoals || []).filter(g => g.id !== goalId);
       
-      // Update profile with filtered goals
       updateProfile({
         ...profile,
         financialGoals: updatedGoals
       });
       
       toast({
-        title: "Goal Deleted",
-        description: "Your financial goal has been removed from your profile."
+        title: t('goals.goalDeleted'),
+        description: t('goals.goalDeletedDescription')
       });
     } catch (err) {
       console.error("Error deleting goal:", err);
       toast({
-        title: "Error",
-        description: "There was a problem deleting your goal. Please try again.",
+        title: t('common.error'),
+        description: t('goals.errorDeletingGoal'),
         variant: "destructive"
       });
     }
@@ -118,20 +113,20 @@ const FinancialGoalsStep: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold">Financial Goals</h2>
+        <h2 className="text-2xl font-semibold">{t('onboarding.financialGoals')}</h2>
         {!isFormOpen && (
           <Button 
             onClick={handleAddGoal} 
             className="flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark"
           >
             <PlusCircle size={16} />
-            Add Goal
+            {t('onboarding.addGoal')}
           </Button>
         )}
       </div>
       
       <p className="text-gray-600 mb-6">
-        Add your short-term and long-term financial goals to create a roadmap for your financial future.
+        {t('onboarding.financialGoalsDescription')}
       </p>
       
       {isFormOpen ? (

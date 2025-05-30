@@ -3,6 +3,7 @@ import React from 'react';
 import { ArrowRight, ChevronRight, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useOnboarding } from '@/context/OnboardingContext';
+import { useTranslation } from 'react-i18next';
 
 interface OnboardingNavigationProps {
   currentStep: number;
@@ -25,13 +26,13 @@ const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
   isEditMode = false,
   isLoading = false
 }) => {
+  const { t } = useTranslation();
   const { profile, updateProfile } = useOnboarding();
 
   const isLastStep = currentStep === totalSteps;
   const isFirstStep = currentStep === 1;
 
   const handleNextClick = () => {
-    // For step 2 (risk profile), ensure emergency fund months is set properly
     if (currentStep === 2 && profile.hasEmergencyFund && profile.emergencyFundMonths === undefined) {
       updateProfile({ emergencyFundMonths: 3 });
     }
@@ -48,14 +49,14 @@ const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
       {!isFirstStep ? (
         <Button variant="outline" onClick={onPrevious} className="flex items-center gap-2" disabled={isLoading}>
           <ArrowRight className="h-4 w-4 rotate-180" />
-          Previous
+          {t('onboarding.previous')}
         </Button>
       ) : (
         <div>
           {isEditMode && onCancel && (
             <Button variant="outline" onClick={onCancel} className="flex items-center gap-2 border-red-300 text-red-500 hover:bg-red-50" disabled={isLoading}>
               <X className="h-4 w-4" />
-              Cancel
+              {t('onboarding.cancel')}
             </Button>
           )}
         </div>
@@ -69,11 +70,11 @@ const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
         {isLoading ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            {!isLastStep ? 'Processing...' : (isEditMode ? 'Saving...' : 'Completing...')}
+            {!isLastStep ? t('onboarding.processing') : (isEditMode ? t('onboarding.saving') : t('onboarding.completing'))}
           </>
         ) : (
           <>
-            {!isLastStep ? 'Next' : (isEditMode ? 'Save Changes' : 'Complete')}
+            {!isLastStep ? t('onboarding.next') : (isEditMode ? t('onboarding.saveChanges') : t('onboarding.complete'))}
             <ChevronRight className="h-4 w-4" />
           </>
         )}
