@@ -84,7 +84,7 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({ userProfile }
 
   return (
     <div className="fixed bottom-4 left-4 z-50 animate-fade-in">
-      <Card className={`shadow-lg border-finance-blue/20 ${isExpanded ? 'w-80' : 'w-64'} transition-all duration-300`}>
+      <Card className="w-80 shadow-lg border-finance-blue/20 transition-all duration-300">
         {isExpanded ? (
           <>
             <CardHeader className="pb-3">
@@ -114,7 +114,7 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({ userProfile }
               <div className="space-y-2">
                 <Progress value={progressPercentage} className="h-2" />
                 <p className="text-sm text-gray-600">
-                  {completedItems}/{totalItems} {t('dashboard.completed')}
+                  {completedItems}/{totalItems} {t('dashboard.completed')} ({Math.round(progressPercentage)}%)
                 </p>
               </div>
             </CardHeader>
@@ -155,7 +155,7 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({ userProfile }
                 </h4>
                 <Progress value={progressPercentage} className="h-2 mb-1" />
                 <p className="text-xs text-gray-600">
-                  {completedItems}/{totalItems} {t('dashboard.completed')}
+                  {completedItems}/{totalItems} {t('dashboard.completed')} ({Math.round(progressPercentage)}%)
                 </p>
               </div>
               <div className="flex gap-1 ml-3">
