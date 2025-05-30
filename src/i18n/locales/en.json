@@ -1,4 +1,3 @@
-
 {
   "app": {
     "name": "Finance Buddy",
@@ -94,7 +93,24 @@
     "addDetailedExpenseFor": "Add a detailed expense item for",
     "updateExpenseDetails": "Update the expense details.",
     "confirmDeletion": "Confirm Deletion",
-    "deleteConfirmation": "Are you sure you want to delete this expense? This action cannot be undone."
+    "deleteConfirmation": "Are you sure you want to delete this expense? This action cannot be undone.",
+    "noDetailedExpenses": "No detailed expenses recorded for this month.",
+    "clickAddToStart": "Click \"Add Expense\" to get started.",
+    "table": {
+      "date": "Date",
+      "description": "Description",
+      "category": "Category",
+      "amount": "Amount"
+    },
+    "categories": {
+      "housing": "Housing",
+      "food": "Food",
+      "transportation": "Transportation",
+      "utilities": "Utilities",
+      "entertainment": "Entertainment",
+      "healthcare": "Healthcare",
+      "other": "Other"
+    }
   },
   "savings": {
     "monthlySavings": "Monthly Savings",

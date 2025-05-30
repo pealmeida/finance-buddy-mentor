@@ -1,4 +1,3 @@
-
 {
   "app": {
     "name": "Finance Buddy",
@@ -94,7 +93,24 @@
     "addDetailedExpenseFor": "Adicionar item de despesa detalhada para",
     "updateExpenseDetails": "Atualizar os detalhes da despesa.",
     "confirmDeletion": "Confirmar Exclusão",
-    "deleteConfirmation": "Tem certeza que deseja excluir esta despesa? Esta ação não pode ser desfeita."
+    "deleteConfirmation": "Tem certeza que deseja excluir esta despesa? Esta ação não pode ser desfeita.",
+    "noDetailedExpenses": "Nenhuma despesa detalhada registrada para este mês.",
+    "clickAddToStart": "Clique em \"Adicionar Despesa\" para começar.",
+    "table": {
+      "date": "Data",
+      "description": "Descrição",
+      "category": "Categoria",
+      "amount": "Valor"
+    },
+    "categories": {
+      "housing": "Habitação",
+      "food": "Alimentação",
+      "transportation": "Transporte",
+      "utilities": "Utilidades",
+      "entertainment": "Entretenimento",
+      "healthcare": "Saúde",
+      "other": "Outros"
+    }
   },
   "savings": {
     "monthlySavings": "Economias Mensais",
