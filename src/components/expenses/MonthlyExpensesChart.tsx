@@ -1,7 +1,8 @@
 
 import React, { useState } from "react";
 import { MonthlyAmount } from "@/types/finance";
-import { MONTHS_SHORT } from "@/constants/months";
+import { useTranslatedMonths } from "@/constants/months";
+import { useCurrency } from "@/context/CurrencyContext";
 import {
   BarChart,
   Bar,
@@ -26,10 +27,13 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
   onSelectMonth,
 }) => {
   const { t } = useTranslation();
+  const { getTranslatedMonthsShort } = useTranslatedMonths();
+  const { formatCurrency } = useCurrency();
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const translatedMonthsShort = getTranslatedMonthsShort();
 
   const chartData = data.map((item) => ({
-    name: MONTHS_SHORT[item.month - 1],
+    name: translatedMonthsShort[item.month - 1],
     month: item.month,
     amount: item.amount,
     hasDetails: Array.isArray(item.items) && item.items.length > 0,
@@ -85,19 +89,17 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
               axisLine={{ stroke: "#e5e7eb" }}
             />
             <YAxis
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value) => formatCurrency(value)}
               tick={{ fill: "#6b7280" }}
               axisLine={{ stroke: "#e5e7eb" }}
             />
             <Tooltip
-              formatter={(value) => [`$${value}`, t('common.amount')]}
+              formatter={(value) => [formatCurrency(Number(value)), t('common.amount')]}
               labelFormatter={(label) => `${t('common.month')}: ${label}`}
               cursor={{ fill: "rgba(239, 68, 68, 0.1)" }}
             />
             <Legend
-              formatter={(value) => (
-                <span className='text-gray-700'>{t('expenses.monthlyExpenses')}</span>
-              )}
+              formatter={() => t('expenses.monthlyExpenses')}
             />
             <Bar
               dataKey='amount'

@@ -53,5 +53,30 @@
   "enterValidNumber": "Por favor, digite um número válido",
   "amountNotNegative": "O valor não pode ser negativo",
   "amountSavedIn": "Valor poupado em",
-  "onTrack": "No Caminho Certo"
+  "onTrack": "No Caminho Certo",
+  "months": {
+    "january": "Janeiro",
+    "february": "Fevereiro",
+    "march": "Março",
+    "april": "Abril",
+    "may": "Maio",
+    "june": "Junho",
+    "july": "Julho",
+    "august": "Agosto",
+    "september": "Setembro",
+    "october": "Outubro",
+    "november": "Novembro",
+    "december": "Dezembro",
+    "jan": "Jan",
+    "feb": "Fev",
+    "mar": "Mar",
+    "apr": "Abr",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Ago",
+    "sep": "Set",
+    "oct": "Out",
+    "nov": "Nov",
+    "dec": "Dez"
+  }
 }

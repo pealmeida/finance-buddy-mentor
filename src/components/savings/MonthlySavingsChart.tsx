@@ -3,6 +3,7 @@ import React from 'react';
 import { MonthlyAmount } from '@/types/finance';
 import { useTranslatedMonths } from '@/constants/months';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useTranslation } from 'react-i18next';
 import {
   BarChart,
   Bar,
@@ -23,6 +24,7 @@ const MonthlySavingsChart: React.FC<MonthlySavingsChartProps> = ({
   data, 
   onSelectMonth 
 }) => {
+  const { t } = useTranslation();
   const { getTranslatedMonthsShort } = useTranslatedMonths();
   const { currencyConfig } = useCurrency();
   const translatedMonthsShort = getTranslatedMonthsShort();
@@ -61,13 +63,15 @@ const MonthlySavingsChart: React.FC<MonthlySavingsChartProps> = ({
             axisLine={{ stroke: '#e5e7eb' }}
           />
           <Tooltip 
-            formatter={(value) => [`${currencyConfig.symbol}${value}`, 'Amount']}
-            labelFormatter={(label) => `Month: ${label}`}
+            formatter={(value) => [`${currencyConfig.symbol}${value}`, t('common.amount')]}
+            labelFormatter={(label) => `${t('common.month')}: ${label}`}
           />
-          <Legend />
+          <Legend 
+            formatter={() => t('savings.monthlySavings')}
+          />
           <Bar 
             dataKey="amount" 
-            name="Savings" 
+            name={t('savings.monthlySavings')} 
             fill="#4f46e5" 
             radius={[4, 4, 0, 0]}
             style={{ cursor: 'pointer' }}
