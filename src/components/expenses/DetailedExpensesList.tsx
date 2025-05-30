@@ -11,7 +11,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
-import { MONTHS } from "@/constants/months";
+import { useTranslatedMonths } from "@/constants/months";
+import { useTranslation } from "react-i18next";
 import { useDetailedExpensesCalculation } from "@/hooks/expenses/useDetailedExpensesCalculation";
 import ExpenseItemsTable from "./ExpenseItemsTable";
 import ExpenseDeleteConfirmDialog from "./ExpenseDeleteConfirmDialog";
@@ -27,6 +28,8 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
   monthData,
   onUpdateMonthData,
 }) => {
+  const { t } = useTranslation();
+  const { getTranslatedMonths } = useTranslatedMonths();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(null);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -72,7 +75,8 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
   };
 
   const items = monthData.items || [];
-  const monthName = MONTHS[monthData.month - 1];
+  const translatedMonths = getTranslatedMonths();
+  const monthName = translatedMonths[monthData.month - 1];
   const calculatedTotal = calculateTotalFromItems(items);
   const hasDiscrepancy = Math.abs(calculatedTotal - monthData.amount) > 0.01;
 
@@ -80,13 +84,13 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
     <Card className='w-full'>
       <CardHeader>
         <CardTitle className='flex justify-between items-center'>
-          <span>Detailed Expenses for {monthName}</span>
+          <span>{t('expenses.editExpensesFor', 'Edit Expenses for')} {monthName}</span>
           <Button
             size='sm'
             onClick={() => setIsAddDialogOpen(true)}
             className='flex items-center gap-1'>
             <Plus className='h-4 w-4' />
-            Add Expense
+            {t('expenses.addExpense', 'Add Expense')}
           </Button>
         </CardTitle>
         <CardDescription>

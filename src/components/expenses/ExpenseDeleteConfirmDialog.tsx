@@ -9,6 +9,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface ExpenseDeleteConfirmDialogProps {
   isOpen: boolean;
@@ -21,22 +22,23 @@ const ExpenseDeleteConfirmDialog: React.FC<ExpenseDeleteConfirmDialogProps> = ({
   onClose,
   onConfirm,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirm Deletion</DialogTitle>
+          <DialogTitle>{t('expenses.confirmDeletion', 'Confirm Deletion')}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this expense? This action cannot
-            be undone.
+            {t('expenses.deleteConfirmation', 'Are you sure you want to delete this expense? This action cannot be undone.')}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant='outline' onClick={onClose}>
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </Button>
           <Button variant='destructive' onClick={onConfirm}>
-            Delete
+            {t('common.delete', 'Delete')}
           </Button>
         </DialogFooter>
       </DialogContent>

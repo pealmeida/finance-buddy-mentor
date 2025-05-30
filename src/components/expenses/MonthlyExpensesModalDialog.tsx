@@ -3,7 +3,7 @@ import React from 'react';
 import { MonthlyAmount } from "@/types/finance";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import DetailedExpensesList from "./DetailedExpensesList";
-import { MONTHS } from "@/constants/months";
+import { useTranslatedMonths } from "@/constants/months";
 
 interface MonthlyExpensesModalDialogProps {
   isOpen: boolean;
@@ -18,12 +18,21 @@ const MonthlyExpensesModalDialog: React.FC<MonthlyExpensesModalDialogProps> = ({
   selectedMonthData,
   onUpdateMonthData
 }) => {
+  const { getTranslatedMonths } = useTranslatedMonths();
+  const translatedMonths = getTranslatedMonths();
+
+  const getModalTitle = () => {
+    if (!selectedMonthData) return 'Monthly Expenses';
+    const monthName = translatedMonths[selectedMonthData.month - 1];
+    return `${monthName} Expenses`;
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {selectedMonthData ? `${MONTHS[selectedMonthData.month - 1]} Expenses` : 'Monthly Expenses'}
+            {getModalTitle()}
           </DialogTitle>
         </DialogHeader>
         {selectedMonthData && (

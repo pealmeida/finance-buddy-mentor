@@ -87,7 +87,14 @@
     "viewDetailed": "Ver despesas detalhadas",
     "trackMonthlyExpenses": "Acompanhe suas despesas mensais para visualizar seus padrões de gastos ao longo do ano.",
     "editExpensesFor": "Editar Despesas para",
-    "expenseAmount": "Valor da Despesa"
+    "expenseAmount": "Valor da Despesa",
+    "addExpense": "Adicionar Despesa",
+    "addNewExpense": "Adicionar Nova Despesa",
+    "editExpense": "Editar Despesa",
+    "addDetailedExpenseFor": "Adicionar item de despesa detalhada para",
+    "updateExpenseDetails": "Atualizar os detalhes da despesa.",
+    "confirmDeletion": "Confirmar Exclusão",
+    "deleteConfirmation": "Tem certeza que deseja excluir esta despesa? Esta ação não pode ser desfeita."
   },
   "savings": {
     "monthlySavings": "Economias Mensais",

@@ -9,7 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import ExpenseItemForm from "./ExpenseItemForm";
-import { MONTHS } from "@/constants/months";
+import { useTranslatedMonths } from "@/constants/months";
+import { useTranslation } from "react-i18next";
 
 interface ExpenseFormDialogsProps {
   isAddDialogOpen: boolean;
@@ -30,7 +31,10 @@ const ExpenseFormDialogs: React.FC<ExpenseFormDialogsProps> = ({
   onUpdateExpense,
   monthNumber,
 }) => {
-  const monthName = MONTHS[monthNumber - 1];
+  const { t } = useTranslation();
+  const { getTranslatedMonths } = useTranslatedMonths();
+  const translatedMonths = getTranslatedMonths();
+  const monthName = translatedMonths[monthNumber - 1];
 
   return (
     <>
@@ -38,9 +42,9 @@ const ExpenseFormDialogs: React.FC<ExpenseFormDialogsProps> = ({
       <Dialog open={isAddDialogOpen} onOpenChange={onCloseAddDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add New Expense</DialogTitle>
+            <DialogTitle>{t('expenses.addNewExpense', 'Add New Expense')}</DialogTitle>
             <DialogDescription>
-              Add a detailed expense item for {monthName}.
+              {t('expenses.addDetailedExpenseFor', 'Add a detailed expense item for')} {monthName}.
             </DialogDescription>
           </DialogHeader>
           <ExpenseItemForm
@@ -54,8 +58,8 @@ const ExpenseFormDialogs: React.FC<ExpenseFormDialogsProps> = ({
       <Dialog open={!!editingExpense} onOpenChange={(open) => !open && onCloseEditDialog()}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Expense</DialogTitle>
-            <DialogDescription>Update the expense details.</DialogDescription>
+            <DialogTitle>{t('expenses.editExpense', 'Edit Expense')}</DialogTitle>
+            <DialogDescription>{t('expenses.updateExpenseDetails', 'Update the expense details.')}</DialogDescription>
           </DialogHeader>
           {editingExpense && (
             <ExpenseItemForm

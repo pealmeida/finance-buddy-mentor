@@ -87,7 +87,14 @@
     "viewDetailed": "View detailed expenses",
     "trackMonthlyExpenses": "Track your monthly expenses to visualize your spending patterns throughout the year.",
     "editExpensesFor": "Edit Expenses for",
-    "expenseAmount": "Expense Amount"
+    "expenseAmount": "Expense Amount",
+    "addExpense": "Add Expense",
+    "addNewExpense": "Add New Expense",
+    "editExpense": "Edit Expense",
+    "addDetailedExpenseFor": "Add a detailed expense item for",
+    "updateExpenseDetails": "Update the expense details.",
+    "confirmDeletion": "Confirm Deletion",
+    "deleteConfirmation": "Are you sure you want to delete this expense? This action cannot be undone."
   },
   "savings": {
     "monthlySavings": "Monthly Savings",
