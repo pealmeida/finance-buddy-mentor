@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
@@ -5,6 +6,7 @@ import InvestmentDistribution from './InvestmentDistribution';
 import MonthlySavings from './MonthlySavings';
 import EmergencyFund from './EmergencyFund';
 import FinancialCardGrid from './FinancialCardGrid';
+import { useTranslation } from 'react-i18next';
 
 interface FinancialOverviewProps {
   userProfile: UserProfile;
@@ -13,6 +15,7 @@ interface FinancialOverviewProps {
 const FinancialOverview: React.FC<FinancialOverviewProps> = ({
   userProfile
 }) => {
+  const { t } = useTranslation();
   const {
     fetchMonthlySavings,
     calculateAverageSavings
@@ -154,7 +157,7 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
   return (
     <div className="glass-panel rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold">Financial Overview</h2>
+        <h2 className="text-2xl font-semibold">{t('dashboard.investmentOverview', 'Financial Overview')}</h2>
         <span className="text-sm text-gray-500">{new Date().toLocaleDateString()}</span>
       </div>
       

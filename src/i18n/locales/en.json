@@ -1,3 +1,4 @@
+
 {
   "header": {
     "dashboard": "Dashboard",
@@ -5,6 +6,12 @@
     "savings": "Savings",
     "profile": "Profile",
     "logout": "Logout"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "expenses": "Expenses",
+    "savings": "Savings",
+    "profile": "Profile"
   },
   "onboarding": {
     "personalInfo": "Personal Info",
@@ -38,7 +45,8 @@
     "monthlyPayment": "Monthly Payment",
     "addDebt": "Add Debt",
     "reviewProfile": "Review Profile",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "preferredCurrency": "Preferred Currency"
   },
   "dashboard": {
     "welcome": "Welcome",
@@ -55,7 +63,24 @@
     "savingsRate": "Savings Rate",
     "expenseBreakdown": "Expense Breakdown",
     "monthlyExpenses": "Monthly Expenses",
-    "monthlySavings": "Monthly Savings"
+    "monthlySavings": "Monthly Savings",
+    "monthlyIncome": "Monthly Income",
+    "investments": "Investments",
+    "emergencyFund": "Emergency Fund",
+    "emergencyFundProgress": "of 6 months target",
+    "emergencyFundTarget": "Emergency fund complete!",
+    "emergencyFundRecommended": "Recommended: 6 months of expenses",
+    "belowRecommended": "below recommended savings",
+    "meetingRecommended": "Meeting recommended savings",
+    "investmentDistribution": "Investment Distribution",
+    "recommendedAllocation": "Recommended allocation based on your risk profile",
+    "marketTrends": "Market Trends",
+    "marketData": {
+      "usIndex": "US Index",
+      "cryptocurrency": "Cryptocurrency",
+      "commodity": "Commodity",
+      "bondYield": "Bond Yield"
+    }
   },
   "expenses": {
     "title": "Expenses",
@@ -119,7 +144,8 @@
     "november": "November",
     "december": "December",
     "amountSavedIn": "Amount saved in",
-    "onTrack": "On Track"
+    "onTrack": "On Track",
+    "loading": "Loading..."
   },
   "goals": {
     "setGoal": "Set a Goal"
@@ -134,5 +160,8 @@
     "saveChanges": "Save Changes",
     "saving": "Saving...",
     "welcome": "Welcome"
+  },
+  "errors": {
+    "errorCalculating": "Error calculating financial metrics"
   }
 }

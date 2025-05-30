@@ -1,3 +1,4 @@
+
 {
   "header": {
     "dashboard": "Painel",
@@ -5,6 +6,12 @@
     "savings": "Poupança",
     "profile": "Perfil",
     "logout": "Sair"
+  },
+  "navigation": {
+    "dashboard": "Painel",
+    "expenses": "Despesas",
+    "savings": "Poupança",
+    "profile": "Perfil"
   },
   "onboarding": {
     "personalInfo": "Informações Pessoais",
@@ -44,7 +51,8 @@
     "name": "Nome",
     "email": "Email",
     "monthlySavings": "Poupança Mensal",
-    "monthlyExpenses": "Despesas Mensais"
+    "monthlyExpenses": "Despesas Mensais",
+    "preferredCurrency": "Moeda Preferida"
   },
   "dashboard": {
     "welcome": "Bem-vindo(a)",
@@ -69,7 +77,24 @@
     "investments": "Investimentos",
     "savings": "Poupanças",
     "expenses": "Despesas",
-    "goals": "Metas"
+    "goals": "Metas",
+    "monthlyIncome": "Renda Mensal",
+    "monthlySavings": "Poupança Mensal",
+    "emergencyFund": "Fundo de Emergência",
+    "emergencyFundProgress": "da meta de 6 meses",
+    "emergencyFundTarget": "Fundo de emergência completo!",
+    "emergencyFundRecommended": "Recomendado: 6 meses de despesas",
+    "belowRecommended": "abaixo da poupança recomendada",
+    "meetingRecommended": "Atingindo a poupança recomendada",
+    "investmentDistribution": "Distribuição de Investimentos",
+    "recommendedAllocation": "Alocação recomendada baseada no seu perfil de risco",
+    "marketTrends": "Tendências do Mercado",
+    "marketData": {
+      "usIndex": "Índice dos EUA",
+      "cryptocurrency": "Criptomoeda",
+      "commodity": "Commodity",
+      "bondYield": "Rendimento de Títulos"
+    }
   },
   "expenses": {
     "title": "Despesas",
@@ -160,8 +185,8 @@
     "total": "Total",
     "analysis": {
       "title": "Análise de Poupança",
-      "totalSaved": "Total Poupad",
-      "averageSaved": "Média Poupad",
+      "totalSaved": "Total Poupado",
+      "averageSaved": "Média Poupada",
       "savingsTrends": "Tendências de Poupança",
       "goalProgress": "Progresso do Objetivo",
       "noDataAvailable": "Nenhum dado disponível para análise.",
@@ -207,7 +232,8 @@
     "add": "Adicionar",
     "onTrack": "No caminho certo",
     "setGoal": "Definir uma meta",
-    "amountSavedIn": "Valor economizado em"
+    "amountSavedIn": "Valor economizado em",
+    "loading": "Carregando..."
   },
   "riskProfile": {
     "conservativeDescription": "Você prioriza a segurança e aceita retornos mais baixos para evitar perdas.",
@@ -222,8 +248,11 @@
     "investmentDescription": "Aumentar seu patrimônio ao longo do tempo por meio de investimentos.",
     "otherDescription": "Poupar para objetivos específicos que são importantes para você."
   },
-   "goals": {
+  "goals": {
     "setGoal": "Defina uma meta para começar a economizar",
     "noGoals": "Nenhuma meta financeira definida ainda."
+  },
+  "errors": {
+    "errorCalculating": "Erro ao calcular métricas financeiras"
   }
 }
