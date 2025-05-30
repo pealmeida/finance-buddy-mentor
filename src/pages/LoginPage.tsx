@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +16,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Mail, Lock } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from "react-i18next";
 import Header from "@/components/Header";
 
 const LoginPage: React.FC = () => {
@@ -25,6 +27,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { userProfile, isLoading, authChecked } = useAuth();
 
   // Effect to handle redirection after successful login
@@ -51,8 +54,8 @@ const LoginPage: React.FC = () => {
 
     if (!email || !password) {
       toast({
-        title: "Missing fields",
-        description: "Please enter both email and password",
+        title: t('auth.missingFields'),
+        description: t('auth.enterEmailPassword'),
         variant: "destructive",
       });
       return;
@@ -69,15 +72,15 @@ const LoginPage: React.FC = () => {
       if (error) {
         console.error("Login error:", error.message);
         toast({
-          title: "Login failed",
+          title: t('auth.loginFailed'),
           description: error.message,
           variant: "destructive",
         });
       } else {
         console.log("Login successful, waiting for auth state update");
         toast({
-          title: "Login successful",
-          description: "You have successfully logged in.",
+          title: t('auth.loginSuccessful'),
+          description: t('auth.loginSuccessDescription'),
         });
 
         // Mark login as successful but don't navigate yet
@@ -87,8 +90,8 @@ const LoginPage: React.FC = () => {
     } catch (error) {
       console.error("Unexpected error during login:", error);
       toast({
-        title: "Login failed",
-        description: "An unexpected error occurred. Please try again.",
+        title: t('auth.loginFailed'),
+        description: t('auth.unexpectedError'),
         variant: "destructive",
       });
     } finally {
@@ -103,22 +106,22 @@ const LoginPage: React.FC = () => {
         <Card className='w-full shadow-lg'>
           <CardHeader className='space-y-1 text-center'>
             <CardTitle className='text-2xl font-bold'>
-              Login to your account
+              {t('auth.loginTitle')}
             </CardTitle>
             <CardDescription>
-              Enter your credentials to access your Finance Buddy account
+              {t('auth.loginDescription')}
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleLogin}>
             <CardContent className='grid gap-4'>
               <div className='grid gap-2'>
-                <Label htmlFor='email'>Email</Label>
+                <Label htmlFor='email'>{t('auth.email')}</Label>
                 <div className='relative'>
                   <Mail className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
                   <Input
                     id='email'
                     type='email'
-                    placeholder='name@example.com'
+                    placeholder={t('auth.emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className='pl-10'
@@ -128,14 +131,14 @@ const LoginPage: React.FC = () => {
               </div>
               <div className='grid gap-2'>
                 <div className='flex items-center justify-between'>
-                  <Label htmlFor='password'>Password</Label>
+                  <Label htmlFor='password'>{t('auth.password')}</Label>
                 </div>
                 <div className='relative'>
                   <Lock className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
                   <Input
                     id='password'
                     type='password'
-                    placeholder='••••••••'
+                    placeholder={t('auth.passwordPlaceholder')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className='pl-10'
@@ -149,14 +152,14 @@ const LoginPage: React.FC = () => {
                 type='submit'
                 className='w-full bg-finance-blue hover:bg-finance-blue-dark'
                 disabled={loading}>
-                {loading ? "Signing in..." : "Sign in"}
+                {loading ? t('auth.signingIn') : t('auth.signIn')}
               </Button>
               <div className='mt-4 text-center text-sm'>
-                Don't have an account?{" "}
+                {t('auth.dontHaveAccount')}{" "}
                 <Link
                   to='/signup'
                   className='text-finance-blue hover:underline'>
-                  Sign up
+                  {t('auth.signUp')}
                 </Link>
               </div>
             </CardFooter>

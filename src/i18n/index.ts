@@ -14,6 +14,7 @@ import enProfile from "./locales/en/profile.json";
 import enOnboarding from "./locales/en/onboarding.json";
 import enGoals from "./locales/en/goals.json";
 import enErrors from "./locales/en/errors.json";
+import enAuth from "./locales/en/auth.json";
 
 // Portuguese translations
 import ptBrCommon from "./locales/pt-br/common.json";
@@ -27,6 +28,7 @@ import ptBrProfile from "./locales/pt-br/profile.json";
 import ptBrOnboarding from "./locales/pt-br/onboarding.json";
 import ptBrGoals from "./locales/pt-br/goals.json";
 import ptBrErrors from "./locales/pt-br/errors.json";
+import ptBrAuth from "./locales/pt-br/auth.json";
 
 // Initialize i18next
 i18n
@@ -45,7 +47,8 @@ i18n
           profile: enProfile,
           onboarding: enOnboarding,
           goals: enGoals,
-          errors: enErrors
+          errors: enErrors,
+          auth: enAuth
         },
       },
       "pt-BR": {
@@ -60,7 +63,8 @@ i18n
           profile: ptBrProfile,
           onboarding: ptBrOnboarding,
           goals: ptBrGoals,
-          errors: ptBrErrors
+          errors: ptBrErrors,
+          auth: ptBrAuth
         },
       },
     },

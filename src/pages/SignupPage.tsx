@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +16,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, User } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from "react-i18next";
 import Header from "@/components/Header";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 
@@ -27,6 +29,7 @@ const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { fetchUserProfile } = useSupabaseData();
   const { userProfile, isLoading, authChecked } = useAuth();
 
@@ -59,7 +62,7 @@ const SignupPage: React.FC = () => {
 
       if (error) {
         toast({
-          title: "Signup failed",
+          title: t('auth.signupFailed'),
           description: error.message,
           variant: "destructive",
         });
@@ -68,9 +71,8 @@ const SignupPage: React.FC = () => {
         console.log("User signed up successfully:", data);
 
         toast({
-          title: "Account created",
-          description:
-            "Your account has been created successfully. Please complete your profile.",
+          title: t('auth.accountCreated'),
+          description: t('auth.accountCreatedDescription'),
         });
 
         // Mark signup as successful but don't navigate yet
@@ -96,8 +98,8 @@ const SignupPage: React.FC = () => {
     } catch (error) {
       console.error("Unexpected error during signup:", error);
       toast({
-        title: "Signup failed",
-        description: "An unexpected error occurred. Please try again.",
+        title: t('auth.signupFailed'),
+        description: t('auth.unexpectedError'),
         variant: "destructive",
       });
     } finally {
@@ -112,21 +114,21 @@ const SignupPage: React.FC = () => {
         <Card className='w-full shadow-lg'>
           <CardHeader className='space-y-1 text-center'>
             <CardTitle className='text-2xl font-bold'>
-              Create an account
+              {t('auth.signupTitle')}
             </CardTitle>
             <CardDescription>
-              Enter your information to get started with Finance Buddy
+              {t('auth.signupDescription')}
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleSignup}>
             <CardContent className='grid gap-4'>
               <div className='grid gap-2'>
-                <Label htmlFor='name'>Full Name</Label>
+                <Label htmlFor='name'>{t('auth.fullName')}</Label>
                 <div className='relative'>
                   <User className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
                   <Input
                     id='name'
-                    placeholder='John Doe'
+                    placeholder={t('auth.fullNamePlaceholder')}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className='pl-10'
@@ -135,13 +137,13 @@ const SignupPage: React.FC = () => {
                 </div>
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='email'>Email</Label>
+                <Label htmlFor='email'>{t('auth.email')}</Label>
                 <div className='relative'>
                   <Mail className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
                   <Input
                     id='email'
                     type='email'
-                    placeholder='name@example.com'
+                    placeholder={t('auth.emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className='pl-10'
@@ -150,13 +152,13 @@ const SignupPage: React.FC = () => {
                 </div>
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='password'>Password</Label>
+                <Label htmlFor='password'>{t('auth.password')}</Label>
                 <div className='relative'>
                   <Lock className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
                   <Input
                     id='password'
                     type='password'
-                    placeholder='••••••••'
+                    placeholder={t('auth.passwordPlaceholder')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className='pl-10'
@@ -171,12 +173,12 @@ const SignupPage: React.FC = () => {
                 type='submit'
                 className='w-full bg-finance-blue hover:bg-finance-blue-dark'
                 disabled={loading}>
-                {loading ? "Creating account..." : "Create account"}
+                {loading ? t('auth.creatingAccount') : t('auth.createAccount')}
               </Button>
               <div className='mt-4 text-center text-sm'>
-                Already have an account?{" "}
+                {t('auth.alreadyHaveAccount')}{" "}
                 <Link to='/login' className='text-finance-blue hover:underline'>
-                  Sign in
+                  {t('auth.signIn')}
                 </Link>
               </div>
             </CardFooter>
