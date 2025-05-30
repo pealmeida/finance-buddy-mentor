@@ -2,6 +2,7 @@
 import React from 'react';
 import { MonthlyAmount } from '@/types/finance';
 import { useTranslatedMonths } from '@/constants/months';
+import { useCurrency } from '@/context/CurrencyContext';
 import {
   BarChart,
   Bar,
@@ -23,6 +24,7 @@ const MonthlySavingsChart: React.FC<MonthlySavingsChartProps> = ({
   onSelectMonth 
 }) => {
   const { getTranslatedMonthsShort } = useTranslatedMonths();
+  const { currencyConfig } = useCurrency();
   const translatedMonthsShort = getTranslatedMonthsShort();
   
   // Transform data for the chart
@@ -54,12 +56,12 @@ const MonthlySavingsChart: React.FC<MonthlySavingsChartProps> = ({
             axisLine={{ stroke: '#e5e7eb' }}
           />
           <YAxis 
-            tickFormatter={(value) => `$${value}`}
+            tickFormatter={(value) => `${currencyConfig.symbol}${value}`}
             tick={{ fill: '#6b7280' }}
             axisLine={{ stroke: '#e5e7eb' }}
           />
           <Tooltip 
-            formatter={(value) => [`$${value}`, 'Amount']}
+            formatter={(value) => [`${currencyConfig.symbol}${value}`, 'Amount']}
             labelFormatter={(label) => `Month: ${label}`}
           />
           <Legend />

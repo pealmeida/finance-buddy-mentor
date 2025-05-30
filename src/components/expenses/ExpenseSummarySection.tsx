@@ -3,6 +3,8 @@ import React from "react";
 import { ExpenseItem } from "@/types/finance";
 import { Badge } from "@/components/ui/badge";
 import { Calculator } from "lucide-react";
+import { useCurrency } from "@/context/CurrencyContext";
+import { useTranslation } from "react-i18next";
 
 interface ExpenseSummarySectionProps {
   items: ExpenseItem[];
@@ -17,6 +19,9 @@ const ExpenseSummarySection: React.FC<ExpenseSummarySectionProps> = ({
   calculatedTotal,
   hasDiscrepancy,
 }) => {
+  const { formatCurrency } = useCurrency();
+  const { t } = useTranslation();
+
   if (items.length === 0) {
     return null;
   }
@@ -24,15 +29,15 @@ const ExpenseSummarySection: React.FC<ExpenseSummarySectionProps> = ({
   return (
     <div className="mt-6 pt-4 border-t">
       <div className="flex justify-between items-center text-lg font-semibold">
-        <span>Total Calculated:</span>
+        <span>{t('expenses.totalCalculated', 'Total Calculated:')}</span>
         <span className={hasDiscrepancy ? "text-orange-600" : "text-green-600"}>
-          ${calculatedTotal.toLocaleString()}
+          {formatCurrency(calculatedTotal)}
         </span>
       </div>
       {hasDiscrepancy && (
         <div className="text-sm text-orange-600 mt-1">
-          Note: There's a discrepancy between the stored total (${monthAmount.toLocaleString()}) 
-          and calculated total. The calculated total will be saved.
+          {t('expenses.discrepancyNote', 'Note: There\'s a discrepancy between the stored total')} ({formatCurrency(monthAmount)}) 
+          {t('expenses.discrepancyNote2', 'and calculated total. The calculated total will be saved.')}
         </div>
       )}
     </div>
@@ -45,17 +50,20 @@ export const ExpenseHeaderInfo: React.FC<{
   calculatedTotal: number;
   hasDiscrepancy: boolean;
 }> = ({ monthAmount, items, calculatedTotal, hasDiscrepancy }) => {
+  const { formatCurrency } = useCurrency();
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span>Total: ${monthAmount.toLocaleString()}</span>
+        <span>{t('expenses.total', 'Total')}: {formatCurrency(monthAmount)}</span>
         {items.length > 0 && (
           <div className="flex items-center gap-2 text-sm">
             <Calculator className="h-4 w-4" />
-            <span>Calculated: ${calculatedTotal.toLocaleString()}</span>
+            <span>{t('expenses.calculated', 'Calculated')}: {formatCurrency(calculatedTotal)}</span>
             {hasDiscrepancy && (
               <Badge variant="destructive" className="text-xs">
-                Discrepancy
+                {t('expenses.discrepancy', 'Discrepancy')}
               </Badge>
             )}
           </div>
@@ -63,7 +71,7 @@ export const ExpenseHeaderInfo: React.FC<{
       </div>
       {items.length > 0 && (
         <div className="text-sm text-gray-600">
-          {items.length} expense {items.length === 1 ? 'item' : 'items'} recorded
+          {items.length} {t('expenses.expenseItem', 'expense')} {items.length === 1 ? t('expenses.item', 'item') : t('expenses.items', 'items')} {t('expenses.recorded', 'recorded')}
         </div>
       )}
     </div>

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,16 +23,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
+import { useCurrency } from "@/context/CurrencyContext";
 
 // Define expense categories
 const EXPENSE_CATEGORIES = [
-  { value: "housing", label: "Housing" },
-  { value: "food", label: "Food & Groceries" },
-  { value: "transportation", label: "Transportation" },
-  { value: "utilities", label: "Utilities" },
-  { value: "entertainment", label: "Entertainment" },
-  { value: "healthcare", label: "Healthcare" },
-  { value: "other", label: "Other" },
+  { value: "housing", key: "expenses.categories.housing" },
+  { value: "food", key: "expenses.categories.food" },
+  { value: "transportation", key: "expenses.categories.transportation" },
+  { value: "utilities", key: "expenses.categories.utilities" },
+  { value: "entertainment", key: "expenses.categories.entertainment" },
+  { value: "healthcare", key: "expenses.categories.healthcare" },
+  { value: "other", key: "expenses.categories.other" },
 ] as const;
 
 // Create a schema for form validation
@@ -71,6 +74,9 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
   expense,
   isEditing = false,
 }) => {
+  const { t } = useTranslation();
+  const { currencyConfig } = useCurrency();
+
   // Get the current date for the selected month
   const getCurrentMonthDate = () => {
     const now = new Date();
@@ -123,9 +129,9 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
           name='description'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t('expenses.table.description', 'Description')}</FormLabel>
               <FormControl>
-                <Input placeholder='Rent, Groceries, etc.' {...field} />
+                <Input placeholder={t('expenses.descriptionPlaceholder', 'Rent, Groceries, etc.')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -137,7 +143,7 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
           name='amount'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Amount ($)</FormLabel>
+              <FormLabel>{t('expenses.table.amount', 'Amount')} ({currencyConfig.symbol})</FormLabel>
               <FormControl>
                 <Input
                   type='number'
@@ -148,7 +154,7 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
                 />
               </FormControl>
               <FormDescription>
-                Enter the expense amount in dollars
+                {t('expenses.enterAmountDescription', 'Enter the expense amount')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -160,17 +166,17 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
           name='category'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>{t('expenses.table.category', 'Category')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder='Select a category' />
+                    <SelectValue placeholder={t('expenses.selectCategory', 'Select a category')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {EXPENSE_CATEGORIES.map((category) => (
                     <SelectItem key={category.value} value={category.value}>
-                      {category.label}
+                      {t(category.key, category.value)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -185,7 +191,7 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
           name='date'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date</FormLabel>
+              <FormLabel>{t('expenses.table.date', 'Date')}</FormLabel>
               <FormControl>
                 <Input type='date' {...field} />
               </FormControl>
@@ -195,7 +201,9 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
         />
 
         <div className='flex justify-end space-x-2 pt-4'>
-          <Button type='submit'>{isEditing ? "Update" : "Add"} Expense</Button>
+          <Button type='submit'>
+            {isEditing ? t('expenses.updateExpense', 'Update') : t('expenses.addExpense', 'Add')} {t('expenses.expense', 'Expense')}
+          </Button>
         </div>
       </form>
     </Form>

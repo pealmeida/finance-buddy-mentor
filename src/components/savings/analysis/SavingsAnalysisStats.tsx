@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface SavingsAnalysisStatsProps {
   totalSaved: number;
@@ -17,6 +18,7 @@ const SavingsAnalysisStats: React.FC<SavingsAnalysisStatsProps> = ({
   selectedYear
 }) => {
   const { t } = useTranslation();
+  const { formatCurrency } = useCurrency();
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -26,7 +28,7 @@ const SavingsAnalysisStats: React.FC<SavingsAnalysisStatsProps> = ({
           <CardDescription>{t('common.amountSavedIn', 'Amount saved in')} {selectedYear}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-3xl font-bold text-green-600">${totalSaved.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-green-600">{formatCurrency(totalSaved)}</p>
         </CardContent>
       </Card>
       
@@ -36,7 +38,7 @@ const SavingsAnalysisStats: React.FC<SavingsAnalysisStatsProps> = ({
           <CardDescription>{t('savings.averageSavingsPerMonth', 'Average savings per month')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-3xl font-bold text-blue-600">${averageSaved.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-blue-600">{formatCurrency(averageSaved)}</p>
         </CardContent>
       </Card>
       

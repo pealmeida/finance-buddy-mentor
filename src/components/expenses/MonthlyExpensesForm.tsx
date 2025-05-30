@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Save, X } from 'lucide-react';
 import { MONTHS } from '@/constants/months';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface MonthlyExpensesFormProps {
   month: number;
@@ -21,6 +22,7 @@ const MonthlyExpensesForm: React.FC<MonthlyExpensesFormProps> = ({
   onCancel
 }) => {
   const { t } = useTranslation();
+  const { currencyConfig } = useCurrency();
   const [value, setValue] = useState(amount);
   const [error, setError] = useState('');
   
@@ -59,9 +61,9 @@ const MonthlyExpensesForm: React.FC<MonthlyExpensesFormProps> = ({
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="amount">{t('expenses.expenseAmount', 'Expense Amount')} ($)</Label>
+            <Label htmlFor="amount">{t('expenses.expenseAmount', 'Expense Amount')} ({currencyConfig.symbol})</Label>
             <div className="mt-1 relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2">{currencyConfig.symbol}</span>
               <Input
                 id="amount"
                 type="number"

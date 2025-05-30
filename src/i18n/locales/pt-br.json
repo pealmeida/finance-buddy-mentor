@@ -1,3 +1,4 @@
+
 {
   "app": {
     "name": "Finance Buddy",
@@ -96,6 +97,21 @@
     "deleteConfirmation": "Tem certeza que deseja excluir esta despesa? Esta ação não pode ser desfeita.",
     "noDetailedExpenses": "Nenhuma despesa detalhada registrada para este mês.",
     "clickAddToStart": "Clique em \"Adicionar Despesa\" para começar.",
+    "descriptionPlaceholder": "Aluguel, Supermercado, etc.",
+    "enterAmountDescription": "Digite o valor da despesa",
+    "selectCategory": "Selecione uma categoria",
+    "updateExpense": "Atualizar",
+    "expense": "Despesa",
+    "totalCalculated": "Total Calculado:",
+    "discrepancyNote": "Nota: Há uma discrepância entre o total armazenado",
+    "discrepancyNote2": "e o total calculado. O total calculado será salvo.",
+    "total": "Total",
+    "calculated": "Calculado",
+    "discrepancy": "Discrepância",
+    "expenseItem": "despesa",
+    "item": "item",
+    "items": "itens",
+    "recorded": "registrados",
     "table": {
       "date": "Data",
       "description": "Descrição",
@@ -236,6 +252,12 @@
       "commodity": "Commodity",
       "bondYield": "Rendimento de Títulos"
     }
+  },
+  "currency": {
+    "selector": "Moeda",
+    "usd": "Dólar Americano",
+    "eur": "Euro",
+    "brl": "Real Brasileiro"
   },
   "errors": {
     "errorCalculating": "Erro ao calcular métricas financeiras:"

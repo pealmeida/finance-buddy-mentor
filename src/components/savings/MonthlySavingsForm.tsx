@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Save, X } from 'lucide-react';
-import { useTranslatedMonths } from '@/constants/months';
+import { MONTHS } from '@/constants/months';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface MonthlySavingsFormProps {
   month: number;
@@ -21,8 +22,7 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
   onCancel
 }) => {
   const { t } = useTranslation();
-  const { getTranslatedMonths } = useTranslatedMonths();
-  const translatedMonths = getTranslatedMonths();
+  const { currencyConfig } = useCurrency();
   const [value, setValue] = useState(amount);
   const [error, setError] = useState('');
   
@@ -55,15 +55,15 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg border">
       <h3 className="text-xl font-semibold mb-4">
-        {t('savings.editSavingsFor', 'Edit Savings for')} {translatedMonths[month - 1]}
+        {t('savings.editSavingsFor', 'Edit Savings for')} {MONTHS[month - 1]}
       </h3>
       
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="amount">{t('savings.savingsAmount', 'Savings Amount')} ($)</Label>
+            <Label htmlFor="amount">{t('savings.savingsAmount', 'Savings Amount')} ({currencyConfig.symbol})</Label>
             <div className="mt-1 relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2">{currencyConfig.symbol}</span>
               <Input
                 id="amount"
                 type="number"
@@ -91,7 +91,7 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
             </Button>
             <Button
               type="submit"
-              className="flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark"
+              className="flex items-center gap-2"
               disabled={!!error}
             >
               <Save size={16} />

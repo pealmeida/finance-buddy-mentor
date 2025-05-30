@@ -2,6 +2,7 @@
 import React from 'react';
 import { MonthlyAmount } from '@/types/finance';
 import { useTranslatedMonths } from '@/constants/months';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface MonthlyCardProps {
   item: MonthlyAmount;
@@ -11,6 +12,7 @@ interface MonthlyCardProps {
 
 const MonthlyCard: React.FC<MonthlyCardProps> = ({ item, monthName, onEdit }) => {
   const { getTranslatedMonths } = useTranslatedMonths();
+  const { formatCurrency } = useCurrency();
   const translatedMonths = getTranslatedMonths();
   const translatedMonthName = translatedMonths[item.month - 1] || monthName;
 
@@ -22,7 +24,7 @@ const MonthlyCard: React.FC<MonthlyCardProps> = ({ item, monthName, onEdit }) =>
       <div className="flex justify-between items-center">
         <div className="font-medium">{translatedMonthName}</div>
         <div className={`text-lg font-bold ${item.amount > 0 ? 'text-green-600' : 'text-gray-500'}`}>
-          ${item.amount.toLocaleString()}
+          {formatCurrency(item.amount)}
         </div>
       </div>
     </div>

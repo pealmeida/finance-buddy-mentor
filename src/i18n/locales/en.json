@@ -1,3 +1,4 @@
+
 {
   "app": {
     "name": "Finance Buddy",
@@ -96,6 +97,21 @@
     "deleteConfirmation": "Are you sure you want to delete this expense? This action cannot be undone.",
     "noDetailedExpenses": "No detailed expenses recorded for this month.",
     "clickAddToStart": "Click \"Add Expense\" to get started.",
+    "descriptionPlaceholder": "Rent, Groceries, etc.",
+    "enterAmountDescription": "Enter the expense amount",
+    "selectCategory": "Select a category",
+    "updateExpense": "Update",
+    "expense": "Expense",
+    "totalCalculated": "Total Calculated:",
+    "discrepancyNote": "Note: There's a discrepancy between the stored total",
+    "discrepancyNote2": "and calculated total. The calculated total will be saved.",
+    "total": "Total",
+    "calculated": "Calculated",
+    "discrepancy": "Discrepancy",
+    "expenseItem": "expense",
+    "item": "item",
+    "items": "items",
+    "recorded": "recorded",
     "table": {
       "date": "Date",
       "description": "Description",
@@ -236,6 +252,12 @@
       "commodity": "Commodity",
       "bondYield": "Bond Yield"
     }
+  },
+  "currency": {
+    "selector": "Currency",
+    "usd": "US Dollar",
+    "eur": "Euro",
+    "brl": "Brazilian Real"
   },
   "errors": {
     "errorCalculating": "Error calculating financial metrics:"

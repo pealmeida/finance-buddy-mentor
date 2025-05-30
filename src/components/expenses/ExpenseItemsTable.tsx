@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { XCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useCurrency } from "@/context/CurrencyContext";
 import ExpenseItemActions from "./ExpenseItemActions";
 
 interface ExpenseItemsTableProps {
@@ -27,6 +28,7 @@ const ExpenseItemsTable: React.FC<ExpenseItemsTableProps> = ({
   onDelete,
 }) => {
   const { t } = useTranslation();
+  const { formatCurrency } = useCurrency();
 
   const getCategoryBadgeColor = (category: ExpenseItem["category"]) => {
     const colors: Record<ExpenseItem["category"], string> = {
@@ -92,7 +94,7 @@ const ExpenseItemsTable: React.FC<ExpenseItemsTableProps> = ({
               </Badge>
             </TableCell>
             <TableCell className='text-right font-medium'>
-              ${expense.amount.toLocaleString()}
+              {formatCurrency(expense.amount)}
             </TableCell>
             <TableCell className='text-right'>
               <ExpenseItemActions

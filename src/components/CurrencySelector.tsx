@@ -6,30 +6,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Globe, DollarSign, Euro, IndianRupee } from "lucide-react";
+import { DollarSign, Euro, IndianRupee } from "lucide-react";
 import { useCurrency, Currency, CURRENCIES } from "@/context/CurrencyContext";
 
-const LanguageSelector: React.FC = () => {
-  const { i18n } = useTranslation();
-  const { currency, setCurrency } = useCurrency();
-
-  const changeLanguage = (language: string) => {
-    i18n.changeLanguage(language);
-    localStorage.setItem("language", language);
-  };
-
-  const getCurrentLanguageLabel = () => {
-    switch (i18n.language) {
-      case "pt-BR":
-        return "PT";
-      case "en":
-      default:
-        return "EN";
-    }
-  };
+const CurrencySelector: React.FC = () => {
+  const { t } = useTranslation();
+  const { currency, currencyConfig, setCurrency } = useCurrency();
 
   const getCurrencyIcon = (currencyCode: Currency) => {
     switch (currencyCode) {
@@ -47,18 +31,11 @@ const LanguageSelector: React.FC = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="flex items-center gap-2 px-3">
-          <Globe className="h-4 w-4" />
-          <span className="text-sm font-medium">{getCurrentLanguageLabel()}</span>
+          {getCurrencyIcon(currency)}
+          <span className="text-sm font-medium">{currencyConfig.symbol}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => changeLanguage("en")}>
-          English
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeLanguage("pt-BR")}>
-          Português (Brasil)
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
         {Object.values(CURRENCIES).map((config) => (
           <DropdownMenuItem
             key={config.code}
@@ -74,4 +51,4 @@ const LanguageSelector: React.FC = () => {
   );
 };
 
-export default LanguageSelector;
+export default CurrencySelector;
