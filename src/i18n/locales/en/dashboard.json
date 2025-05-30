@@ -32,6 +32,9 @@
   "expensesSummary": "Expenses Summary",
   "personalizedInsights": "Personalized Insights",
   "investmentStrategy": "Investment Strategy",
+  "onboardingProgress": "Profile Setup Progress",
+  "setupProgress": "Setup Progress",
+  "completed": "completed",
   "marketData": {
     "usIndex": "US Index",
     "cryptocurrency": "Cryptocurrency",

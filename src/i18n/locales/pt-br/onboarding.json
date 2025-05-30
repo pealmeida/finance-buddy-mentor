@@ -74,5 +74,12 @@
   "editProfileHeader": "Editar Seu Perfil",
   "editProfileSubheader": "Atualize suas informações para obter melhores recomendações",
   "fullProfileHeader": "Configuração Completa do Perfil",
-  "fullProfileSubheader": "Forneça informações detalhadas para planejamento financeiro abrangente"
+  "fullProfileSubheader": "Forneça informações detalhadas para planejamento financeiro abrangente",
+  "personalInfoComplete": "Completar informações pessoais",
+  "riskProfileSet": "Definir tolerância ao risco",
+  "emergencyFundStatus": "Status do fundo de emergência definido",
+  "financialGoalsAdded": "Adicionar objetivos financeiros",
+  "investmentsAdded": "Adicionar investimentos atuais",
+  "monthlyExpensesSet": "Definir gastos mensais",
+  "monthlySavingsSet": "Definir poupança mensal"
 }

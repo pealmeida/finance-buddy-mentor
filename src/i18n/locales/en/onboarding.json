@@ -74,5 +74,12 @@
   "editProfileHeader": "Edit Your Profile",
   "editProfileSubheader": "Update your information to get better recommendations",
   "fullProfileHeader": "Complete Profile Setup",
-  "fullProfileSubheader": "Provide detailed information for comprehensive financial planning"
+  "fullProfileSubheader": "Provide detailed information for comprehensive financial planning",
+  "personalInfoComplete": "Complete personal information",
+  "riskProfileSet": "Set risk tolerance",
+  "emergencyFundStatus": "Emergency fund status set",
+  "financialGoalsAdded": "Add financial goals",
+  "investmentsAdded": "Add current investments",
+  "monthlyExpensesSet": "Set monthly expenses",
+  "monthlySavingsSet": "Set monthly savings"
 }

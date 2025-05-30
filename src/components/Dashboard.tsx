@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { UserProfile } from '@/types/finance';
 import FinancialOverview from './dashboard/FinancialOverview';
@@ -5,6 +6,7 @@ import FinancialGoals from './dashboard/FinancialGoals';
 import PersonalizedInsights from './dashboard/PersonalizedInsights';
 import MarketTrends from './dashboard/MarketTrends';
 import ExpensesSummary from './dashboard/ExpensesSummary';
+import OnboardingChecklist from './dashboard/OnboardingChecklist';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
 import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
 import { useTranslation } from 'react-i18next';
@@ -102,6 +104,9 @@ const Dashboard: React.FC<DashboardProps> = ({ userProfile }) => {
           <MarketTrends />
         </div>
       </div>
+      
+      {/* Floating Onboarding Checklist */}
+      <OnboardingChecklist userProfile={userProfile} />
     </div>
   );
 };

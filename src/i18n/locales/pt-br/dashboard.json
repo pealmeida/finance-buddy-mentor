@@ -28,6 +28,10 @@
   "expensesSummary": "Resumo de Despesas",
   "personalizedInsights": "Insights Personalizados",
   "investmentStrategy": "Estratégia de Investimento",
+  "completeProfile": "Completar Perfil",
+  "onboardingProgress": "Progresso da Configuração do Perfil",
+  "setupProgress": "Progresso da Configuração",
+  "completed": "concluído",
   "marketData": {
     "usIndex": "Índice dos EUA",
     "cryptocurrency": "Criptomoeda",
