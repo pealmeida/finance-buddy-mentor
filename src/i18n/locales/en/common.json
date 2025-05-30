@@ -2,6 +2,7 @@
 {
   "loading": "Loading...",
   "save": "Save",
+  "saving": "Saving...",
   "cancel": "Cancel",
   "delete": "Delete",
   "edit": "Edit",
@@ -48,5 +49,9 @@
   "signup": "Sign Up",
   "by": "By",
   "noGoalsYet": "No financial goals yet",
-  "addGoal": "Add Goal"
+  "addGoal": "Add Goal",
+  "enterValidNumber": "Please enter a valid number",
+  "amountNotNegative": "Amount cannot be negative",
+  "amountSavedIn": "Amount saved in",
+  "onTrack": "On Track"
 }

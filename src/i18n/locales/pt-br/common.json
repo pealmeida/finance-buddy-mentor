@@ -2,6 +2,7 @@
 {
   "loading": "Carregando...",
   "save": "Salvar",
+  "saving": "Salvando...",
   "cancel": "Cancelar",
   "delete": "Excluir",
   "edit": "Editar",
@@ -48,5 +49,9 @@
   "signup": "Cadastrar-se",
   "by": "Por",
   "noGoalsYet": "Nenhuma meta financeira ainda",
-  "addGoal": "Adicionar Meta"
+  "addGoal": "Adicionar Meta",
+  "enterValidNumber": "Por favor, digite um número válido",
+  "amountNotNegative": "O valor não pode ser negativo",
+  "amountSavedIn": "Valor poupado em",
+  "onTrack": "No Caminho Certo"
 }
