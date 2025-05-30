@@ -3,6 +3,7 @@ import React from 'react';
 import { TrendingUp, Wallet, LineChart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface FinancialCardGridProps {
   monthlyIncome: number;
@@ -14,6 +15,7 @@ const FinancialCardGrid: React.FC<FinancialCardGridProps> = ({
   totalInvestments
 }) => {
   const { t } = useTranslation();
+  const { formatCurrency } = useCurrency();
   
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -26,7 +28,7 @@ const FinancialCardGrid: React.FC<FinancialCardGridProps> = ({
             <TrendingUp className="h-5 w-5 text-finance-green" />
           </div>
           <h3 className="mt-4 font-medium text-gray-500">{t('dashboard.monthlyIncome', 'Monthly Income')}</h3>
-          <p className="text-2xl font-semibold">${monthlyIncome.toLocaleString()}</p>
+          <p className="text-2xl font-semibold">{formatCurrency(monthlyIncome)}</p>
         </CardContent>
       </Card>
       
@@ -39,7 +41,7 @@ const FinancialCardGrid: React.FC<FinancialCardGridProps> = ({
             <TrendingUp className="h-5 w-5 text-finance-green" />
           </div>
           <h3 className="mt-4 font-medium text-gray-500">{t('dashboard.investments', 'Investments')}</h3>
-          <p className="text-2xl font-semibold">${totalInvestments.toLocaleString()}</p>
+          <p className="text-2xl font-semibold">{formatCurrency(totalInvestments)}</p>
         </CardContent>
       </Card>
     </div>

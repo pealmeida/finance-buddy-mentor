@@ -3,6 +3,7 @@ import React from 'react';
 import { Shield } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface EmergencyFundProps {
   currentEmergencyFund: number;
@@ -16,6 +17,7 @@ const EmergencyFund: React.FC<EmergencyFundProps> = ({
   emergencyFundPercentage
 }) => {
   const { t } = useTranslation();
+  const { formatCurrency } = useCurrency();
   
   return (
     <div>
@@ -25,12 +27,7 @@ const EmergencyFund: React.FC<EmergencyFundProps> = ({
           <p className="font-medium">{t('dashboard.emergencyFund', 'Emergency Fund')}</p>
         </div>
         <p className="text-sm text-gray-500">
-          ${currentEmergencyFund.toLocaleString(undefined, {
-            maximumFractionDigits: 0
-          })} 
-          of ${emergencyFundTarget.toLocaleString(undefined, {
-            maximumFractionDigits: 0
-          })}
+          {formatCurrency(currentEmergencyFund)} of {formatCurrency(emergencyFundTarget)}
         </p>
       </div>
       <Progress value={emergencyFundPercentage} className="h-2 progress-animation" />
