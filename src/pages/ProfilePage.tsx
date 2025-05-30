@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MobileHeader from '@/components/ui/mobile-header';
 import MobileBottomNav from '@/components/ui/mobile-bottom-nav';
 import ResponsiveContainer from '@/components/ui/responsive-container';
+import { useTranslation } from 'react-i18next';
 
 interface ProfilePageProps {
   userProfile: UserProfile;
@@ -20,6 +21,7 @@ interface ProfilePageProps {
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate }) => {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState('personal-info');
   const navigate = useNavigate();
@@ -46,7 +48,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
       
       {/* Mobile Header */}
       <MobileHeader 
-        title="Profile Settings"
+        title={t('profile.title', 'Profile Settings')}
         showBack={true}
         showMenu={false}
         actions={
@@ -72,9 +74,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
               {/* Desktop Header Section */}
               <div className="hidden md:flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                 <div>
-                  <h1 className="text-3xl font-bold">Profile Settings</h1>
+                  <h1 className="text-3xl font-bold">{t('profile.title', 'Profile Settings')}</h1>
                   <p className="text-gray-500 mt-1">
-                    Welcome, <span className="font-medium">{userName}</span>
+                    {t('profile.welcome', 'Welcome')}, <span className="font-medium">{userName}</span>
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3">
@@ -83,14 +85,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
                     onClick={handleEditFullProfile}
                     className="flex items-center gap-2 border-finance-blue text-finance-blue hover:bg-finance-blue hover:text-white"
                   >
-                    <Pencil className="h-4 w-4" /> Edit Full Profile
+                    <Pencil className="h-4 w-4" /> {t('profile.editFullProfile', 'Edit Full Profile')}
                   </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => navigate('/dashboard')} 
                     className="flex items-center gap-2"
                   >
-                    <ChevronLeft className="h-4 w-4" /> Back to Dashboard
+                    <ChevronLeft className="h-4 w-4" /> {t('profile.backToDashboard', 'Back to Dashboard')}
                   </Button>
                 </div>
               </div>
@@ -98,7 +100,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
               {/* Mobile Welcome Message */}
               <div className="md:hidden mb-4 text-center">
                 <p className="text-gray-600">
-                  Welcome, <span className="font-medium text-finance-blue">{userName}</span>
+                  {t('profile.welcome', 'Welcome')}, <span className="font-medium text-finance-blue">{userName}</span>
                 </p>
               </div>
               
@@ -113,21 +115,21 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
                         className="flex items-center gap-2 px-3 py-3 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none"
                       >
                         <User className="h-4 w-4" />
-                        <span className="font-medium text-sm md:text-base">Personal Info</span>
+                        <span className="font-medium text-sm md:text-base">{t('profile.personalInfoTab', 'Personal Info')}</span>
                       </TabsTrigger>
                       <TabsTrigger 
                         value="investments"
                         className="flex items-center gap-2 px-3 py-3 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none"
                       >
                         <LineChart className="h-4 w-4" />
-                        <span className="font-medium text-sm md:text-base">Investments</span>
+                        <span className="font-medium text-sm md:text-base">{t('profile.investmentsTab', 'Investments')}</span>
                       </TabsTrigger>
                       <TabsTrigger 
                         value="savings"
                         className="flex items-center gap-2 px-3 py-3 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none"
                       >
                         <PiggyBank className="h-4 w-4" />
-                        <span className="font-medium text-sm md:text-base">Strategies</span>
+                        <span className="font-medium text-sm md:text-base">{t('profile.strategiesTab', 'Strategies')}</span>
                       </TabsTrigger>
                     </div>
                   </TabsList>
@@ -146,7 +148,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onProfileUpdate 
                         disabled={isSubmitting}
                         className="w-full md:w-auto bg-finance-blue hover:bg-finance-blue-dark text-white"
                       >
-                        {isSubmitting ? 'Saving...' : 'Save Changes'}
+                        {isSubmitting ? t('profile.saving', 'Saving...') : t('profile.saveChanges', 'Save Changes')}
                       </Button>
                     </div>
                   </TabsContent>

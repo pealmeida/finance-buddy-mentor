@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, User } from 'lucide-react';
 import CurrencySelector from '@/components/CurrencySelector';
+import { useTranslation } from 'react-i18next';
 
 interface PersonalInfoTabProps {
   profile: UserProfile;
@@ -15,6 +16,8 @@ interface PersonalInfoTabProps {
 }
 
 const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ profile, onInputChange, handleInputChange }) => {
+  const { t } = useTranslation();
+  
   // Use either onInputChange or handleInputChange (for backward compatibility)
   const handleChange = (field: keyof UserProfile, value: any) => {
     if (handleInputChange) {
@@ -27,11 +30,11 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ profile, onInputChang
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Personal Information</CardTitle>
+        <CardTitle>{t('profile.personalInfo', 'Personal Information')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email Address</Label>
+          <Label htmlFor="email">{t('profile.emailAddress', 'Email Address')}</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input 
@@ -47,7 +50,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ profile, onInputChang
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="name">Full Name</Label>
+          <Label htmlFor="name">{t('profile.fullName', 'Full Name')}</Label>
           <div className="relative">
             <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input 
@@ -61,7 +64,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ profile, onInputChang
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="age">Age</Label>
+          <Label htmlFor="age">{t('profile.age', 'Age')}</Label>
           <Input 
             id="age" 
             type="number" 
@@ -73,7 +76,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ profile, onInputChang
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="currency">Preferred Currency</Label>
+          <Label htmlFor="currency">{t('profile.preferredCurrency', 'Preferred Currency')}</Label>
           <div className="flex justify-start">
             <CurrencySelector />
           </div>
