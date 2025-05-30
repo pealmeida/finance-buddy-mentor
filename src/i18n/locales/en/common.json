@@ -54,6 +54,9 @@
   "amountNotNegative": "Amount cannot be negative",
   "amountSavedIn": "Amount saved in",
   "onTrack": "On Track",
+  "backToDashboard": "Back to Dashboard",
+  "tryAgain": "Try Again",
+  "actions": "Actions",
   "months": {
     "january": "January",
     "february": "February",
