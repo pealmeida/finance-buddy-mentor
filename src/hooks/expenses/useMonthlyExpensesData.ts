@@ -1,10 +1,9 @@
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { UserProfile, MonthlyAmount } from '@/types/finance';
-import { useExpensesDataFetching } from './useExpensesDataFetching';
-import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
-import { toast } from '@/components/ui/use-toast';
-import { ensureCompleteExpensesData } from './utils/expensesDataUtils';
+import { useEffect, useCallback } from 'react';
+import { UserProfile } from '@/types/finance';
+import { useExpensesDataState } from './useExpensesDataState';
+import { useExpensesDataRetry } from './useExpensesDataRetry';
+import { useExpensesDataFetcher } from './useExpensesDataFetcher';
 
 /**
  * Hook to manage monthly expenses data loading and saving
@@ -17,74 +16,71 @@ export const useMonthlyExpensesData = (
   checkAndRefreshAuth: () => Promise<boolean>,
   onSave: (updatedProfile: UserProfile) => void
 ) => {
-  const effectRunRef = useRef<boolean>(false);
-  const { fetchMonthlyExpenses } = useMonthlyExpenses();
-  const [initialFetchAttempted, setInitialFetchAttempted] = useState<boolean>(false);
-  const [dataFetchFailed, setDataFetchFailed] = useState<boolean>(false);
-  const maxRetryAttempts = 3;
-  const retryAttemptsRef = useRef<number>(0);
-  
   const {
     expensesData,
-    loadingData,
-    error,
-    refreshData,
     setExpensesData,
+    loadingData,
+    setLoadingData,
+    error,
     setError,
+    dataFetchFailed,
+    setDataFetchFailed,
     initializeEmptyData
-  } = useExpensesDataFetching({
+  } = useExpensesDataState();
+
+  const {
+    retryFetchWithBackoff,
+    resetRetryCount
+  } = useExpensesDataRetry(
     profile,
     selectedYear,
-    authChecked,
-    checkAndRefreshAuth
-  });
+    setExpensesData,
+    setDataFetchFailed,
+    initializeEmptyData
+  );
 
-  // Retry fetching data with exponential backoff
-  const retryFetchWithBackoff = useCallback(async () => {
-    if (retryAttemptsRef.current >= maxRetryAttempts) {
-      console.log("Max retry attempts reached, initializing empty data");
-      setDataFetchFailed(true);
-      initializeEmptyData();
+  const {
+    fetchData,
+    initialFetchAttempted,
+    setInitialFetchAttempted
+  } = useExpensesDataFetcher(
+    profile,
+    selectedYear,
+    setExpensesData,
+    setError,
+    initializeEmptyData,
+    retryFetchWithBackoff
+  );
+
+  // Refresh data function for manual refresh
+  const refreshData = useCallback(async () => {
+    if (!profile?.id) {
+      console.log("Skipping data refresh: missing profile ID");
       return;
     }
     
-    const delay = Math.min(1000 * Math.pow(2, retryAttemptsRef.current), 8000);
-    console.log(`Retrying data fetch in ${delay}ms (attempt ${retryAttemptsRef.current + 1}/${maxRetryAttempts})`);
-    
-    await new Promise(resolve => setTimeout(resolve, delay));
-    retryAttemptsRef.current++;
+    setLoadingData(true);
+    setError(null);
+    resetRetryCount();
     
     try {
-      if (!profile?.id) return;
-      
-      console.log(`Retry attempt ${retryAttemptsRef.current}: Fetching expenses for user ${profile.id} and year ${selectedYear}`);
-      const savedData = await fetchMonthlyExpenses(profile.id, selectedYear);
-      
-      if (savedData && savedData.data) {
-        console.log("Retry successful, setting expenses data:", savedData.data);
-        const completeData = ensureCompleteExpensesData(savedData.data);
-        setExpensesData(completeData);
-        setDataFetchFailed(false);
-        
-        toast({
-          title: "Data Loaded",
-          description: "Your monthly expenses have been loaded successfully."
-        });
-      } else {
-        console.log("No data found in retry, initializing empty data");
-        initializeEmptyData();
+      // Verify auth before proceeding
+      const isAuthenticated = await checkAndRefreshAuth();
+      if (!isAuthenticated) {
+        console.error("Authentication failed during data refresh");
+        setError("Authentication error. Please log in again.");
+        return;
       }
+      
+      await fetchData();
     } catch (err) {
-      console.error(`Error in retry attempt ${retryAttemptsRef.current}:`, err);
-      if (retryAttemptsRef.current < maxRetryAttempts) {
-        retryFetchWithBackoff();
-      } else {
-        console.log("Max retry attempts reached after error, initializing empty data");
-        setDataFetchFailed(true);
-        initializeEmptyData();
-      }
+      console.error("Error refreshing expenses data:", err);
+      setError(err instanceof Error ? err.message : "An unknown error occurred");
+      initializeEmptyData();
+    } finally {
+      setLoadingData(false);
     }
-  }, [fetchMonthlyExpenses, initializeEmptyData, profile?.id, selectedYear, setExpensesData, toast]);
+  }, [profile?.id, checkAndRefreshAuth, fetchData, setLoadingData, setError, resetRetryCount, initializeEmptyData]);
 
   // Fetch data when year changes or auth is confirmed
   useEffect(() => {
@@ -94,7 +90,7 @@ export const useMonthlyExpensesData = (
     }
 
     // Reset retry counter when dependencies change
-    retryAttemptsRef.current = 0;
+    resetRetryCount();
     
     // Don't fetch again if we've already tried for this combination
     if (initialFetchAttempted) {
@@ -106,64 +102,18 @@ export const useMonthlyExpensesData = (
     setInitialFetchAttempted(true);
     setLoadingData(true);
     
-    const fetchData = async () => {
-      try {
-        console.log(`Fetching monthly expenses for user ${profile.id} and year ${selectedYear}`);
-        
-        // Try to fetch data from Supabase
-        const savedData = await fetchMonthlyExpenses(profile.id, selectedYear);
-        
-        if (savedData && savedData.data && Array.isArray(savedData.data)) {
-          console.log("Setting expenses data from fetch:", savedData.data);
-          
-          // Ensure data is complete and in the right order
-          const completeData = ensureCompleteExpensesData(savedData.data);
-          
-          console.log("Complete processed data being set:", completeData);
-          setExpensesData(completeData);
-          
-          toast({
-            title: "Expenses Data Loaded",
-            description: "Your monthly expenses have been loaded successfully."
-          });
-        } else {
-          console.log("No saved data found, initializing empty data");
-          initializeEmptyData();
-          
-          toast({
-            title: "No Data Found",
-            description: "No expenses data found for this year. Starting with empty data."
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching expenses data:", err);
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
-        
-        // Attempt to retry the fetch with backoff
-        retryFetchWithBackoff();
-        
-        toast({
-          title: "Error Loading Data",
-          description: "There was a problem loading your expenses data. Retrying...",
-          variant: "destructive"
-        });
-      } finally {
-        setLoadingData(false);
-      }
-    };
-    
-    fetchData();
+    fetchData().finally(() => {
+      setLoadingData(false);
+    });
   }, [
     profile?.id, 
     selectedYear, 
     authChecked,
-    initializeEmptyData, 
-    setError, 
-    setExpensesData,
-    fetchMonthlyExpenses,
     initialFetchAttempted,
-    retryFetchWithBackoff,
-    toast
+    fetchData,
+    setInitialFetchAttempted,
+    setLoadingData,
+    resetRetryCount
   ]);
 
   // Re-fetch data when year changes
@@ -173,19 +123,20 @@ export const useMonthlyExpensesData = (
       console.log("Year changed, resetting fetch status");
       setInitialFetchAttempted(false);
       setDataFetchFailed(false);
-      retryAttemptsRef.current = 0;
+      resetRetryCount();
     }
-  }, [selectedYear]);
+  }, [selectedYear, initialFetchAttempted, setInitialFetchAttempted, setDataFetchFailed, resetRetryCount]);
 
   // Force a setLoadingData setter to expose it
-  const setLoadingData = useCallback((loading: boolean) => {
+  const forceSetLoadingData = useCallback((loading: boolean) => {
     // This is a pass-through to the inner hook's loading state
     if (loading) {
       console.log("Setting loading state to true");
     } else {
       console.log("Setting loading state to false");
     }
-  }, []);
+    setLoadingData(loading);
+  }, [setLoadingData]);
 
   return {
     expensesData,
@@ -196,6 +147,6 @@ export const useMonthlyExpensesData = (
     setError,
     initializeEmptyData,
     dataFetchFailed,
-    setLoadingData
+    setLoadingData: forceSetLoadingData
   };
 };
