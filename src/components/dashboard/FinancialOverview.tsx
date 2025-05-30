@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { UserProfile, MonthlyAmount } from '@/types/finance';
 import { useMonthlySavings } from '@/hooks/supabase/useMonthlySavings';
@@ -157,7 +156,7 @@ const FinancialOverview: React.FC<FinancialOverviewProps> = ({
   return (
     <div className="glass-panel rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold">{t('dashboard.investmentOverview', 'Financial Overview')}</h2>
+        <h2 className="text-2xl font-semibold">{t('dashboard.financialOverview')}</h2>
         <span className="text-sm text-gray-500">{new Date().toLocaleDateString()}</span>
       </div>
       

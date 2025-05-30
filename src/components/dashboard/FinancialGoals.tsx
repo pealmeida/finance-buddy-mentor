@@ -65,7 +65,7 @@ const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
         <h2 className="text-xl font-semibold">{t('dashboard.financialGoals')}</h2>
         <Link to="/goals">
           <Button variant="ghost" className="text-finance-blue flex items-center gap-1 text-sm">
-            {t('common.viewAll', 'View All')} <ChevronRight className="h-4 w-4" />
+            {t('common.viewAll')} <ChevronRight className="h-4 w-4" />
           </Button>
         </Link>
       </div>
@@ -103,14 +103,14 @@ const FinancialGoals: React.FC<FinancialGoalsProps> = ({ userProfile }) => {
       ) : (
         <div className="text-center py-10 text-gray-500">
           <Target className="h-10 w-10 mx-auto mb-2 text-gray-300" />
-          <p>{t('goals.noGoalsYet', 'No financial goals yet')}</p>
+          <p>{t('common.noGoalsYet')}</p>
           <Button 
             variant="outline" 
             className="mt-4 text-finance-blue border-finance-blue hover:bg-finance-blue hover:text-white transition-all duration-300"
             onClick={handleAddGoal}
           >
             <Plus className="h-4 w-4 mr-2" />
-            {t('goals.addGoal', 'Add a Goal')}
+            {t('common.addGoal')}
           </Button>
         </div>
       )}

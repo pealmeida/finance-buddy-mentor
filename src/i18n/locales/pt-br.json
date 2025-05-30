@@ -59,6 +59,9 @@
     "totalExpenses": "Despesas Totais",
     "totalSavings": "Poupança Total",
     "investmentPerformance": "Desempenho dos Investimentos",
+    "investmentOverview": "Visão Geral dos Investimentos",
+    "financialOverview": "Visão Geral Financeira",
+    "financialGoals": "Objetivos Financeiros",
     "debtsOverview": "Visão Geral das Dívidas",
     "noExpenses": "Nenhuma despesa registrada ainda.",
     "noSavings": "Nenhuma poupança registrada ainda.",
@@ -88,6 +91,7 @@
     "meetingRecommended": "Atingindo a poupança recomendada",
     "investmentDistribution": "Distribuição de Investimentos",
     "recommendedAllocation": "Alocação recomendada baseada no seu perfil de risco",
+    "riskProfile": "perfil de risco",
     "marketTrends": "Tendências do Mercado",
     "marketData": {
       "usIndex": "Índice dos EUA",
@@ -233,7 +237,10 @@
     "onTrack": "No caminho certo",
     "setGoal": "Definir uma meta",
     "amountSavedIn": "Valor economizado em",
-    "loading": "Carregando..."
+    "loading": "Carregando...",
+    "by": "Por",
+    "addGoal": "Adicionar Meta",
+    "noGoalsYet": "Nenhuma meta financeira ainda"
   },
   "riskProfile": {
     "conservativeDescription": "Você prioriza a segurança e aceita retornos mais baixos para evitar perdas.",
@@ -250,7 +257,9 @@
   },
   "goals": {
     "setGoal": "Defina uma meta para começar a economizar",
-    "noGoals": "Nenhuma meta financeira definida ainda."
+    "noGoals": "Nenhuma meta financeira definida ainda.",
+    "addGoal": "Adicionar Meta",
+    "noGoalsYet": "Nenhuma meta financeira ainda"
   },
   "errors": {
     "errorCalculating": "Erro ao calcular métricas financeiras"

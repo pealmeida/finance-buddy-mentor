@@ -53,6 +53,8 @@
     "totalExpenses": "Total Expenses",
     "totalSavings": "Total Savings",
     "investmentOverview": "Investment Overview",
+    "financialOverview": "Financial Overview",
+    "financialGoals": "Financial Goals",
     "debtsOverview": "Debts Overview",
     "noDebts": "No debts to display",
     "emergencyFundStatus": "Emergency Fund Status",
@@ -75,6 +77,7 @@
     "investmentDistribution": "Investment Distribution",
     "recommendedAllocation": "Recommended allocation based on your risk profile",
     "marketTrends": "Market Trends",
+    "riskProfile": "risk profile",
     "marketData": {
       "usIndex": "US Index",
       "cryptocurrency": "Cryptocurrency",
@@ -145,10 +148,16 @@
     "december": "December",
     "amountSavedIn": "Amount saved in",
     "onTrack": "On Track",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "viewAll": "View All",
+    "by": "By",
+    "addGoal": "Add Goal",
+    "noGoalsYet": "No financial goals yet"
   },
   "goals": {
-    "setGoal": "Set a Goal"
+    "setGoal": "Set a Goal",
+    "addGoal": "Add a Goal",
+    "noGoalsYet": "No financial goals yet"
   },
   "profile": {
     "title": "Profile Settings",
