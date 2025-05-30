@@ -78,6 +78,8 @@
     "recommendedAllocation": "Recommended allocation based on your risk profile",
     "marketTrends": "Market Trends",
     "riskProfile": "risk profile",
+    "expensesSummary": "Expenses Summary",
+    "personalizedInsights": "Personalized Insights",
     "marketData": {
       "usIndex": "US Index",
       "cryptocurrency": "Cryptocurrency",
@@ -98,6 +100,7 @@
     "delete": "Delete",
     "confirmDelete": "Are you sure you want to delete this expense?",
     "noExpenses": "No expenses to display",
+    "noExpensesData": "No expenses data available",
     "totalExpenses": "Total Expenses",
     "monthlyExpenses": "Monthly Expenses",
     "yearlyExpenses": "Yearly Expenses",

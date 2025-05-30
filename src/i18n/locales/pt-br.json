@@ -93,6 +93,8 @@
     "recommendedAllocation": "Alocação recomendada baseada no seu perfil de risco",
     "riskProfile": "perfil de risco",
     "marketTrends": "Tendências do Mercado",
+    "expensesSummary": "Resumo de Despesas",
+    "personalizedInsights": "Insights Personalizados",
     "marketData": {
       "usIndex": "Índice dos EUA",
       "cryptocurrency": "Criptomoeda",
@@ -112,6 +114,7 @@
     "cancel": "Cancelar",
     "delete": "Excluir",
     "noExpenses": "Nenhuma despesa registrada ainda.",
+    "noExpensesData": "Nenhum dado de despesas disponível",
     "food": "Alimentação",
     "transport": "Transporte",
     "housing": "Moradia",
