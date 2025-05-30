@@ -16,6 +16,7 @@
   "currentAmount": "Valor Atual",
   "targetDate": "Data Alvo",
   "priority": "Prioridade",
+  "priorityLabel": "Prioridade",
   "progress": "Progresso",
   "goal": "Meta",
   "actions": "Ações",

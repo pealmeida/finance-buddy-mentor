@@ -16,6 +16,7 @@
   "currentAmount": "Current Amount",
   "targetDate": "Target Date",
   "priority": "Priority",
+  "priorityLabel": "Priority",
   "progress": "Progress",
   "goal": "Goal",
   "actions": "Actions",

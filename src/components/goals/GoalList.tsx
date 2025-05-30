@@ -52,7 +52,7 @@ const GoalList: React.FC<GoalListProps> = ({ goals, onEdit, onDelete }) => {
             <TableHead>{t('goals.goal', 'Goal')}</TableHead>
             <TableHead>{t('goals.progress', 'Progress')}</TableHead>
             <TableHead>{t('goals.targetDate', 'Target Date')}</TableHead>
-            <TableHead>{t('goals.priority', 'Priority')}</TableHead>
+            <TableHead>{t('goals.priorityLabel', 'Priority')}</TableHead>
             <TableHead className="text-right">{t('common.actions', 'Actions')}</TableHead>
           </TableRow>
         </TableHeader>
