@@ -4,6 +4,7 @@ import { DollarSign } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useOnboarding } from '@/context/OnboardingContext';
+import CurrencySelector from '@/components/CurrencySelector';
 
 const PersonalInfoStep: React.FC = () => {
   const { profile, updateProfile } = useOnboarding();
@@ -25,7 +26,7 @@ const PersonalInfoStep: React.FC = () => {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="income">Monthly Income ($)</Label>
+          <Label htmlFor="income">Monthly Income</Label>
           <div className="relative">
             <DollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input 
@@ -36,6 +37,13 @@ const PersonalInfoStep: React.FC = () => {
               placeholder="5000"
               className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-finance-blue"
             />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="currency">Preferred Currency</Label>
+          <div className="flex justify-start">
+            <CurrencySelector />
           </div>
         </div>
       </div>

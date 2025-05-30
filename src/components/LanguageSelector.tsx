@@ -6,15 +6,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Globe, DollarSign, Euro, IndianRupee } from "lucide-react";
-import { useCurrency, Currency, CURRENCIES } from "@/context/CurrencyContext";
+import { Globe } from "lucide-react";
 
 const LanguageSelector: React.FC = () => {
   const { i18n } = useTranslation();
-  const { currency, setCurrency } = useCurrency();
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
@@ -28,18 +25,6 @@ const LanguageSelector: React.FC = () => {
       case "en":
       default:
         return "EN";
-    }
-  };
-
-  const getCurrencyIcon = (currencyCode: Currency) => {
-    switch (currencyCode) {
-      case "EUR":
-        return <Euro className="h-4 w-4" />;
-      case "BRL":
-        return <IndianRupee className="h-4 w-4" />;
-      case "USD":
-      default:
-        return <DollarSign className="h-4 w-4" />;
     }
   };
 
@@ -58,17 +43,6 @@ const LanguageSelector: React.FC = () => {
         <DropdownMenuItem onClick={() => changeLanguage("pt-BR")}>
           Português (Brasil)
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        {Object.values(CURRENCIES).map((config) => (
-          <DropdownMenuItem
-            key={config.code}
-            onClick={() => setCurrency(config.code)}
-            className="flex items-center gap-2"
-          >
-            {getCurrencyIcon(config.code)}
-            <span>{config.symbol} - {config.name}</span>
-          </DropdownMenuItem>
-        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

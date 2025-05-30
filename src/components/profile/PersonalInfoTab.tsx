@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, User } from 'lucide-react';
+import CurrencySelector from '@/components/CurrencySelector';
 
 interface PersonalInfoTabProps {
   profile: UserProfile;
@@ -69,6 +70,13 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ profile, onInputChang
             placeholder="30"
             className="transition-all duration-300 focus:ring-2 focus:ring-finance-blue"
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="currency">Preferred Currency</Label>
+          <div className="flex justify-start">
+            <CurrencySelector />
+          </div>
         </div>
       </CardContent>
     </Card>
