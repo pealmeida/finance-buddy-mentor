@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { CheckCircle, Circle, ChevronUp, ChevronDown, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { UserProfile } from '@/types/finance';
 
 interface OnboardingChecklistProps {
@@ -20,6 +20,7 @@ interface ChecklistItem {
 
 const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({ userProfile }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -72,6 +73,10 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({ userProfile }
   const completedItems = checklistItems.filter(item => item.completed).length;
   const totalItems = checklistItems.length;
   const progressPercentage = (completedItems / totalItems) * 100;
+
+  const handleCompleteProfile = () => {
+    navigate('/full-profile');
+  };
 
   // Don't show if fully completed
   if (completedItems === totalItems) {
@@ -139,7 +144,7 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({ userProfile }
                   variant="outline"
                   size="sm"
                   className="w-full text-finance-blue border-finance-blue hover:bg-finance-blue hover:text-white"
-                  onClick={() => window.location.href = '/profile'}
+                  onClick={handleCompleteProfile}
                 >
                   {t('dashboard.completeProfile')}
                 </Button>
