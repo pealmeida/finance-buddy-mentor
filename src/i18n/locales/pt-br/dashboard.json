@@ -27,10 +27,26 @@
   "marketTrends": "Tendências do Mercado",
   "expensesSummary": "Resumo de Despesas",
   "personalizedInsights": "Insights Personalizados",
+  "investmentStrategy": "Estratégia de Investimento",
   "marketData": {
     "usIndex": "Índice dos EUA",
     "cryptocurrency": "Criptomoeda",
     "commodity": "Commodity",
     "bondYield": "Rendimento de Títulos"
+  },
+  "savingsInsight": {
+    "low": "Olá {{name}}, notamos que sua poupança mensal está abaixo do valor recomendado. Considere criar um orçamento para aumentar sua taxa de poupança.",
+    "moderate": "Bom trabalho {{name}}! Você está progredindo em direção às suas metas de poupança, mas ainda há espaço para melhoria.",
+    "high": "Excelente trabalho {{name}}! Você está superando suas metas de poupança. Considere investir os fundos extras para maximizar seus retornos."
+  },
+  "expenseInsight": {
+    "high": "{{name}}, suas despesas são altas em relação à sua renda. Considere identificar áreas onde você pode reduzir gastos.",
+    "moderate": "{{name}}, suas despesas estão em um nível moderado. Procure oportunidades para reduzir gastos não essenciais.",
+    "low": "{{name}}, você está indo bem em manter suas despesas sob controle. Isso lhe dá mais flexibilidade para poupança e investimentos."
+  },
+  "investmentAdvice": {
+    "conservative": "Como um investidor conservador {{name}}, foque em investimentos estáveis como títulos e ações de dividendos para preservar capital.",
+    "moderate": "Com sua tolerância de risco moderada {{name}}, uma carteira equilibrada de ações e títulos pode funcionar bem para você.",
+    "aggressive": "Como um investidor agressivo {{name}}, você pode considerar ações de crescimento e investimentos alternativos para maiores retornos potenciais."
   }
 }

@@ -31,10 +31,26 @@
   "riskProfile": "risk profile",
   "expensesSummary": "Expenses Summary",
   "personalizedInsights": "Personalized Insights",
+  "investmentStrategy": "Investment Strategy",
   "marketData": {
     "usIndex": "US Index",
     "cryptocurrency": "Cryptocurrency",
     "commodity": "Commodity",
     "bondYield": "Bond Yield"
+  },
+  "savingsInsight": {
+    "low": "Hi {{name}}, we noticed your monthly savings are below the recommended amount. Consider creating a budget to increase your savings rate.",
+    "moderate": "Good job {{name}}! You're making progress toward your savings goals, but there's still room for improvement.",
+    "high": "Excellent work {{name}}! You're exceeding your savings targets. Consider investing the extra funds to maximize your returns."
+  },
+  "expenseInsight": {
+    "high": "{{name}}, your expenses are high relative to your income. Consider identifying areas where you can cut back.",
+    "moderate": "{{name}}, your expenses are at a moderate level. Look for opportunities to reduce non-essential spending.",
+    "low": "{{name}}, you're doing well at keeping your expenses in check. This gives you more flexibility for savings and investments."
+  },
+  "investmentAdvice": {
+    "conservative": "As a conservative investor {{name}}, focus on stable investments like bonds and dividend stocks to preserve capital.",
+    "moderate": "With your moderate risk tolerance {{name}}, a balanced portfolio of stocks and bonds could work well for you.",
+    "aggressive": "As an aggressive investor {{name}}, you might consider growth stocks and alternative investments for higher potential returns."
   }
 }

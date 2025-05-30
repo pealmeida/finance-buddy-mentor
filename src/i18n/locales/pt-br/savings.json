@@ -1,28 +1,24 @@
 
 {
   "title": "Poupança",
-  "addSaving": "Adicionar Poupança",
-  "editSaving": "Editar Poupança",
-  "goal": "Objetivo",
-  "amount": "Valor",
-  "date": "Data",
-  "description": "Descrição",
-  "save": "Salvar",
-  "cancel": "Cancelar",
-  "delete": "Excluir",
-  "noSavings": "Nenhuma poupança registrada ainda.",
   "monthlySavings": "Poupança Mensal",
   "yearlySavings": "Poupança Anual",
-  "total": "Total",
+  "totalSavings": "Poupança Total",
+  "savingsGoal": "Meta de Poupança",
+  "savingsRate": "Taxa de Poupança",
+  "emergencyFund": "Fundo de Emergência",
   "analysis": {
     "title": "Análise de Poupança",
-    "totalSaved": "Total Poupado",
-    "averageSaved": "Média Poupada",
-    "savingsTrends": "Tendências de Poupança",
-    "goalProgress": "Progresso do Objetivo",
-    "noDataAvailable": "Nenhum dado disponível para análise.",
-    "averageSavingsPerMonth": "Poupança média por mês"
+    "averageMonthlySavings": "Poupança Mensal Média",
+    "totalAnnualSavings": "Poupança Anual Total",
+    "savingsGrowth": "Crescimento da Poupança",
+    "bestSavingsMonth": "Melhor Mês de Poupança",
+    "lowestSavingsMonth": "Menor Mês de Poupança"
   },
-  "yearlyGoal": "Meta Anual",
-  "progressTowardsGoal": "Progresso em direção à sua meta anual"
+  "strategies": {
+    "title": "Estratégias de Poupança",
+    "automaticSavings": "Poupança Automática",
+    "budgetOptimization": "Otimização de Orçamento",
+    "expenseReduction": "Redução de Despesas"
+  }
 }

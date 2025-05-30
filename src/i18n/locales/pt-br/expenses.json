@@ -23,6 +23,12 @@
   "yearlyExpenses": "Despesas Anuais",
   "trackMonthlyExpenses": "Acompanhe suas despesas mensais para visualizar seus padrões de gastos ao longo do ano.",
   "clickBarInfo": "Clique nas barras para ver detalhes",
+  "loadingExpenses": "Carregando despesas...",
+  "viewDetailed": "Ver despesas detalhadas",
+  "highSpending": "Alto",
+  "moderateSpending": "Moderado",
+  "lowSpending": "Baixo", 
+  "spending": "Gasto",
   "categories": {
     "housing": "Moradia",
     "food": "Alimentação",

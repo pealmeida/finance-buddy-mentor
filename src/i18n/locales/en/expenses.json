@@ -25,6 +25,12 @@
   "other": "Other",
   "trackMonthlyExpenses": "Track your monthly expenses to visualize your spending patterns throughout the year.",
   "clickBarInfo": "Click on bars to view details",
+  "loadingExpenses": "Loading expenses...",
+  "viewDetailed": "View detailed expenses",
+  "highSpending": "High",
+  "moderateSpending": "Moderate", 
+  "lowSpending": "Low",
+  "spending": "Spending",
   "categories": {
     "housing": "Housing",
     "food": "Food",
