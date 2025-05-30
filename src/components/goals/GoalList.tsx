@@ -66,6 +66,8 @@ const GoalList: React.FC<GoalListProps> = ({ goals, onEdit, onDelete }) => {
             // Format the priority for display
             let priorityClass = "";
             let priorityText = "";
+            const priority = goal.priority as string;
+            
             switch (goal.priority) {
               case 'high':
                 priorityClass = "bg-red-100 text-red-800";
@@ -81,7 +83,7 @@ const GoalList: React.FC<GoalListProps> = ({ goals, onEdit, onDelete }) => {
                 break;
               default:
                 priorityClass = "bg-gray-100 text-gray-800";
-                priorityText = goal.priority.charAt(0).toUpperCase() + goal.priority.slice(1);
+                priorityText = priority.charAt(0).toUpperCase() + priority.slice(1);
             }
             
             return (
