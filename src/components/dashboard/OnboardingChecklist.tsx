@@ -83,7 +83,7 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({ userProfile }
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 animate-fade-in">
+    <div className="fixed bottom-4 left-4 z-50 animate-fade-in">
       <Card className={`shadow-lg border-finance-blue/20 ${isExpanded ? 'w-80' : 'w-64'} transition-all duration-300`}>
         {isExpanded ? (
           <>
