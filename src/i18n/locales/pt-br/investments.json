@@ -1,0 +1,51 @@
+
+{
+  "title": "Investimentos",
+  "portfolioTitle": "Portfólio de Investimentos",
+  "portfolioDescription": "Gerencie seus investimentos e acompanhe seu desempenho.",
+  "addInvestment": "Adicionar Investimento",
+  "addFirstInvestment": "Adicionar Seu Primeiro Investimento",
+  "editInvestment": "Editar Investimento",
+  "deleteInvestment": "Excluir Investimento",
+  "confirmDelete": "Confirmar Exclusão",
+  "noInvestmentsYet": "Nenhum Investimento Ainda",
+  "startBuilding": "Comece a construir seu portfólio adicionando seu primeiro investimento.",
+  "loadingData": "Carregando dados de investimentos...",
+  "userProfileError": "Perfil do usuário não está disponível. Faça login para visualizar seus investimentos.",
+  "getDetailedPlan": "Obter Plano Detalhado",
+  "investmentRecommendations": "Recomendações de Investimento",
+  "seeAll": "Ver Todos",
+  "currentValue": "Valor Atual",
+  "annualReturn": "Retorno Anual",
+  "investmentType": "Tipo de Investimento",
+  "investmentName": "Nome do Investimento",
+  "addNewInvestment": "Adicionar Novo Investimento",
+  "updateInvestment": "Atualizar Investimento",
+  "saving": "Salvando...",
+  "allocation": "Alocação",
+  "riskLevel": "Nível de Risco",
+  "expectedReturn": "Retorno Esperado",
+  "timeHorizon": "Horizonte de Tempo",
+  "conservative": "Conservador",
+  "moderate": "Moderado",
+  "aggressive": "Agressivo",
+  "types": {
+    "stocks": "Ações",
+    "bonds": "Títulos",
+    "realEstate": "Imóveis",
+    "cash": "Dinheiro / Poupança",
+    "crypto": "Criptomoeda",
+    "other": "Outros"
+  },
+  "errors": {
+    "addFailed": "Falha ao adicionar investimento",
+    "updateFailed": "Falha ao atualizar investimento",
+    "deleteFailed": "Falha ao excluir investimento",
+    "loadFailed": "Falha ao carregar investimentos"
+  },
+  "success": {
+    "added": "Investimento adicionado com sucesso",
+    "updated": "Investimento atualizado com sucesso",
+    "deleted": "Investimento excluído com sucesso"
+  }
+}

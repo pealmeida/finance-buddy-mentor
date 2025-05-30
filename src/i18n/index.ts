@@ -9,6 +9,7 @@ import enNavigation from "./locales/en/navigation.json";
 import enDashboard from "./locales/en/dashboard.json";
 import enExpenses from "./locales/en/expenses.json";
 import enSavings from "./locales/en/savings.json";
+import enInvestments from "./locales/en/investments.json";
 import enProfile from "./locales/en/profile.json";
 import enOnboarding from "./locales/en/onboarding.json";
 import enGoals from "./locales/en/goals.json";
@@ -21,6 +22,7 @@ import ptBrNavigation from "./locales/pt-br/navigation.json";
 import ptBrDashboard from "./locales/pt-br/dashboard.json";
 import ptBrExpenses from "./locales/pt-br/expenses.json";
 import ptBrSavings from "./locales/pt-br/savings.json";
+import ptBrInvestments from "./locales/pt-br/investments.json";
 import ptBrProfile from "./locales/pt-br/profile.json";
 import ptBrOnboarding from "./locales/pt-br/onboarding.json";
 import ptBrGoals from "./locales/pt-br/goals.json";
@@ -39,6 +41,7 @@ i18n
           dashboard: enDashboard,
           expenses: enExpenses,
           savings: enSavings,
+          investments: enInvestments,
           profile: enProfile,
           onboarding: enOnboarding,
           goals: enGoals,
@@ -53,6 +56,7 @@ i18n
           dashboard: ptBrDashboard,
           expenses: ptBrExpenses,
           savings: ptBrSavings,
+          investments: ptBrInvestments,
           profile: ptBrProfile,
           onboarding: ptBrOnboarding,
           goals: ptBrGoals,

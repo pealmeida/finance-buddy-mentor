@@ -1,0 +1,51 @@
+
+{
+  "title": "Investments",
+  "portfolioTitle": "Investment Portfolio",
+  "portfolioDescription": "Manage your investments and track their performance.",
+  "addInvestment": "Add Investment",
+  "addFirstInvestment": "Add Your First Investment",
+  "editInvestment": "Edit Investment",
+  "deleteInvestment": "Delete Investment",
+  "confirmDelete": "Confirm Delete",
+  "noInvestmentsYet": "No Investments Yet",
+  "startBuilding": "Start building your portfolio by adding your first investment.",
+  "loadingData": "Loading investments data...",
+  "userProfileError": "User profile is not available. Please log in to view your investments.",
+  "getDetailedPlan": "Get Detailed Plan",
+  "investmentRecommendations": "Investment Recommendations",
+  "seeAll": "See All",
+  "currentValue": "Current Value",
+  "annualReturn": "Annual Return",
+  "investmentType": "Investment Type",
+  "investmentName": "Investment Name",
+  "addNewInvestment": "Add New Investment",
+  "updateInvestment": "Update Investment",
+  "saving": "Saving...",
+  "allocation": "Allocation",
+  "riskLevel": "Risk Level",
+  "expectedReturn": "Expected Return",
+  "timeHorizon": "Time Horizon",
+  "conservative": "Conservative",
+  "moderate": "Moderate",
+  "aggressive": "Aggressive",
+  "types": {
+    "stocks": "Stocks",
+    "bonds": "Bonds",
+    "realEstate": "Real Estate", 
+    "cash": "Cash / Savings",
+    "crypto": "Cryptocurrency",
+    "other": "Other"
+  },
+  "errors": {
+    "addFailed": "Failed to add investment",
+    "updateFailed": "Failed to update investment",
+    "deleteFailed": "Failed to delete investment",
+    "loadFailed": "Failed to load investments"
+  },
+  "success": {
+    "added": "Investment added successfully",
+    "updated": "Investment updated successfully",
+    "deleted": "Investment deleted successfully"
+  }
+}
