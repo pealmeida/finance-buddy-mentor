@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { MonthlyAmount } from '@/types/finance';
-import { MONTHS_SHORT } from '@/constants/months';
+import { useTranslatedMonths } from '@/constants/months';
 import {
   BarChart,
   Bar,
@@ -22,9 +22,12 @@ const MonthlySavingsChart: React.FC<MonthlySavingsChartProps> = ({
   data, 
   onSelectMonth 
 }) => {
+  const { getTranslatedMonthsShort } = useTranslatedMonths();
+  const translatedMonthsShort = getTranslatedMonthsShort();
+  
   // Transform data for the chart
   const chartData = data.map(item => ({
-    name: MONTHS_SHORT[item.month - 1],
+    name: translatedMonthsShort[item.month - 1],
     month: item.month,
     amount: typeof item.amount === 'number' ? item.amount : 0
   }));

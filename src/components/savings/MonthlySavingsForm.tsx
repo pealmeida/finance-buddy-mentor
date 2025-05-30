@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Save, X } from 'lucide-react';
-import { MONTHS } from '@/constants/months';
+import { useTranslatedMonths } from '@/constants/months';
 import { useTranslation } from 'react-i18next';
 
 interface MonthlySavingsFormProps {
@@ -21,6 +21,8 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
   onCancel
 }) => {
   const { t } = useTranslation();
+  const { getTranslatedMonths } = useTranslatedMonths();
+  const translatedMonths = getTranslatedMonths();
   const [value, setValue] = useState(amount);
   const [error, setError] = useState('');
   
@@ -53,7 +55,7 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg border">
       <h3 className="text-xl font-semibold mb-4">
-        {t('savings.editSavingsFor', 'Edit Savings for')} {MONTHS[month - 1]}
+        {t('savings.editSavingsFor', 'Edit Savings for')} {translatedMonths[month - 1]}
       </h3>
       
       <form onSubmit={handleSubmit}>
