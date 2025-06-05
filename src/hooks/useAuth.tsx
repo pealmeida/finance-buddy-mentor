@@ -1,4 +1,3 @@
-
 import { useAuthState } from "./useAuthState";
 import { useSessionHandler } from "./useSessionHandler";
 
@@ -16,7 +15,7 @@ export const useAuth = () => {
     authChecked,
     setAuthChecked,
     handleProfileComplete,
-    handleProfileUpdate
+    handleProfileUpdate,
   } = useAuthState();
 
   // Handle auth session state changes
@@ -24,7 +23,7 @@ export const useAuth = () => {
     setUserProfile,
     setIsLoading,
     setIsProfileComplete,
-    setAuthChecked
+    setAuthChecked,
   });
 
   return {
@@ -33,6 +32,6 @@ export const useAuth = () => {
     isProfileComplete,
     authChecked,
     handleProfileComplete,
-    handleProfileUpdate
+    handleProfileUpdate,
   };
 };

@@ -1,11 +1,18 @@
-
-import React, { useEffect, useState } from 'react';
-import { UserProfile } from '@/types/finance';
-import { useOnboarding } from '@/context/OnboardingContext';
-import StepIndicator from './StepIndicator';
-import OnboardingNavigation from './OnboardingNavigation';
-import OnboardingStepContent from './OnboardingStepContent';
-import { useOnboardingFlow } from '@/hooks/useOnboardingFlow';
+import React, { useEffect, useState } from "react";
+import { UserProfile } from "@/types/finance";
+import { useOnboarding } from "@/context/OnboardingContext";
+import { StepIndicator } from "./StepIndicator";
+import OnboardingNavigation from "./OnboardingNavigation";
+import OnboardingStepContent from "./OnboardingStepContent";
+import { useOnboardingFlow } from "@/hooks/useOnboardingFlow";
+import PersonalInfoStep from "./PersonalInfoStep";
+import RiskProfileStep from "./RiskProfileStep";
+import MonthlyExpensesStep from "./MonthlyExpensesStep";
+import MonthlySavingsStep from "./MonthlySavingsStep";
+import DebtDetailsForm from "./DebtDetailsForm";
+import FinancialGoalsStep from "./FinancialGoalsStep";
+import InvestmentsStep from "./InvestmentsStep";
+import ReviewStep from "./ReviewStep";
 
 interface OnboardingContentProps {
   onComplete: (profile: UserProfile) => void;
@@ -14,15 +21,22 @@ interface OnboardingContentProps {
   isSaving?: boolean;
 }
 
-const OnboardingContent: React.FC<OnboardingContentProps> = ({ 
-  onComplete, 
-  existingProfile, 
+interface OnboardingStep {
+  id: number;
+  label: string;
+  component: React.ReactNode;
+}
+
+const OnboardingContent: React.FC<OnboardingContentProps> = ({
+  onComplete,
+  existingProfile,
   isEditMode,
-  isSaving = false 
+  isSaving = false,
 }) => {
   const { profile, updateProfile } = useOnboarding();
   const [profileInitialized, setProfileInitialized] = useState(false);
-  
+  const [currentStep, setCurrentStep] = useState(1);
+
   const {
     step,
     totalSteps,
@@ -30,18 +44,39 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
     handlePrevStep,
     handleCancel,
     handleComplete: completeOnboarding,
-    isLoading
+    isLoading,
   } = useOnboardingFlow({
     onComplete,
     isEditMode,
     isSaving,
-    existingProfile
+    existingProfile,
   });
+
+  const steps: OnboardingStep[] = [
+    { id: 1, label: "Personal Info", component: <PersonalInfoStep /> },
+    { id: 2, label: "Risk Profile", component: <RiskProfileStep /> },
+    { id: 3, label: "Monthly Expenses", component: <MonthlyExpensesStep /> },
+    { id: 4, label: "Savings", component: <MonthlySavingsStep /> },
+    { id: 5, label: "Debt Details", component: <DebtDetailsForm /> },
+    { id: 6, label: "Financial Goals", component: <FinancialGoalsStep /> },
+    { id: 7, label: "Investments", component: <InvestmentsStep /> },
+    { id: 8, label: "Review", component: <ReviewStep /> },
+  ];
+
+  const stepIndicatorSteps = steps.map((step) => ({
+    id: step.id,
+    label: step.label,
+    completed: step.id < currentStep,
+    current: step.id === currentStep,
+  }));
 
   // Initialize onboarding context with existing profile data if in edit mode
   useEffect(() => {
     if (isEditMode && existingProfile && !profileInitialized) {
-      console.log('Initializing onboarding with existing profile:', existingProfile);
+      console.log(
+        "Initializing onboarding with existing profile:",
+        existingProfile
+      );
       updateProfile(existingProfile);
       setProfileInitialized(true);
     }
@@ -60,11 +95,13 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
         age: profile.age ?? existingProfile.age,
         monthlyIncome: profile.monthlyIncome ?? existingProfile.monthlyIncome,
         riskProfile: profile.riskProfile || existingProfile.riskProfile,
-        hasEmergencyFund: profile.hasEmergencyFund ?? existingProfile.hasEmergencyFund,
+        hasEmergencyFund:
+          profile.hasEmergencyFund ?? existingProfile.hasEmergencyFund,
         hasDebts: profile.hasDebts ?? existingProfile.hasDebts,
-        financialGoals: profile.financialGoals || existingProfile.financialGoals,
+        financialGoals:
+          profile.financialGoals || existingProfile.financialGoals,
         investments: profile.investments || existingProfile.investments,
-        debtDetails: profile.debtDetails || existingProfile.debtDetails
+        debtDetails: profile.debtDetails || existingProfile.debtDetails,
       };
       completeOnboarding(completeProfile);
     } else {
@@ -74,12 +111,12 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto py-8 px-4 sm:px-6 animate-fade-in">
-      <StepIndicator currentStep={step} totalSteps={totalSteps} />
-      
+    <div className='flex flex-col gap-8'>
+      <StepIndicator steps={stepIndicatorSteps} currentStep={currentStep} />
+
       <OnboardingStepContent currentStep={step} />
-      
-      <OnboardingNavigation 
+
+      <OnboardingNavigation
         currentStep={step}
         totalSteps={totalSteps}
         onNext={handleNextStep}
