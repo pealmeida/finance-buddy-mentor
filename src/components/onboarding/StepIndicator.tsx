@@ -1,41 +1,58 @@
+import React from "react";
+import { Check } from "lucide-react";
 
-import React from 'react';
-import { CheckCircle } from 'lucide-react';
-
-interface StepIndicatorProps {
-  currentStep: number;
-  totalSteps: number;
+interface Step {
+  id: number;
+  label: string;
+  completed: boolean;
+  current: boolean;
 }
 
-const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, totalSteps }) => {
+interface StepIndicatorProps {
+  steps: Step[];
+  currentStep: number;
+}
+
+export const StepIndicator = ({ steps, currentStep }: StepIndicatorProps) => {
   return (
-    <div className="flex items-center justify-between mb-8">
-      {Array.from({ length: totalSteps }, (_, i) => i + 1).map(stepNumber => (
-        <div 
-          key={stepNumber}
-          className={`relative flex items-center justify-center h-10 w-10 rounded-full 
-            ${stepNumber < currentStep ? 'bg-finance-green text-white' : 
-              stepNumber === currentStep ? 'bg-finance-blue text-white' : 
-              'bg-gray-200 text-gray-500'} 
-            transition-all duration-300`}
-        >
-          {stepNumber < currentStep ? (
-            <CheckCircle className="h-5 w-5" />
-          ) : (
-            <span className="text-sm font-medium">{stepNumber}</span>
-          )}
-          
-          {stepNumber < totalSteps && (
-            <div 
-              className={`absolute top-5 -right-full h-0.5 w-full 
-                ${stepNumber < currentStep ? 'bg-finance-green' : 'bg-gray-200'} 
-                transition-all duration-300`} 
-            />
-          )}
-        </div>
-      ))}
+    <div className='flex flex-col gap-4 w-full'>
+      {/* Step labels and indicators */}
+      <div className='flex justify-between w-full px-4'>
+        {steps.map((step) => (
+          <div
+            key={step.id}
+            className='flex flex-col items-center gap-1 min-w-[40px]'>
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300
+                ${
+                  step.completed
+                    ? "bg-green-500 text-white"
+                    : step.current
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-600"
+                }`}
+              aria-current={step.current ? "step" : undefined}>
+              {step.completed ? <Check className='w-4 h-4' /> : step.id}
+            </div>
+            <span
+              className={`text-xs text-center ${
+                step.current ? "font-bold text-blue-500" : "text-gray-600"
+              }`}>
+              {step.label}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Progress bar */}
+      <div className='w-full bg-gray-200 h-1.5 rounded-full'>
+        <div
+          className='bg-blue-500 h-1.5 rounded-full transition-all duration-500'
+          style={{
+            width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
+          }}
+        />
+      </div>
     </div>
   );
 };
-
-export default StepIndicator;

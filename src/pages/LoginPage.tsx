@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,39 +22,28 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [loginSuccess, setLoginSuccess] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
   const { t } = useTranslation();
   const { userProfile, isLoading, authChecked } = useAuth();
 
-  // Effect to handle redirection after successful login
+  // Redirect if already authenticated
   useEffect(() => {
-    // Only redirect if login was successful, auth has been checked, and we're not already loading
-    if (loginSuccess && authChecked && !isLoading && userProfile) {
-      console.log("Auth state updated after login, redirecting to dashboard");
-      // Get the intended destination from location state or default to dashboard
+    if (authChecked && !isLoading && userProfile?.id) {
+      console.log("User already authenticated, redirecting to dashboard");
       const from = location.state?.from?.pathname || "/dashboard";
       navigate(from, { replace: true });
-      setLoginSuccess(false); // Reset login success state
     }
-  }, [
-    loginSuccess,
-    authChecked,
-    isLoading,
-    userProfile,
-    navigate,
-    location.state,
-  ]);
+  }, [authChecked, isLoading, userProfile, navigate, location.state]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !password) {
       toast({
-        title: t('auth.missingFields'),
-        description: t('auth.enterEmailPassword'),
+        title: t("auth.missingFields"),
+        description: t("auth.enterEmailPassword"),
         variant: "destructive",
       });
       return;
@@ -72,26 +60,56 @@ const LoginPage: React.FC = () => {
       if (error) {
         console.error("Login error:", error.message);
         toast({
-          title: t('auth.loginFailed'),
+          title: t("auth.loginFailed"),
           description: error.message,
           variant: "destructive",
         });
-      } else {
-        console.log("Login successful, waiting for auth state update");
+      } else if (data?.user) {
+        console.log("Login successful, user:", data.user.id);
         toast({
-          title: t('auth.loginSuccessful'),
-          description: t('auth.loginSuccessDescription'),
+          title: t("auth.loginSuccessful"),
+          description: t("auth.loginSuccessDescription"),
         });
 
-        // Mark login as successful but don't navigate yet
-        // The useEffect will handle navigation once auth state is updated
-        setLoginSuccess(true);
+        // Wait for the session to be established
+        const maxAttempts = 20; // 10 seconds max wait
+        let attempts = 0;
+
+        const waitForAuthAndProfile = async () => {
+          while (attempts < maxAttempts) {
+            // Check if we have a valid session
+            const {
+              data: { session },
+            } = await supabase.auth.getSession();
+
+            // Check if profile has been loaded in localStorage (as a backup check)
+            const storedProfile = localStorage.getItem("userProfile");
+
+            if (session?.user?.id === data.user.id && storedProfile) {
+              console.log("Session confirmed, redirecting to dashboard");
+              const from = location.state?.from?.pathname || "/dashboard";
+              navigate(from, { replace: true });
+              return;
+            }
+
+            attempts++;
+            await new Promise((resolve) => setTimeout(resolve, 500)); // Wait 500ms between checks
+          }
+
+          // If we've exhausted attempts, force navigation anyway
+          console.warn("Auth state not fully established, forcing redirect");
+          const from = location.state?.from?.pathname || "/dashboard";
+          navigate(from, { replace: true });
+        };
+
+        // Start waiting for auth establishment
+        await waitForAuthAndProfile();
       }
     } catch (error) {
       console.error("Unexpected error during login:", error);
       toast({
-        title: t('auth.loginFailed'),
-        description: t('auth.unexpectedError'),
+        title: t("auth.loginFailed"),
+        description: t("auth.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -106,22 +124,21 @@ const LoginPage: React.FC = () => {
         <Card className='w-full shadow-lg'>
           <CardHeader className='space-y-1 text-center'>
             <CardTitle className='text-2xl font-bold'>
-              {t('auth.loginTitle')}
+              {t("auth.loginTitle")}
             </CardTitle>
-            <CardDescription>
-              {t('auth.loginDescription')}
-            </CardDescription>
+            <CardDescription>{t("auth.loginDescription")}</CardDescription>
           </CardHeader>
           <form onSubmit={handleLogin}>
             <CardContent className='grid gap-4'>
               <div className='grid gap-2'>
-                <Label htmlFor='email'>{t('auth.email')}</Label>
+                <Label htmlFor='email'>{t("auth.email")}</Label>
                 <div className='relative'>
                   <Mail className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
                   <Input
+                    data-testid='login-email-input'
                     id='email'
                     type='email'
-                    placeholder={t('auth.emailPlaceholder')}
+                    placeholder={t("auth.emailPlaceholder")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className='pl-10'
@@ -131,14 +148,15 @@ const LoginPage: React.FC = () => {
               </div>
               <div className='grid gap-2'>
                 <div className='flex items-center justify-between'>
-                  <Label htmlFor='password'>{t('auth.password')}</Label>
+                  <Label htmlFor='password'>{t("auth.password")}</Label>
                 </div>
                 <div className='relative'>
                   <Lock className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
                   <Input
+                    data-testid='login-password-input'
                     id='password'
                     type='password'
-                    placeholder={t('auth.passwordPlaceholder')}
+                    placeholder={t("auth.passwordPlaceholder")}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className='pl-10'
@@ -149,17 +167,18 @@ const LoginPage: React.FC = () => {
             </CardContent>
             <CardFooter className='flex flex-col'>
               <Button
+                data-testid='login-submit-button'
                 type='submit'
                 className='w-full bg-finance-blue hover:bg-finance-blue-dark'
                 disabled={loading}>
-                {loading ? t('auth.signingIn') : t('auth.signIn')}
+                {loading ? t("auth.signingIn") : t("auth.signIn")}
               </Button>
               <div className='mt-4 text-center text-sm'>
-                {t('auth.dontHaveAccount')}{" "}
+                {t("auth.dontHaveAccount")}{" "}
                 <Link
                   to='/signup'
                   className='text-finance-blue hover:underline'>
-                  {t('auth.signUp')}
+                  {t("auth.signUp")}
                 </Link>
               </div>
             </CardFooter>
