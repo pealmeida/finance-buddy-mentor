@@ -1,0 +1,1 @@
+// Improved session handling with error fallbacks
