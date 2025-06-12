@@ -1,75 +1,115 @@
-
-import React, { useState, useEffect } from 'react';
-import { UserProfile, MonthlyAmount } from '@/types/finance';
-import { useMonthlyExpenses } from '@/hooks/supabase/useMonthlyExpenses';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2 } from 'lucide-react';
-import MonthlyExpensesHeader from './MonthlyExpensesHeader';
-import MonthlyExpensesContent from './MonthlyExpensesContent';
-import { initializeEmptyExpensesData, ensureCompleteExpensesData } from '@/hooks/expenses/utils/expensesDataUtils';
-import { useToast } from '@/components/ui/use-toast';
-import { v4 as uuidv4 } from 'uuid';
+import React, { useState, useEffect } from "react";
+import { UserProfile, MonthlyAmount, ExpenseItem } from "../../types/finance";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Loader2 } from "lucide-react";
+import MonthlyExpensesHeader from "./MonthlyExpensesHeader";
+import MonthlyExpensesContent from "./MonthlyExpensesContent";
+import {
+  initializeEmptyExpensesData,
+  ensureCompleteExpensesData,
+} from "../../lib/expensesUtils";
+import { useToast } from "../ui/use-toast";
+import { useExpenses } from "../../hooks/supabase/useExpenses";
 
 interface MonthlyExpensesProps {
   profile: UserProfile;
-  onSave?: (updatedProfile: UserProfile) => void;
-  isSaving?: boolean;
+  onUpdateProfile?: (updatedProfile: UserProfile) => void;
 }
 
 const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
   profile,
-  onSave,
-  isSaving = false
+  onUpdateProfile,
 }) => {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
-  const [expensesData, setExpensesData] = useState<MonthlyAmount[]>(initializeEmptyExpensesData());
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [expensesData, setExpensesData] = useState<MonthlyAmount[]>(
+    initializeEmptyExpensesData()
+  );
   const { toast } = useToast();
-  
+
   const {
-    expensesLoading,
-    fetchMonthlyExpenses,
-    saveMonthlyExpenses
-  } = useMonthlyExpenses();
+    monthlyExpensesData,
+    isLoading: expensesLoading,
+    error: expensesError,
+    getMonthlyExpensesSummary,
+    getExpenses,
+    addExpense,
+    updateExpense,
+    deleteExpense,
+    updateMonthlyExpensesSummary,
+  } = useExpenses(profile.id, selectedYear);
 
   useEffect(() => {
-    const loadExpensesData = async () => {
-      if (!profile?.id) return;
-      
-      setLoading(true);
-      setError(null);
-      
+    const loadDetailedExpenses = async () => {
+      if (!profile?.id || !monthlyExpensesData) return;
+
       try {
-        console.log("Fetching expenses data for user:", profile.id, "year:", selectedYear);
-        const savedData = await fetchMonthlyExpenses(profile.id, selectedYear);
-        
-        if (savedData && savedData.data) {
-          console.log("Setting expenses data from fetch:", savedData.data);
-          const completeData = ensureCompleteExpensesData(savedData.data);
-          setExpensesData(completeData);
-        } else {
-          console.log("No expenses data found, initializing empty data");
-          setExpensesData(initializeEmptyExpensesData());
-        }
+        const detailedExpenses = await Promise.all(
+          monthlyExpensesData.map(async (monthData) => {
+            const items = await getExpenses(
+              profile.id,
+              monthData.month,
+              selectedYear
+            );
+            return { ...monthData, items };
+          })
+        );
+
+        setExpensesData(ensureCompleteExpensesData(detailedExpenses));
+        console.log(
+          "MonthlyExpenses: Successfully loaded and set expensesData:",
+          ensureCompleteExpensesData(detailedExpenses)
+        );
       } catch (err) {
         console.error("Error loading expenses data:", err);
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
         setExpensesData(initializeEmptyExpensesData());
-        
+
         toast({
           title: "Data Loading Error",
-          description: "Could not load your expenses data. Using empty values instead.",
-          variant: "destructive"
+          description:
+            "Could not load your expenses data. Using empty values instead.",
+          variant: "destructive",
         });
-      } finally {
-        setLoading(false);
       }
     };
-    
-    loadExpensesData();
-  }, [profile?.id, selectedYear, fetchMonthlyExpenses, toast]);
+
+    if (!expensesLoading && !expensesError) {
+      loadDetailedExpenses();
+    }
+  }, [
+    profile?.id,
+    selectedYear,
+    getExpenses,
+    toast,
+    monthlyExpensesData,
+    expensesLoading,
+    expensesError,
+  ]);
+
+  useEffect(() => {
+    if (onUpdateProfile) {
+      console.log(
+        "MonthlyExpenses: expensesData updated, calling onUpdateProfile.",
+        expensesData
+      );
+      console.log("MonthlyExpenses: Checking individual monthly amounts:");
+      expensesData.forEach((month) => {
+        console.log(
+          `Month ${month.month}: Amount: ${month.amount}, Items length: ${
+            month.items?.length || 0
+          }`
+        );
+      });
+      onUpdateProfile({
+        ...profile,
+        monthlyExpenses: {
+          userId: profile.id,
+          year: selectedYear,
+          data: expensesData,
+        },
+      });
+    }
+  }, [expensesData, onUpdateProfile, profile, selectedYear]);
 
   const handleYearChange = (year: number) => {
     setSelectedYear(year);
@@ -79,133 +119,115 @@ const MonthlyExpenses: React.FC<MonthlyExpensesProps> = ({
     setExpensesData(updatedData);
   };
 
-  const handleSaveAll = async () => {
-    if (!profile?.id) {
-      toast({
-        title: "Cannot Save",
-        description: "User profile is not available",
-        variant: "destructive"
+  const handleAddItem = async (
+    month: number,
+    item: Omit<ExpenseItem, "id">
+  ) => {
+    if (!profile?.id) return;
+    const newItem = await addExpense(item, profile.id);
+    if (newItem) {
+      const updatedData = expensesData.map((m) => {
+        if (m.month === month) {
+          return {
+            ...m,
+            items: [...(m.items || []), newItem],
+            amount: m.amount + newItem.amount,
+          };
+        }
+        return m;
       });
-      return;
+      setExpensesData(updatedData);
+      await updateMonthlyExpensesSummary(profile.id, month, selectedYear);
     }
-    
-    try {
-      const monthlyExpensesId = profile.monthlyExpenses?.id || uuidv4();
-      
-      const success = await saveMonthlyExpenses({
-        id: monthlyExpensesId,
-        userId: profile.id,
-        year: selectedYear,
-        data: expensesData
+  };
+
+  const handleUpdateItem = async (month: number, item: ExpenseItem) => {
+    if (!profile?.id) return;
+    const oldItem = expensesData
+      .find((m) => m.month === month)
+      ?.items?.find((i) => i.id === item.id);
+    const updatedItem = await updateExpense(item);
+    if (updatedItem && oldItem) {
+      const updatedData = expensesData.map((m) => {
+        if (m.month === month) {
+          const newItems = (m.items || []).map((i) =>
+            i.id === item.id ? updatedItem : i
+          );
+          const newAmount = m.amount - oldItem.amount + updatedItem.amount;
+          return { ...m, items: newItems, amount: newAmount };
+        }
+        return m;
       });
-      
-      if (success && onSave) {
-        onSave({
-          ...profile,
-          monthlyExpenses: {
-            id: monthlyExpensesId,
-            userId: profile.id,
-            year: selectedYear,
-            data: expensesData
+      setExpensesData(updatedData);
+      await updateMonthlyExpensesSummary(profile.id, month, selectedYear);
+    }
+  };
+
+  const handleDeleteItem = async (month: number, itemId: string) => {
+    if (!profile?.id) return;
+    const itemToDelete = expensesData
+      .find((m) => m.month === month)
+      ?.items?.find((i) => i.id === itemId);
+    if (itemToDelete) {
+      const success = await deleteExpense(itemId);
+      if (success) {
+        const updatedData = expensesData.map((m) => {
+          if (m.month === month) {
+            const newItems = (m.items || []).filter((i) => i.id !== itemId);
+            const newAmount = m.amount - itemToDelete.amount;
+            return { ...m, items: newItems, amount: newAmount };
           }
+          return m;
         });
-        
-        toast({
-          title: "Expenses Saved",
-          description: `Your expenses data for ${selectedYear} has been saved successfully.`
-        });
-      } else if (!success) {
-        toast({
-          title: "Save Error",
-          description: "Failed to save your expenses data. Please try again.",
-          variant: "destructive"
-        });
+        setExpensesData(updatedData);
+        await updateMonthlyExpensesSummary(profile.id, month, selectedYear);
       }
-    } catch (err) {
-      console.error("Error saving expenses data:", err);
-      toast({
-        title: "Save Error",
-        description: "Could not save your expenses data. Please try again.",
-        variant: "destructive"
-      });
     }
   };
 
   const handleRefresh = async () => {
-    if (!profile?.id) return;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const savedData = await fetchMonthlyExpenses(profile.id, selectedYear);
-      
-      if (savedData && savedData.data) {
-        const completeData = ensureCompleteExpensesData(savedData.data);
-        setExpensesData(completeData);
-        
-        toast({
-          title: "Data Refreshed",
-          description: "Your expenses data has been refreshed successfully."
-        });
-      } else {
-        setExpensesData(initializeEmptyExpensesData());
-        toast({
-          title: "No Data Found",
-          description: "No expenses data was found for the selected year."
-        });
-      }
-    } catch (err) {
-      console.error("Error refreshing data:", err);
-      toast({
-        title: "Refresh Error",
-        description: "Failed to refresh expenses data. Please try again.",
-        variant: "destructive"
-      });
-      setError(err instanceof Error ? err.message : "An unknown error occurred");
-    } finally {
-      setLoading(false);
-    }
+    // React Query will handle refetching automatically based on query invalidation
+    // If a manual refetch is needed, you can use queryClient.invalidateQueries(['monthlyExpensesSummary', profile.id, selectedYear]);
+    // or use the refetch function from useGetMonthlyExpensesSummary if exposed.
   };
 
-  if (!profile || !profile.id) {
+  if (expensesLoading) {
     return (
-      <Alert variant="destructive">
+      <div className='flex justify-center items-center h-64'>
+        <Loader2 className='h-8 w-8 animate-spin text-finance-blue' />
+      </div>
+    );
+  }
+
+  if (expensesError) {
+    return (
+      <Alert variant='destructive'>
         <AlertDescription>
-          User profile is not available. Please log in to view your expenses data.
+          Error loading expenses data:{" "}
+          {expensesError instanceof Error
+            ? expensesError.message
+            : expensesError || "An unknown error occurred"}
         </AlertDescription>
       </Alert>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className='space-y-8'>
       <MonthlyExpensesHeader
         selectedYear={selectedYear}
         onYearChange={handleYearChange}
-        onSaveAll={handleSaveAll}
-        disabled={loading || isSaving || expensesLoading}
-        isSaving={isSaving}
+        onAddItem={handleAddItem}
       />
-      
-      {error ? (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      ) : loading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-red-500" />
-          <span className="ml-2">Loading expenses data...</span>
-        </div>
-      ) : (
-        <MonthlyExpensesContent
-          loadingData={loading}
-          expensesData={expensesData}
-          onRefresh={handleRefresh}
-          onUpdateExpensesData={handleUpdateExpensesData}
-          error={error}
-        />
-      )}
+
+      <MonthlyExpensesContent
+        expensesData={expensesData}
+        onUpdateExpensesData={handleUpdateExpensesData}
+        onUpdateItem={handleUpdateItem}
+        onDeleteItem={handleDeleteItem}
+        loadingData={expensesLoading}
+        onAddItem={handleAddItem}
+      />
     </div>
   );
 };

@@ -1,8 +1,7 @@
-
 import { useUserProfile } from './supabase/useUserProfile';
-import { useProfileSave } from './supabase/useProfileSave';
-import { UserProfile } from '@/types/finance';
-import { useState } from 'react';
+import { useProfileSave } from "./supabase/useProfileSave.js";
+import { UserProfile } from "../types/finance";
+import { useState } from "react";
 
 /**
  * Main hook that combines all Supabase data operations
@@ -14,7 +13,7 @@ export function useSupabaseData() {
   const [error, setError] = useState<string | null>(null);
 
   const loading = profileLoading || saveLoading;
-  
+
   // Wrapper for saveUserProfile to ensure we always have a complete UserProfile
   const saveUserProfile = async (profile: UserProfile): Promise<boolean> => {
     try {
@@ -36,7 +35,7 @@ export function useSupabaseData() {
         investments: profile.investments || [],
         debtDetails: profile.debtDetails || []
       };
-      
+
       return await saveProfile(completeProfile);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "Unknown error occurred";
@@ -50,6 +49,6 @@ export function useSupabaseData() {
     loading,
     error,
     fetchUserProfile,
-    saveUserProfile
+    saveUserProfile,
   };
 }

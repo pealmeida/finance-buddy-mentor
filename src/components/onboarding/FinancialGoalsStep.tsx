@@ -1,14 +1,17 @@
+import React, { useState, useEffect } from "react";
+import { useOnboarding } from "../../context/OnboardingContext";
+import { useTranslation } from "react-i18next";
+import GoalForm from "../goals/GoalForm";
+import GoalList from "../goals/GoalList";
+import { Button } from "../ui/button";
+import { PlusCircle, Loader2 } from "lucide-react";
+import { FinancialGoal } from "../../types/finance";
+import { useToast } from "../ui/use-toast";
+import { v4 as uuidv4 } from "uuid";
 
-import React, { useState, useEffect } from 'react';
-import { useOnboarding } from '@/context/OnboardingContext';
-import { useTranslation } from 'react-i18next';
-import GoalForm from '@/components/goals/GoalForm';
-import GoalList from '@/components/goals/GoalList';
-import { Button } from '@/components/ui/button';
-import { PlusCircle, Loader2 } from 'lucide-react';
-import { FinancialGoal } from '@/types/finance';
-import { useToast } from '@/components/ui/use-toast';
-import { v4 as uuidv4 } from 'uuid';
+const ensureDate = (dateValue: string | Date): Date => {
+  return dateValue instanceof Date ? dateValue : new Date(dateValue);
+};
 
 const FinancialGoalsStep: React.FC = () => {
   const { t } = useTranslation();
@@ -27,7 +30,7 @@ const FinancialGoalsStep: React.FC = () => {
   const handleEditGoal = (goal: FinancialGoal) => {
     setEditingGoal({
       ...goal,
-      targetDate: goal.targetDate instanceof Date ? goal.targetDate : new Date(goal.targetDate)
+      targetDate: ensureDate(goal.targetDate),
     });
     setIsFormOpen(true);
   };
@@ -35,47 +38,47 @@ const FinancialGoalsStep: React.FC = () => {
   const handleSaveGoal = (goal: FinancialGoal) => {
     try {
       setIsSaving(true);
-      
+
       const formattedGoal = {
         ...goal,
-        targetDate: goal.targetDate instanceof Date ? goal.targetDate : new Date(goal.targetDate)
+        targetDate: ensureDate(goal.targetDate),
       };
 
       let updatedGoals: FinancialGoal[];
-      
+
       if (editingGoal) {
-        updatedGoals = (profile.financialGoals || []).map(g => 
+        updatedGoals = (profile.financialGoals || []).map((g) =>
           g.id === formattedGoal.id ? formattedGoal : g
         );
         toast({
-          title: t('goals.goalUpdated'),
-          description: t('goals.goalUpdatedDescription')
+          title: t("goals.goalUpdated"),
+          description: t("goals.goalUpdatedDescription"),
         });
       } else {
         const newGoal = {
           ...formattedGoal,
-          id: uuidv4()
+          id: uuidv4(),
         };
         updatedGoals = [...(profile.financialGoals || []), newGoal];
         toast({
-          title: t('goals.goalAdded'),
-          description: t('goals.goalAddedDescription')
+          title: t("goals.goalAdded"),
+          description: t("goals.goalAddedDescription"),
         });
       }
-      
+
       updateProfile({
         ...profile,
-        financialGoals: updatedGoals
+        financialGoals: updatedGoals,
       });
-      
+
       setIsFormOpen(false);
       setEditingGoal(null);
     } catch (err) {
       console.error("Error saving goal:", err);
       toast({
-        title: t('common.error'),
-        description: t('goals.errorSavingGoal'),
-        variant: "destructive"
+        title: t("common.error"),
+        description: t("goals.errorSavingGoal"),
+        variant: "destructive",
       });
     } finally {
       setIsSaving(false);
@@ -84,23 +87,25 @@ const FinancialGoalsStep: React.FC = () => {
 
   const handleDeleteGoal = (goalId: string) => {
     try {
-      const updatedGoals = (profile.financialGoals || []).filter(g => g.id !== goalId);
-      
+      const updatedGoals = (profile.financialGoals || []).filter(
+        (g) => g.id !== goalId
+      );
+
       updateProfile({
         ...profile,
-        financialGoals: updatedGoals
+        financialGoals: updatedGoals,
       });
-      
+
       toast({
-        title: t('goals.goalDeleted'),
-        description: t('goals.goalDeletedDescription')
+        title: t("goals.goalDeleted"),
+        description: t("goals.goalDeletedDescription"),
       });
     } catch (err) {
       console.error("Error deleting goal:", err);
       toast({
-        title: t('common.error'),
-        description: t('goals.errorDeletingGoal'),
-        variant: "destructive"
+        title: t("common.error"),
+        description: t("goals.errorDeletingGoal"),
+        variant: "destructive",
       });
     }
   };
@@ -111,34 +116,35 @@ const FinancialGoalsStep: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold">{t('onboarding.financialGoals')}</h2>
+    <div className='space-y-6'>
+      <div className='flex items-center justify-between mb-4'>
+        <h2 className='text-2xl font-semibold'>
+          {t("onboarding.financialGoals")}
+        </h2>
         {!isFormOpen && (
-          <Button 
-            onClick={handleAddGoal} 
-            className="flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark"
-          >
+          <Button
+            onClick={handleAddGoal}
+            className='flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark'>
             <PlusCircle size={16} />
-            {t('onboarding.addGoal')}
+            {t("onboarding.addGoal")}
           </Button>
         )}
       </div>
-      
-      <p className="text-gray-600 mb-6">
-        {t('onboarding.financialGoalsDescription')}
+
+      <p className='text-gray-600 mb-6'>
+        {t("onboarding.financialGoalsDescription")}
       </p>
-      
+
       {isFormOpen ? (
-        <GoalForm 
-          goal={editingGoal} 
-          onSave={handleSaveGoal} 
+        <GoalForm
+          goal={editingGoal}
+          onSave={handleSaveGoal}
           onCancel={handleCancelEdit}
           isSaving={isSaving}
         />
       ) : isLoading ? (
-        <div className="flex justify-center items-center py-10">
-          <Loader2 className="h-8 w-8 animate-spin text-finance-blue" />
+        <div className='flex justify-center items-center py-10'>
+          <Loader2 className='h-8 w-8 animate-spin text-finance-blue' />
         </div>
       ) : (
         <GoalList

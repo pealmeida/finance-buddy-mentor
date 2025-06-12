@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useAuth } from "./hooks/useAuth";
 import LoadingScreen from "./components/LoadingScreen";
@@ -11,12 +10,14 @@ function App() {
     isLoading,
     isProfileComplete,
     handleProfileComplete,
-    handleProfileUpdate
+    handleProfileUpdate,
   } = useAuth();
 
   if (isLoading) {
     return <LoadingScreen />;
   }
+
+  console.log("App.tsx: userProfile being passed to AppRoutes:", userProfile);
 
   return (
     <Providers>

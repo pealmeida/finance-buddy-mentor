@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { UserProfile } from "@/types/finance";
-import { toast } from "@/components/ui/use-toast";
-import { fetchUserProfileFromSupabase } from "@/utils/auth/profileFetcher";
-import { loadFromLocalStorage } from "@/utils/session/localStorageLoader";
+import { supabase } from "../../integrations/supabase/client";
+import { UserProfile } from "../../types/finance";
+import { toast } from "../../components/ui/use-toast";
+import { fetchUserProfileFromSupabase } from "../../utils/auth/profileFetcher";
+import { loadFromLocalStorage } from "../../utils/session/localStorageLoader";
 
 interface SessionCoreProps {
   setUserProfile: (profile: UserProfile | null) => void;
@@ -40,7 +40,7 @@ export const useSessionCore = ({
           console.log('Session found, fetching profile for user:', session.user.id);
           const profile = await fetchUserProfileFromSupabase(session.user.id);
           if (isMounted && profile) {
-            const profileIsComplete = profile.monthlyIncome > 0 && profile.age > 0 && profile.riskProfile !== undefined;
+            const profileIsComplete = profile.monthlyIncome && profile.monthlyIncome > 0 && profile.age && profile.age > 0 && profile.riskProfile !== undefined;
             setIsProfileComplete(profileIsComplete);
             setUserProfile(profile);
             localStorage.setItem('userProfile', JSON.stringify(profile));

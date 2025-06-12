@@ -1,16 +1,15 @@
-
-import React from 'react';
-import { UserProfile } from '@/types/finance';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useTranslation } from 'react-i18next';
-import InvestmentForm from './InvestmentForm';
-import InvestmentHeader from './InvestmentHeader';
-import InvestmentGrid from './InvestmentGrid';
-import InvestmentError from './InvestmentError';
-import InvestmentLoading from './InvestmentLoading';
-import EmptyInvestments from './EmptyInvestments';
-import EditInvestmentDialog from './EditInvestmentDialog';
-import { useInvestmentActions } from './hooks/useInvestmentActions';
+import React from "react";
+import { UserProfile } from "../../types/finance";
+import { Alert, AlertDescription } from "../ui/alert";
+import { useTranslation } from "react-i18next";
+import InvestmentHeader from "./InvestmentHeader";
+import InvestmentGrid from "./InvestmentGrid";
+import InvestmentError from "./InvestmentError";
+import InvestmentLoading from "./InvestmentLoading";
+import EmptyInvestments from "./EmptyInvestments";
+import EditInvestmentDialog from "./EditInvestmentDialog";
+import AddInvestmentDialog from "./AddInvestmentDialog";
+import { useInvestmentActions } from "./hooks/useInvestmentActions";
 
 interface InvestmentsProps {
   profile: UserProfile;
@@ -21,10 +20,10 @@ interface InvestmentsProps {
 const Investments: React.FC<InvestmentsProps> = ({
   profile,
   onSave,
-  isSaving = false
+  isSaving = false,
 }) => {
   const { t } = useTranslation();
-  
+
   const {
     investments,
     isLoading,
@@ -40,46 +39,46 @@ const Investments: React.FC<InvestmentsProps> = ({
     handleEditInvestment,
     handleUpdateInvestment,
     handleDeleteInvestment,
-    fetchInvestments
   } = useInvestmentActions(profile, onSave);
 
   if (!profile || !profile.id) {
     return (
-      <Alert variant="destructive">
+      <Alert variant='destructive'>
         <AlertDescription>
-          {t('investments.userProfileError', 'User profile is not available. Please log in to view your investments.')}
+          {t(
+            "investments.userProfileError",
+            "User profile is not available. Please log in to view your investments."
+          )}
         </AlertDescription>
       </Alert>
     );
   }
 
   return (
-    <div className="space-y-8">
-      <InvestmentHeader 
+    <div className='space-y-8'>
+      <InvestmentHeader
         onAddClick={() => setIsAddingInvestment(true)}
-        onRefreshClick={fetchInvestments}
         isLoading={isLoading}
         isSaving={isSaving}
       />
-      
+
       {error ? (
         <InvestmentError error={error} />
       ) : isLoading ? (
         <InvestmentLoading />
       ) : (
         <>
-          {isAddingInvestment && (
-            <InvestmentForm
-              onSubmit={handleAddInvestment}
-              onCancel={() => setIsAddingInvestment(false)}
-              isSubmitting={isSaving}
-            />
-          )}
-          
+          <AddInvestmentDialog
+            isOpen={isAddingInvestment}
+            onOpenChange={setIsAddingInvestment}
+            onSubmit={handleAddInvestment}
+            isSubmitting={isSaving}
+          />
+
           {investments.length === 0 && !isAddingInvestment ? (
             <EmptyInvestments onAddClick={() => setIsAddingInvestment(true)} />
           ) : (
-            <InvestmentGrid 
+            <InvestmentGrid
               investments={investments}
               onEdit={handleEditInvestment}
               onDelete={handleDeleteInvestment}
@@ -88,7 +87,7 @@ const Investments: React.FC<InvestmentsProps> = ({
           )}
         </>
       )}
-      
+
       <EditInvestmentDialog
         isOpen={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}

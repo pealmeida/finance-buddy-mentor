@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ExpenseItem } from "@/types/finance";
 import {
@@ -45,25 +44,24 @@ const ExpenseItemsTable: React.FC<ExpenseItemsTableProps> = ({
   };
 
   const getCategoryTranslation = (category: ExpenseItem["category"]) => {
-    const translations: Record<ExpenseItem["category"], string> = {
-      housing: t('expenses.categories.housing', 'Housing'),
-      food: t('expenses.categories.food', 'Food'),
-      transportation: t('expenses.categories.transportation', 'Transportation'),
-      utilities: t('expenses.categories.utilities', 'Utilities'),
-      entertainment: t('expenses.categories.entertainment', 'Entertainment'),
-      healthcare: t('expenses.categories.healthcare', 'Healthcare'),
-      other: t('expenses.categories.other', 'Other'),
-    };
-
-    return translations[category];
+    return t(`expenses.categories.${category}`, {
+      defaultValue: t("expenses.categories.other"),
+    });
   };
 
   if (items.length === 0) {
     return (
       <div className='text-center py-8 text-gray-500'>
         <XCircle className='mx-auto h-10 w-10 mb-2 text-gray-400' />
-        <p>{t('expenses.noDetailedExpenses', 'No detailed expenses recorded for this month.')}</p>
-        <p className='text-sm mt-1'>{t('expenses.clickAddToStart', 'Click "Add Expense" to get started.')}</p>
+        <p>
+          {t(
+            "expenses.noDetailedExpenses",
+            "No detailed expenses recorded for this month."
+          )}
+        </p>
+        <p className='text-sm mt-1'>
+          {t("expenses.clickAddToStart", 'Click "Add Expense" to get started.')}
+        </p>
       </div>
     );
   }
@@ -72,39 +70,49 @@ const ExpenseItemsTable: React.FC<ExpenseItemsTableProps> = ({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>{t('expenses.table.date', 'Date')}</TableHead>
-          <TableHead>{t('expenses.table.description', 'Description')}</TableHead>
-          <TableHead>{t('expenses.table.category', 'Category')}</TableHead>
-          <TableHead className='text-right'>{t('expenses.table.amount', 'Amount')}</TableHead>
-          <TableHead className='text-right'>{t('common.actions', 'Actions')}</TableHead>
+          <TableHead>{t("expenses.table.date", "Date")}</TableHead>
+          <TableHead>
+            {t("expenses.table.description", "Description")}
+          </TableHead>
+          <TableHead>{t("expenses.table.category", "Category")}</TableHead>
+          <TableHead className='text-right'>
+            {t("expenses.table.amount", "Amount")}
+          </TableHead>
+          <TableHead className='text-right'>
+            {t("common.actions", "Actions")}
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {items
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          )
           .map((expense) => (
-          <TableRow key={expense.id}>
-            <TableCell>
-              {format(new Date(expense.date), "MMM dd, yyyy")}
-            </TableCell>
-            <TableCell className="font-medium">{expense.description}</TableCell>
-            <TableCell>
-              <Badge className={getCategoryBadgeColor(expense.category)}>
-                {getCategoryTranslation(expense.category)}
-              </Badge>
-            </TableCell>
-            <TableCell className='text-right font-medium'>
-              {formatCurrency(expense.amount)}
-            </TableCell>
-            <TableCell className='text-right'>
-              <ExpenseItemActions
-                expense={expense}
-                onEdit={onEdit}
-                onDelete={onDelete}
-              />
-            </TableCell>
-          </TableRow>
-        ))}
+            <TableRow key={expense.id}>
+              <TableCell>
+                {format(new Date(expense.date), "MMM dd, yyyy")}
+              </TableCell>
+              <TableCell className='font-medium'>
+                {expense.description}
+              </TableCell>
+              <TableCell>
+                <Badge className={getCategoryBadgeColor(expense.category)}>
+                  {getCategoryTranslation(expense.category)}
+                </Badge>
+              </TableCell>
+              <TableCell className='text-right font-medium'>
+                {formatCurrency(expense.amount)}
+              </TableCell>
+              <TableCell className='text-right'>
+                <ExpenseItemActions
+                  expense={expense}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                />
+              </TableCell>
+            </TableRow>
+          ))}
       </TableBody>
     </Table>
   );

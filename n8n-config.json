@@ -1,0 +1,14 @@
+{
+  "executions": {
+    "saveDataOnSuccess": "none"
+  },
+  "generic": {
+    "timezone": "America/Sao_Paulo"
+  },
+  "nodes": {
+    "exclude": "[\"n8n-nodes-base.executeCommand\",\"n8n-nodes-base.writeBinaryFile\"]"
+  },
+  "runners": {
+    "enabled": true
+  }
+}

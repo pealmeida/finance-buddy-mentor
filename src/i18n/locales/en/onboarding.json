@@ -1,4 +1,3 @@
-
 {
   "personalInfo": "Personal Info",
   "riskProfile": "Risk Profile",
@@ -81,5 +80,10 @@
   "financialGoalsAdded": "Add financial goals",
   "investmentsAdded": "Add current investments",
   "monthlyExpensesSet": "Set monthly expenses",
-  "monthlySavingsSet": "Set monthly savings"
+  "monthlySavingsSet": "Set monthly savings",
+  "reviewModalTitle": "Attention: Profile Update",
+  "reviewModalMessage1": "Your profile data will be updated.",
+  "reviewModalMessage2": "Click \"Save\" to confirm the changes or \"Continue Editing\" to make further adjustments.",
+  "continueEditing": "Continue Editing",
+  "save": "Save"
 }

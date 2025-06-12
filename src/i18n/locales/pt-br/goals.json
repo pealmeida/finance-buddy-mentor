@@ -1,4 +1,3 @@
-
 {
   "setGoal": "Defina uma meta para começar a economizar",
   "addGoal": "Adicionar Meta",
@@ -15,7 +14,6 @@
   "targetAmount": "Valor Alvo",
   "currentAmount": "Valor Atual",
   "targetDate": "Data Alvo",
-  "priority": "Prioridade",
   "priorityLabel": "Prioridade",
   "progress": "Progresso",
   "goal": "Meta",
@@ -39,8 +37,8 @@
   "goalsRefreshed": "Metas Atualizadas",
   "goalsRefreshedDescription": "Suas metas financeiras foram atualizadas.",
   "priority": {
-    "low": "Prioridade Baixa",
-    "medium": "Prioridade Média",
-    "high": "Prioridade Alta"
+    "low": "Baixa",
+    "medium": "Média",
+    "high": "Alta"
   }
 }

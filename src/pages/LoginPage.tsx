@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { supabase } from "../integrations/supabase/client";
+import { useAuth } from "../hooks/useAuth";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,12 +11,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+} from "../components/ui/card";
+import { Label } from "../components/ui/label";
 import { Mail, Lock } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "../components/ui/use-toast";
 import { useTranslation } from "react-i18next";
-import Header from "@/components/Header";
+import Header from "../components/Header";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -177,6 +177,7 @@ const LoginPage: React.FC = () => {
                 {t("auth.dontHaveAccount")}{" "}
                 <Link
                   to='/signup'
+                  data-testid='signup-navigation-link'
                   className='text-finance-blue hover:underline'>
                   {t("auth.signUp")}
                 </Link>

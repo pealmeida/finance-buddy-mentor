@@ -1,6 +1,5 @@
-
-import { supabase } from "@/integrations/supabase/client";
-import { UserProfile, RiskProfile } from "@/types/finance";
+import { supabase } from "../../integrations/supabase/client";
+import { UserProfile, RiskProfile } from "../../types/finance";
 import { validateRiskProfile } from "./profileValidation";
 
 /**
@@ -14,43 +13,43 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       .select('*')
       .eq('id', userId)
       .maybeSingle();
-    
+
     if (profileError) {
       throw new Error(`Error fetching profile: ${profileError.message}`);
     }
-    
+
     // Fetch financial profile
     const { data: financialProfileData, error: financialProfileError } = await supabase
       .from('financial_profiles')
       .select('*')
       .eq('id', userId)
       .maybeSingle();
-      
+
     if (financialProfileError && financialProfileError.code !== 'PGRST116') {
       throw new Error(`Error fetching financial profile: ${financialProfileError.message}`);
     }
-    
+
     // Create a new profile if it doesn't exist
     if (!profileData) {
       return null;
     }
-    
+
     // Fetch the related data
     const { data: goalsData } = await supabase
       .from('financial_goals')
       .select('*')
       .eq('user_id', userId);
-      
+
     const { data: investmentsData } = await supabase
       .from('investments')
       .select('*')
       .eq('user_id', userId);
-      
+
     const { data: debtDetailsData } = await supabase
       .from('debt_details')
       .select('*')
       .eq('user_id', userId);
-    
+
     // Transform goals data
     const financialGoals = goalsData ? goalsData.map((goal: any) => ({
       id: goal.id,
@@ -60,7 +59,7 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       targetDate: new Date(goal.target_date),
       priority: goal.priority as 'low' | 'medium' | 'high'
     })) : [];
-    
+
     // Transform investments data
     const investments = investmentsData ? investmentsData.map((investment: any) => ({
       id: investment.id,
@@ -69,19 +68,20 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       value: investment.value,
       annualReturn: investment.annual_return
     })) : [];
-    
+
     // Transform debt details data
     const debtDetails = debtDetailsData ? debtDetailsData.map((debt: any) => ({
       id: debt.id,
-      type: debt.type as 'creditCard' | 'personalLoan' | 'studentLoan' | 'other',
+      type: debt.type as 'credit_card' | 'loan' | 'mortgage' | 'other',
       name: debt.name,
       amount: debt.amount,
-      interestRate: debt.interest_rate
+      interestRate: debt.interest_rate,
+      minimumPayment: debt.minimum_payment
     })) : [];
-    
+
     // Ensure riskProfile is a valid RiskProfile type
-    const riskProfile = validateRiskProfile(financialProfileData?.risk_profile);
-    
+    const riskProfile = validateRiskProfile(financialProfileData?.risk_profile ?? null);
+
     // Combine data from both tables into a user profile object
     return {
       id: profileData.id || userId,
@@ -91,7 +91,7 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       monthlyIncome: financialProfileData?.monthly_income || 0,
       riskProfile: riskProfile,
       hasEmergencyFund: financialProfileData?.has_emergency_fund || false,
-      emergencyFundMonths: financialProfileData?.emergency_fund_months,
+      emergencyFundMonths: financialProfileData?.emergency_fund_months ?? undefined,
       hasDebts: financialProfileData?.has_debts || false,
       financialGoals,
       investments,

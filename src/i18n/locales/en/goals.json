@@ -1,4 +1,3 @@
-
 {
   "setGoal": "Set a Goal",
   "addGoal": "Add a Goal",
@@ -15,7 +14,6 @@
   "targetAmount": "Target Amount",
   "currentAmount": "Current Amount",
   "targetDate": "Target Date",
-  "priority": "Priority",
   "priorityLabel": "Priority",
   "progress": "Progress",
   "goal": "Goal",
@@ -39,8 +37,8 @@
   "goalsRefreshed": "Goals Refreshed",
   "goalsRefreshedDescription": "Your financial goals have been refreshed.",
   "priority": {
-    "low": "Low Priority",
-    "medium": "Medium Priority", 
-    "high": "High Priority"
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
   }
 }

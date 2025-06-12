@@ -1,5 +1,5 @@
-import { useAuthState } from "./useAuthState";
-import { useSessionHandler } from "./useSessionHandler";
+import { useAuthState } from "./useAuthState.ts";
+import { useSessionHandler } from "./useSessionHandler.ts";
 
 /**
  * Main authentication hook that combines state management and session handling

@@ -1,0 +1,207 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Finance Buddy Mentor - Project Rules
+
+## Project Overview
+Finance Buddy Mentor is a comprehensive personal finance management application built with React, TypeScript, and Supabase. The application helps users track expenses, manage savings, set financial goals, and receive investment recommendations based on their risk profile.
+
+## Technology Stack
+- **Frontend Framework**: React 18.3 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Backend**: Supabase (PostgreSQL + Auth + Realtime)
+- **State Management**: React Query (TanStack Query v5)
+- **Forms**: React Hook Form with Zod validation
+- **Routing**: React Router v6
+- **Internationalization**: i18next (supports English and Portuguese)
+- **Testing**: Playwright for E2E tests
+- **Package Manager**: npm
+
+## Project Structure
+```
+finance-buddy-mentor/
+├── src/
+│   ├── components/         # React components
+│   │   ├── dashboard/     # Dashboard-specific components
+│   │   ├── expenses/      # Expense tracking components
+│   │   ├── goals/         # Financial goals components
+│   │   ├── investments/   # Investment management
+│   │   ├── onboarding/    # User onboarding flow
+│   │   ├── profile/       # User profile components
+│   │   ├── savings/       # Savings tracking and analysis
+│   │   └── ui/           # shadcn/ui components
+│   ├── constants/         # Application constants
+│   ├── context/          # React contexts
+│   ├── hooks/            # Custom React hooks
+│   ├── i18n/             # Internationalization config
+│   ├── integrations/     # Third-party integrations
+│   │   └── supabase/     # Supabase client and types
+│   ├── lib/              # Utility libraries
+│   ├── pages/            # Route pages
+│   ├── services/         # API services
+│   ├── types/            # TypeScript types
+│   └── utils/            # Utility functions
+├── supabase/             # Supabase migrations and config
+└── tests/                # Playwright E2E tests
+```
+
+## Important Files
+- Main entry: [index.html](mdc:index.html)
+- App component: [src/App.tsx](mdc:src/App.tsx)
+- Routing: [src/components/AppRoutes.tsx](mdc:src/components/AppRoutes.tsx)
+- Supabase client: [src/integrations/supabase/client.ts](mdc:src/integrations/supabase/client.ts)
+- Type definitions: [src/types/finance.ts](mdc:src/types/finance.ts)
+- i18n config: [src/i18n/index.ts](mdc:src/i18n/index.ts)
+
+## Path Aliases
+- `@/*` maps to `./src/*` - Use this for all imports within the src directory
+
+## Key Data Models
+
+### UserProfile
+The main user data structure containing:
+- Personal info (name, age, email)
+- Financial info (monthly income, risk profile)
+- Emergency fund status
+- Debts and debt details
+- Financial goals
+- Investments
+- Monthly savings and expenses
+
+### Financial Types
+- `RiskProfile`: 'conservative' | 'moderate' | 'aggressive'
+- `FinancialGoal`: Goals with target amounts and dates
+- `Investment`: User's investment portfolio
+- `MonthlyExpenses` & `MonthlySavings`: Monthly financial tracking
+
+## Authentication Flow
+1. Uses Supabase Auth with email/password
+2. Auth state managed by `useAuth` hook
+3. Protected routes redirect to login if not authenticated
+4. Profile completion required before accessing main features
+
+## Component Patterns
+
+### Form Components
+- Use React Hook Form with Zod validation
+- Form components use shadcn/ui Form primitives
+- Validation schemas should be defined with Zod
+
+Example:
+```typescript
+const formSchema = z.object({
+  name: z.string().min(2),
+  amount: z.number().positive()
+});
+
+const form = useForm<z.infer<typeof formSchema>>({
+  resolver: zodResolver(formSchema)
+});
+```
+
+### Data Fetching
+- Use React Query for all data fetching
+- Custom hooks for Supabase queries (e.g., `useUserProfile`, `useExpenses`)
+- Implement optimistic updates where appropriate
+
+### UI Components
+- All UI components from shadcn/ui are in `src/components/ui/`
+- Use Tailwind classes for styling
+- Responsive design using Tailwind breakpoints
+
+## Internationalization
+- All user-facing text must use i18n
+- Translation keys organized by feature (e.g., `dashboard.title`, `expenses.add`)
+- Support for English and Portuguese (pt-BR)
+
+Example:
+```typescript
+const { t } = useTranslation();
+return <h1>{t('dashboard.welcome')}</h1>;
+```
+
+## State Management Patterns
+1. **Local State**: useState for component-specific state
+2. **Server State**: React Query for API data
+3. **Global State**: React Context for app-wide state (auth, theme)
+4. **Form State**: React Hook Form for form management
+
+## API Integration
+- All Supabase queries through custom hooks
+- Type-safe database queries using generated types
+- Error handling with toast notifications
+- Loading states using React Query's isLoading
+
+## Testing Strategy
+- E2E tests with Playwright
+- Test files in `tests/` directory
+- Focus on critical user flows (auth, onboarding, transactions)
+
+## Code Style Guidelines
+1. **TypeScript**: Strict mode is disabled, but prefer explicit types
+2. **Components**: Functional components with TypeScript
+3. **Naming**: 
+   - Components: PascalCase
+   - Hooks: camelCase starting with 'use'
+   - Utils: camelCase
+   - Types/Interfaces: PascalCase
+4. **File Structure**: One component per file
+5. **Imports**: Use @ alias for src imports
+
+## Security Considerations
+1. Never expose Supabase service keys
+2. Use Row Level Security (RLS) in Supabase
+3. Validate all user inputs
+4. Sanitize data before display
+
+## Performance Guidelines
+1. Lazy load route components
+2. Use React Query for caching
+3. Implement pagination for large lists
+4. Optimize images and assets
+5. Use React.memo for expensive components
+
+## Development Workflow
+1. Run `npm run dev` for development
+2. Supabase types are auto-generated
+3. Use `npm run lint` before committing
+4. Test on mobile viewports (responsive design)
+
+## Common Patterns
+
+### Protected Routes
+```typescript
+const authRedirect = !userProfile ? <Navigate to="/login" replace /> : null;
+const completeRedirect = userProfile && !isProfileComplete ? <Navigate to="/onboarding" replace /> : null;
+```
+
+### Toast Notifications
+```typescript
+import { toast } from "sonner";
+toast.success(t('common.saved'));
+toast.error(t('errors.generic'));
+```
+
+### Responsive Container
+```typescript
+import { ResponsiveContainer } from "@/components/ui/responsive-container";
+<ResponsiveContainer size="md">
+  {/* Content */}
+</ResponsiveContainer>
+```
+
+## Database Schema Notes
+- User profiles linked to Supabase Auth
+- Financial data stored with user_id foreign keys
+- Timestamps on all records
+- Soft deletes where applicable
+
+## Deployment Considerations
+- Environment variables for Supabase credentials
+- Build optimization with Vite
+- Static hosting compatible (Vercel, Netlify)
+- API rate limiting handled by Supabase
+

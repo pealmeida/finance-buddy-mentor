@@ -1,24 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { UserProfile } from "@/types/finance";
-import { useOnboarding } from "@/context/OnboardingContext";
+import React, { useEffect, useState, useCallback } from "react";
+import { UserProfile } from "../../types/finance";
+import { useOnboarding } from "../../context/OnboardingContext";
 import { StepIndicator } from "./StepIndicator";
 import OnboardingNavigation from "./OnboardingNavigation";
 import OnboardingStepContent from "./OnboardingStepContent";
-import { useOnboardingFlow } from "@/hooks/useOnboardingFlow";
-import PersonalInfoStep from "./PersonalInfoStep";
-import RiskProfileStep from "./RiskProfileStep";
-import MonthlyExpensesStep from "./MonthlyExpensesStep";
-import MonthlySavingsStep from "./MonthlySavingsStep";
-import DebtDetailsForm from "./DebtDetailsForm";
-import FinancialGoalsStep from "./FinancialGoalsStep";
-import InvestmentsStep from "./InvestmentsStep";
-import ReviewStep from "./ReviewStep";
+import { useOnboardingFlow } from "../../hooks/useOnboardingFlow";
+import { ReviewModal } from "./ReviewModal";
+import { useToast } from "../../components/ui/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface OnboardingContentProps {
   onComplete: (profile: UserProfile) => void;
   existingProfile?: UserProfile;
   isEditMode?: boolean;
   isSaving?: boolean;
+  onOnboardingComplete: () => void;
 }
 
 interface OnboardingStep {
@@ -32,10 +28,94 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
   existingProfile,
   isEditMode,
   isSaving = false,
+  onOnboardingComplete,
 }) => {
   const { profile, updateProfile } = useOnboarding();
   const [profileInitialized, setProfileInitialized] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  const { t } = useTranslation();
+
+  const hasMonthlyExpenses = useCallback(() => {
+    if (!profile.monthlyExpenses || profile.monthlyExpenses.data.length === 0) {
+      return false;
+    }
+    return profile.monthlyExpenses.data.some(
+      (expense) => (expense.amount || 0) > 0
+    );
+  }, [profile.monthlyExpenses]);
+
+  const getMissingProfileField = useCallback(() => {
+    if (!profile.name) return "Personal Info: Name";
+
+    if (!profile.age) return "Personal Info: Age";
+
+    if (!profile.monthlyIncome) return "Personal Info: Monthly Income";
+
+    if (!profile.riskProfile) return "Risk Profile";
+
+    if (
+      profile.hasEmergencyFund === undefined ||
+      profile.hasEmergencyFund === null
+    ) {
+      return "Risk Profile: Emergency Fund";
+    }
+
+    if (!profile.monthlyExpenses || profile.monthlyExpenses.data.length === 0)
+      return "Monthly Expenses";
+
+    if (!profile.financialGoals || profile.financialGoals.length === 0)
+      return "Financial Goals";
+
+    if (!profile.investments || profile.investments.length === 0)
+      return "Investments";
+
+    return null;
+  }, [profile]);
+
+  const isProfileComplete = useCallback(() => {
+    const complete =
+      !!profile.name &&
+      !!profile.age &&
+      !!profile.monthlyIncome &&
+      !!profile.riskProfile &&
+      hasMonthlyExpenses() &&
+      !!profile.financialGoals &&
+      profile.financialGoals.length > 0 &&
+      !!profile.investments &&
+      profile.investments.length > 0;
+    return complete;
+  }, [profile, hasMonthlyExpenses]);
+
+  const isStepCompleted = useCallback(
+    (stepId: number): boolean => {
+      switch (stepId) {
+        case 1:
+          return !!profile.name && !!profile.age && !!profile.monthlyIncome;
+        case 2:
+          return (
+            !!profile.riskProfile &&
+            profile.hasEmergencyFund !== undefined &&
+            profile.hasEmergencyFund !== null
+          );
+        case 3:
+          return hasMonthlyExpenses();
+        case 4:
+          return (
+            !!profile.monthlySavings && profile.monthlySavings.data.length > 0
+          );
+        case 5:
+          return !!profile.financialGoals && profile.financialGoals.length > 0;
+        case 6:
+          return !!profile.investments && profile.investments.length > 0;
+        default:
+          return false;
+      }
+    },
+    [profile, hasMonthlyExpenses]
+  );
 
   const {
     step,
@@ -44,7 +124,6 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
     handlePrevStep,
     handleCancel,
     handleComplete: completeOnboarding,
-    isLoading,
   } = useOnboardingFlow({
     onComplete,
     isEditMode,
@@ -52,79 +131,132 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
     existingProfile,
   });
 
-  const steps: OnboardingStep[] = [
-    { id: 1, label: "Personal Info", component: <PersonalInfoStep /> },
-    { id: 2, label: "Risk Profile", component: <RiskProfileStep /> },
-    { id: 3, label: "Monthly Expenses", component: <MonthlyExpensesStep /> },
-    { id: 4, label: "Savings", component: <MonthlySavingsStep /> },
-    { id: 5, label: "Debt Details", component: <DebtDetailsForm /> },
-    { id: 6, label: "Financial Goals", component: <FinancialGoalsStep /> },
-    { id: 7, label: "Investments", component: <InvestmentsStep /> },
-    { id: 8, label: "Review", component: <ReviewStep /> },
+  // Log current step and total steps when component re-renders
+  useEffect(() => {
+    console.log(
+      `OnboardingContent: Current Step: ${step}, Total Steps: ${totalSteps}`
+    );
+  }, [step, totalSteps]);
+
+  const steps = {
+    goals: 1,
+    savings: 2,
+    investments: 3,
+  };
+
+  const stepIndicatorSteps = [
+    {
+      id: 1,
+      label: t("onboarding.personalInfo"),
+      completed: isStepCompleted(1),
+      current: step === 1,
+      required: true,
+    },
+    {
+      id: 2,
+      label: t("onboarding.riskProfile"),
+      completed: isStepCompleted(2),
+      current: step === 2,
+      required: true,
+    },
+    {
+      id: 3,
+      label: t("onboarding.monthlyExpenses"),
+      completed: isStepCompleted(3),
+      current: step === 3,
+    },
+    {
+      id: 4,
+      label: t("onboarding.monthlySavings"),
+      completed: isStepCompleted(4),
+      current: step === 4,
+    },
+    {
+      id: 5,
+      label: t("onboarding.financialGoals"),
+      completed: isStepCompleted(5),
+      current: step === 5,
+    },
+    {
+      id: 6,
+      label: t("onboarding.investments"),
+      completed: isStepCompleted(6),
+      current: step === 6,
+    },
   ];
 
-  const stepIndicatorSteps = steps.map((step) => ({
-    id: step.id,
-    label: step.label,
-    completed: step.id < currentStep,
-    current: step.id === currentStep,
-  }));
-
-  // Initialize onboarding context with existing profile data if in edit mode
   useEffect(() => {
-    if (isEditMode && existingProfile && !profileInitialized) {
+    if (isEditMode && existingProfile) {
       console.log(
-        "Initializing onboarding with existing profile:",
+        "OnboardingContent: Updating context profile with existing profile:",
         existingProfile
       );
       updateProfile(existingProfile);
-      setProfileInitialized(true);
     }
-  }, [isEditMode, existingProfile, updateProfile, profileInitialized]);
+  }, [isEditMode, existingProfile, updateProfile]);
 
-  const handleComplete = () => {
-    // Make sure we have a complete UserProfile with required fields
-    if (!profile.id && existingProfile?.id) {
-      // Use the id from existingProfile if profile doesn't have one
-      const completeProfile: UserProfile = {
-        ...profile,
-        id: existingProfile.id,
-        // Ensure other required properties are present
-        email: profile.email || existingProfile.email,
-        name: profile.name || existingProfile.name,
-        age: profile.age ?? existingProfile.age,
-        monthlyIncome: profile.monthlyIncome ?? existingProfile.monthlyIncome,
-        riskProfile: profile.riskProfile || existingProfile.riskProfile,
-        hasEmergencyFund:
-          profile.hasEmergencyFund ?? existingProfile.hasEmergencyFund,
-        hasDebts: profile.hasDebts ?? existingProfile.hasDebts,
-        financialGoals:
-          profile.financialGoals || existingProfile.financialGoals,
-        investments: profile.investments || existingProfile.investments,
-        debtDetails: profile.debtDetails || existingProfile.debtDetails,
-      };
-      completeOnboarding(completeProfile);
+  const handleFinalizeOnboarding = useCallback(() => {
+    if (isEditMode) {
+      setIsReviewModalOpen(true);
     } else {
-      // If we have a complete profile with an id, use it directly
       completeOnboarding(profile as UserProfile);
+      onOnboardingComplete();
+    }
+  }, [isEditMode, completeOnboarding, profile, onOnboardingComplete]);
+
+  const handleSaveProfile = async () => {
+    setIsLoading(true);
+    console.log("Attempting to save profile:", profile);
+    try {
+      await onComplete(profile as UserProfile); // Always call onComplete
+      toast({
+        title: t("onboarding.profileSaved"),
+        description: t("onboarding.profileSavedSuccessfully"),
+        variant: "success",
+      });
+      if (isEditMode) {
+        onOnboardingComplete(); // Close modal or navigate back if in edit mode
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      toast({
+        title: t("onboarding.errorSavingProfile"),
+        description: t("onboarding.errorSavingProfileDescription"),
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className='flex flex-col gap-8'>
-      <StepIndicator steps={stepIndicatorSteps} currentStep={currentStep} />
+      <StepIndicator steps={stepIndicatorSteps} currentStep={step} />
 
-      <OnboardingStepContent currentStep={step} />
+      <OnboardingStepContent
+        currentStep={step}
+        onOpenReview={handleFinalizeOnboarding}
+        onPrevious={handlePrevStep}
+        onNext={handleNextStep}
+        isLastStep={step === totalSteps}
+      />
 
       <OnboardingNavigation
         currentStep={step}
         totalSteps={totalSteps}
         onNext={handleNextStep}
         onPrevious={handlePrevStep}
-        onComplete={handleComplete}
+        onComplete={handleFinalizeOnboarding}
         onCancel={handleCancel}
         isEditMode={isEditMode}
         isLoading={isLoading}
+      />
+
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        onSave={handleSaveProfile}
+        profileData={profile}
       />
     </div>
   );

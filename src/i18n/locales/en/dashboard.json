@@ -1,4 +1,3 @@
-
 {
   "welcome": "Welcome",
   "totalExpenses": "Total Expenses",
@@ -32,8 +31,8 @@
   "expensesSummary": "Expenses Summary",
   "personalizedInsights": "Personalized Insights",
   "investmentStrategy": "Investment Strategy",
-  "onboardingProgress": "Profile Setup Progress",
-  "setupProgress": "Setup Progress",
+  "onboardingProgress": "Profile Setup",
+  "setupProgress": "Your Progress",
   "completed": "completed",
   "marketData": {
     "usIndex": "US Index",
@@ -55,5 +54,34 @@
     "conservative": "As a conservative investor {{name}}, focus on stable investments like bonds and dividend stocks to preserve capital.",
     "moderate": "With your moderate risk tolerance {{name}}, a balanced portfolio of stocks and bonds could work well for you.",
     "aggressive": "As an aggressive investor {{name}}, you might consider growth stocks and alternative investments for higher potential returns."
-  }
+  },
+  "common": {
+    "ofTarget": "of target",
+    "ofIncome": "of income",
+    "recommendedLabel": "⭐ Recommended",
+    "riskLevel": "{{level}} risk",
+    "ageAdjustedLabel": "Age-adjusted"
+  },
+  "status": {
+    "needsImprovement": "Needs Improvement",
+    "onTrack": "On Track",
+    "excellent": "Excellent",
+    "high": "High",
+    "moderate": "Moderate",
+    "low": "Low"
+  },
+  "riskProfiles": {
+    "conservative": "Conservative",
+    "moderate": "Moderate",
+    "aggressive": "Aggressive"
+  },
+  "investmentType": {
+    "stocks": "Stocks",
+    "bonds": "Bonds",
+    "realEstate": "Real Estate",
+    "cash": "Cash",
+    "crypto": "Crypto",
+    "other": "Other"
+  },
+  "investmentItem": "{{type}}: {{percentage}}%"
 }

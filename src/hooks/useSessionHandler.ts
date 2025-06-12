@@ -1,5 +1,5 @@
 import { useSessionCore } from "./session/useSessionCore";
-import { UserProfile } from "@/types/finance";
+import { UserProfile } from "../types/finance";
 
 interface SessionHandlerProps {
   setUserProfile: (profile: UserProfile | null) => void;

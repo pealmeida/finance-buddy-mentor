@@ -29,9 +29,9 @@ test('should navigate from login to signup via button click', async ({ page }) =
     const submitButton = page.getByTestId('signup-submit-button');
 
     // Fill the form
-    await nameInput.fill('John Doe');
-    await emailInput.fill('john.doe@example.com');
-    await passwordInput.fill('SecurePass123!');
+    await nameInput.fill('Test User 2');
+    await emailInput.fill('test2@test.com');
+    await passwordInput.fill('test234');
     await page.waitForTimeout(5000);
 
     await page.screenshot({

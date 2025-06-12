@@ -1,4 +1,3 @@
-
 {
   "loading": "Loading...",
   "save": "Save",
@@ -48,6 +47,11 @@
   "login": "Login",
   "signup": "Sign Up",
   "by": "By",
+  "of": "of",
+  "noEmergencyFundData": "No emergency fund data available.",
+  "emergencyFundCallToAction": "Add your emergency fund details to see your progress.",
+  "noInvestmentData": "No investment data available.",
+  "investmentCallToAction": "Add your investments to see your portfolio distribution.",
   "noGoalsYet": "No financial goals yet",
   "addGoal": "Add Goal",
   "enterValidNumber": "Please enter a valid number",
@@ -57,6 +61,7 @@
   "backToDashboard": "Back to Dashboard",
   "tryAgain": "Try Again",
   "actions": "Actions",
+  "continueEditing": "Continue Editing",
   "months": {
     "january": "January",
     "february": "February",
