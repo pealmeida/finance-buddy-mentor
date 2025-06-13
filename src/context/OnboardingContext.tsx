@@ -1,10 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import {
-  FinancialGoal,
-  Investment,
-  RiskProfile,
-  UserProfile,
-} from "@/types/finance";
+import { UserProfile } from "../types/finance";
 import { v4 as uuidv4 } from "uuid";
 
 interface OnboardingContextType {
@@ -36,7 +31,7 @@ const initialProfile: Partial<UserProfile> = {
   name: "",
   age: 0,
   monthlyIncome: 0,
-  riskProfile: "moderate",
+  riskProfile: undefined,
   hasEmergencyFund: false,
   hasDebts: false,
   financialGoals: [],
@@ -70,7 +65,18 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const updateProfile = (updates: Partial<UserProfile>) => {
-    setProfile((prev) => ({ ...prev, ...updates }));
+    console.log(
+      "OnboardingContext: updateProfile called with updates:",
+      updates
+    );
+    setProfile((prev) => {
+      const newProfile = { ...prev, ...updates };
+      console.log(
+        "OnboardingContext: new profile state after update:",
+        newProfile
+      );
+      return newProfile;
+    });
   };
 
   const updateCurrentGoal = (updates: Partial<typeof initialCurrentGoal>) => {

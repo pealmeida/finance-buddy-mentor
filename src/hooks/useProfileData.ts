@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { UserProfile } from '@/types/finance';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,13 +13,14 @@ export function useProfileData(initialProfile: UserProfile) {
     age: baseProfile.age || 0,
     monthlyIncome: baseProfile.monthlyIncome || 0,
     riskProfile: baseProfile.riskProfile || 'moderate',
-    hasEmergencyFund: baseProfile.hasEmergencyFund || false,
-    hasDebts: baseProfile.hasDebts || false,
+    hasEmergencyFund: baseProfile.hasEmergencyFund ?? false,
+    emergencyFundMonths: baseProfile.emergencyFundMonths || 0,
+    hasDebts: baseProfile.hasDebts ?? false,
     financialGoals: baseProfile.financialGoals || [],
     investments: baseProfile.investments || [],
-    debtDetails: baseProfile.debtDetails || []
+    debtDetails: baseProfile.debtDetails || [],
   }), []);
-  
+
   const [profile, setProfile] = useState<UserProfile>(createDefaultProfile(initialProfile));
   const [userName, setUserName] = useState<string>(initialProfile.name || '');
   const [loading, setLoading] = useState(true);
@@ -28,41 +28,41 @@ export function useProfileData(initialProfile: UserProfile) {
   const [hasLoaded, setHasLoaded] = useState(false);
   const { toast } = useToast();
   const { fetchUserProfile } = useSupabaseData();
-  
+
   const handleInputChange = (field: keyof UserProfile, value: any) => {
     setProfile(prev => {
       const updatedProfile = {
         ...prev,
         [field]: value
       };
-      
+
       // Update userName if name field changes
       if (field === 'name') {
-        setUserName(value || '');
+        setUserName(value as string || '');
       }
-      
+
       return updatedProfile;
     });
   };
-  
+
   // Fetch user data from Supabase
   const fetchUserData = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
+
       if (sessionError) {
         throw new Error(sessionError.message);
       }
-      
+
       if (session?.user) {
         const { email, user_metadata, id } = session.user;
-        
+
         // Get profile data from Supabase
         const supabaseProfile = await fetchUserProfile(id);
-        
+
         // If we have Supabase profile data, use it
         if (supabaseProfile) {
           console.log('Loaded profile from Supabase:', supabaseProfile);
@@ -73,9 +73,9 @@ export function useProfileData(initialProfile: UserProfile) {
             email: supabaseProfile.email || email || '',
             name: supabaseProfile.name || (user_metadata?.name as string) || 'User',
           });
-          
+
           setProfile(completeProfile);
-          setUserName(completeProfile.name);
+          setUserName(completeProfile.name || '');
           return completeProfile;
         } else {
           // Fallback to localStorage data with session user data
@@ -85,9 +85,9 @@ export function useProfileData(initialProfile: UserProfile) {
             email: email || profile.email,
             name: (user_metadata?.name as string) || profile.name,
           });
-          
+
           setProfile(updatedProfile);
-          setUserName(updatedProfile.name);
+          setUserName(updatedProfile.name || '');
           return updatedProfile;
         }
       } else {
@@ -102,31 +102,31 @@ export function useProfileData(initialProfile: UserProfile) {
       console.error("Error fetching user data:", err);
       const errorMsg = err instanceof Error ? err.message : "Unknown error occurred";
       setError(errorMsg);
-      
+
       toast({
         title: "Error loading profile",
         description: err instanceof Error ? err.message : "Failed to load user profile data",
         variant: "destructive"
       });
-      
+
       return null;
     } finally {
       setLoading(false);
     }
-  }, [initialProfile, createDefaultProfile, fetchUserProfile, profile, toast]);
-  
+  }, [initialProfile, createDefaultProfile, fetchUserProfile, toast]);
+
   // Load user data on component mount
   useEffect(() => {
     // Prevent multiple fetches after the initial load
     if (hasLoaded) return;
-    
+
     fetchUserData().then(updatedProfile => {
       if (updatedProfile) {
         setHasLoaded(true);
       }
     });
   }, [hasLoaded, fetchUserData]);
-  
+
   return {
     profile,
     userName,

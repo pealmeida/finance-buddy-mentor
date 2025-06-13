@@ -1,4 +1,3 @@
-
 {
   "welcome": "Bem-vindo(a)",
   "totalExpenses": "Despesas Totais",
@@ -29,8 +28,8 @@
   "personalizedInsights": "Insights Personalizados",
   "investmentStrategy": "Estratégia de Investimento",
   "completeProfile": "Completar Perfil",
-  "onboardingProgress": "Progresso da Configuração do Perfil",
-  "setupProgress": "Progresso da Configuração",
+  "onboardingProgress": "Configuração do Perfil",
+  "setupProgress": "Seu Progresso",
   "completed": "concluído",
   "marketData": {
     "usIndex": "Índice dos EUA",
@@ -39,6 +38,7 @@
     "bondYield": "Rendimento de Títulos"
   },
   "savingsInsight": {
+    "noData": "Olá {{name}}, parece que você ainda não registrou nenhum valor. Comece a registrar suas poupanças para obter insights personalizados!",
     "low": "Olá {{name}}, notamos que sua poupança mensal está abaixo do valor recomendado. Considere criar um orçamento para aumentar sua taxa de poupança.",
     "moderate": "Bom trabalho {{name}}! Você está progredindo em direção às suas metas de poupança, mas ainda há espaço para melhoria.",
     "high": "Excelente trabalho {{name}}! Você está superando suas metas de poupança. Considere investir os fundos extras para maximizar seus retornos."
@@ -52,5 +52,35 @@
     "conservative": "Como um investidor conservador {{name}}, foque em investimentos estáveis como títulos e ações de dividendos para preservar capital.",
     "moderate": "Com sua tolerância de risco moderada {{name}}, uma carteira equilibrada de ações e títulos pode funcionar bem para você.",
     "aggressive": "Como um investidor agressivo {{name}}, você pode considerar ações de crescimento e investimentos alternativos para maiores retornos potenciais."
-  }
+  },
+  "common": {
+    "ofTarget": "da meta",
+    "ofIncome": "da renda",
+    "recommendedLabel": "⭐ Recomendado",
+    "riskLevel": "{{level}}",
+    "ageAdjustedLabel": "Ajustado por idade"
+  },
+  "status": {
+    "needsImprovement": "Precisa Melhorar",
+    "onTrack": "No Caminho Certo",
+    "excellent": "Excelente",
+    "high": "Alto",
+    "moderate": "Moderado",
+    "low": "Baixo",
+    "noData": "Sem Dados"
+  },
+  "riskProfiles": {
+    "conservative": "Conservador",
+    "moderate": "Moderado",
+    "aggressive": "Agressivo"
+  },
+  "investmentType": {
+    "stocks": "Ações",
+    "bonds": "Títulos",
+    "realEstate": "Imóveis",
+    "cash": "Dinheiro",
+    "crypto": "Cripto",
+    "other": "Outros"
+  },
+  "investmentItem": "{{type}}: {{percentage}}%"
 }

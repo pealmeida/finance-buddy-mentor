@@ -1,10 +1,9 @@
-
-import React, { useEffect } from 'react';
-import { UserProfile } from '@/types/finance';
-import { useMonthlySavingsState } from '@/hooks/savings/useMonthlySavingsState';
-import MonthlySavingsHeader from './savings-components/MonthlySavingsHeader';
-import MonthlySavingsContent from './MonthlySavingsContent';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import React, { useEffect } from "react";
+import { UserProfile } from "../../types/finance";
+import MonthlySavingsHeader from "./MonthlySavingsHeader";
+import MonthlySavingsContent from "./MonthlySavingsContent";
+import { Alert, AlertDescription } from "../../components/ui/alert";
+import { useMonthlySavingsState } from "../../hooks/savings/useMonthlySavingsState";
 
 interface MonthlySavingsProps {
   profile: UserProfile;
@@ -15,7 +14,7 @@ interface MonthlySavingsProps {
 const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   profile,
   onSave,
-  isSaving = false
+  isSaving = false,
 }) => {
   const {
     selectedYear,
@@ -27,41 +26,30 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     handleEditMonth,
     handleSaveAll,
     handleYearChange,
-    refreshData,
-    setEditingMonth
-  } = useMonthlySavingsState(
-    profile,
-    onSave || (() => {}),
-    isSaving
-  );
-
-  // Initial data load
-  useEffect(() => {
-    refreshData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setEditingMonth,
+  } = useMonthlySavingsState(profile, onSave || (() => {}), isSaving);
 
   if (!profile || !profile.id) {
     return (
-      <Alert variant="destructive">
+      <Alert variant='destructive'>
         <AlertDescription>
-          User profile is not available. Please log in to view your savings data.
+          User profile is not available. Please log in to view your savings
+          data.
         </AlertDescription>
       </Alert>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className='space-y-8'>
       <MonthlySavingsHeader
         selectedYear={selectedYear}
         onYearChange={handleYearChange}
         onSaveAll={handleSaveAll}
-        onRefresh={refreshData}
         disabled={loadingData || isSaving}
         isSaving={isSaving}
       />
-      
+
       <MonthlySavingsContent
         loadingData={loadingData}
         savingsData={savingsData}
@@ -69,7 +57,6 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
         onEditMonth={handleEditMonth}
         onSaveAmount={handleSaveAmount}
         onCancelEdit={() => setEditingMonth(null)}
-        onRefresh={refreshData}
         error={error}
       />
     </div>

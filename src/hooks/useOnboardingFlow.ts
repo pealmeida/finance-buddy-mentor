@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { UserProfile, RiskProfile } from '@/types/finance';
-import { useToast } from '@/components/ui/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { UserProfile, RiskProfile } from '../types/finance';
+import { useToast } from '../components/ui/use-toast';
+import { supabase } from '../integrations/supabase/client';
 
 interface UseOnboardingFlowProps {
   onComplete: (profile: UserProfile) => void;
@@ -33,7 +32,7 @@ export function useOnboardingFlow({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const totalSteps = 7; // Updated from 6 to 7 to include monthly expenses step
+  const totalSteps = 6; // Updated from 7 to 6 as InvestmentsStep is the last content step
 
   // Check for authenticated user
   useEffect(() => {
@@ -56,7 +55,7 @@ export function useOnboardingFlow({
         console.error('Error checking authentication:', error);
       }
     };
-    
+
     checkAuth();
   }, [toast]);
 
@@ -86,20 +85,20 @@ export function useOnboardingFlow({
     // Navigate to profile page when canceling in edit mode, otherwise go to dashboard
     navigate(isEditMode ? '/profile' : '/dashboard');
   };
-  
+
   const handleComplete = async (profile: UserProfile | undefined) => {
     if (isSubmitting || isSaving || !profile) return; // Prevent duplicate submissions
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Check if user is authenticated
       const { data, error: sessionError } = await supabase.auth.getSession();
-      
+
       if (sessionError) {
         throw new Error(`Authentication error: ${sessionError.message}`);
       }
-      
+
       if (!data.session || !data.session.user) {
         toast({
           title: "Authentication Required",
@@ -119,20 +118,18 @@ export function useOnboardingFlow({
         monthlyIncome: profile.monthlyIncome || 0,
         riskProfile: validateRiskProfile(profile.riskProfile),
         hasEmergencyFund: profile.hasEmergencyFund || false,
-        hasDebts: profile.hasDebts || false,
         financialGoals: profile.financialGoals || [],
         investments: profile.investments || [],
-        debtDetails: profile.debtDetails || [],
         emergencyFundMonths: profile.emergencyFundMonths,
         monthlySavings: profile.monthlySavings,
         monthlyExpenses: profile.monthlyExpenses
       };
 
       console.log('Completing onboarding with profile:', completeProfile);
-      
+
       // Complete onboarding flow by calling the parent handler
       await onComplete(completeProfile);
-      
+
       // Don't redirect - the onComplete function will handle navigation
     } catch (error) {
       console.error("Error completing onboarding:", error);
@@ -146,9 +143,6 @@ export function useOnboardingFlow({
     }
   };
 
-  // Combine our internal isSubmitting state with any parent-provided isSaving state
-  const isLoading = isSubmitting || isSaving;
-
   return {
     step,
     totalSteps,
@@ -157,7 +151,7 @@ export function useOnboardingFlow({
     handleCancel,
     handleComplete,
     isEditMode,
-    isLoading,
+    isLoading: isSubmitting || isSaving,
     userId,
   };
 }

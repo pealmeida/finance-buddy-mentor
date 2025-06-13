@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ExpenseItem, MonthlyAmount } from "@/types/finance";
 import {
@@ -10,52 +9,46 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { v4 as uuidv4 } from "uuid";
 import { useTranslatedMonths } from "@/constants/months";
 import { useTranslation } from "react-i18next";
-import { useDetailedExpensesCalculation } from "@/hooks/expenses/useDetailedExpensesCalculation";
 import ExpenseItemsTable from "./ExpenseItemsTable";
 import ExpenseDeleteConfirmDialog from "./ExpenseDeleteConfirmDialog";
 import ExpenseFormDialogs from "./ExpenseFormDialogs";
-import ExpenseSummarySection, { ExpenseHeaderInfo } from "./ExpenseSummarySection";
+import ExpenseSummarySection, {
+  ExpenseHeaderInfo,
+} from "./ExpenseSummarySection";
 
 interface DetailedExpensesListProps {
   monthData: MonthlyAmount;
   onUpdateMonthData: (updatedData: MonthlyAmount) => void;
+  onAddItem: (item: Omit<ExpenseItem, "id">) => Promise<void>;
+  onUpdateItem: (item: ExpenseItem) => Promise<void>;
+  onDeleteItem: (itemId: string) => Promise<void>;
 }
 
 const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
   monthData,
   onUpdateMonthData,
+  onAddItem,
+  onUpdateItem,
+  onDeleteItem,
 }) => {
   const { t } = useTranslation();
   const { getTranslatedMonths } = useTranslatedMonths();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(null);
+  const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(
+    null
+  );
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null);
 
-  const {
-    addExpenseItem,
-    updateExpenseItem,
-    removeExpenseItem,
-    calculateTotalFromItems
-  } = useDetailedExpensesCalculation();
-
-  const handleAddExpense = (expense: Omit<ExpenseItem, "id">) => {
-    const newExpense: ExpenseItem = {
-      ...expense,
-      id: uuidv4(),
-    };
-
-    const updatedMonthData = addExpenseItem(monthData, newExpense);
-    onUpdateMonthData(updatedMonthData);
+  const handleAddExpense = async (expense: Omit<ExpenseItem, "id">) => {
+    await onAddItem(expense);
     setIsAddDialogOpen(false);
   };
 
-  const handleUpdateExpense = (updatedExpense: ExpenseItem) => {
-    const updatedMonthData = updateExpenseItem(monthData, updatedExpense);
-    onUpdateMonthData(updatedMonthData);
+  const handleUpdateExpense = async (updatedExpense: ExpenseItem) => {
+    await onUpdateItem(updatedExpense);
     setEditingExpense(null);
   };
 
@@ -64,12 +57,9 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
     setIsDeleteConfirmOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!expenseToDelete) return;
-
-    const updatedMonthData = removeExpenseItem(monthData, expenseToDelete);
-    onUpdateMonthData(updatedMonthData);
-
+    await onDeleteItem(expenseToDelete);
     setIsDeleteConfirmOpen(false);
     setExpenseToDelete(null);
   };
@@ -77,20 +67,20 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
   const items = monthData.items || [];
   const translatedMonths = getTranslatedMonths();
   const monthName = translatedMonths[monthData.month - 1];
-  const calculatedTotal = calculateTotalFromItems(items);
+  const calculatedTotal = items.reduce((sum, item) => sum + item.amount, 0);
   const hasDiscrepancy = Math.abs(calculatedTotal - monthData.amount) > 0.01;
 
   return (
     <Card className='w-full'>
       <CardHeader>
         <CardTitle className='flex justify-between items-center'>
-          <span>{t('expenses.editExpensesFor', 'Edit Expenses for')} {monthName}</span>
+          <span>{t("expenses.editExpenses", "Edit Expenses")}</span>
           <Button
             size='sm'
             onClick={() => setIsAddDialogOpen(true)}
             className='flex items-center gap-1'>
             <Plus className='h-4 w-4' />
-            {t('expenses.addExpense', 'Add Expense')}
+            {t("expenses.addExpense", "Add Expense")}
           </Button>
         </CardTitle>
         <CardDescription>
@@ -112,7 +102,6 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
         <ExpenseSummarySection
           items={items}
           monthAmount={monthData.amount}
-          calculatedTotal={calculatedTotal}
           hasDiscrepancy={hasDiscrepancy}
         />
       </CardContent>

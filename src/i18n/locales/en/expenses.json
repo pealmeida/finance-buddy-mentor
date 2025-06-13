@@ -1,4 +1,3 @@
-
 {
   "title": "Expenses",
   "addExpense": "Add Expense",
@@ -28,7 +27,7 @@
   "loadingExpenses": "Loading expenses...",
   "viewDetailed": "View detailed expenses",
   "highSpending": "High",
-  "moderateSpending": "Moderate", 
+  "moderateSpending": "Moderate",
   "lowSpending": "Low",
   "spending": "Spending",
   "categories": {
@@ -45,5 +44,12 @@
     "description": "Description",
     "category": "Category",
     "amount": "Amount"
-  }
+  },
+  "monthlyExpensesFor": "{{month}} Expenses",
+  "editExpenses": "Edit Expenses",
+  "totalCalculated": "Total Calculated",
+  "discrepancyNote": "Note: There's a discrepancy between the stored total",
+  "discrepancyNote2": "and calculated total. The calculated total will be saved.",
+  "viewYearly": "View Yearly",
+  "viewLast3Months": "View Last 3 Months"
 }

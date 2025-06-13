@@ -2,19 +2,23 @@ export type RiskProfile = 'conservative' | 'moderate' | 'aggressive';
 
 export interface UserProfile {
   id: string;
-  email: string;
-  name: string;
-  age: number;
-  monthlyIncome: number;
-  riskProfile: RiskProfile;
-  hasEmergencyFund: boolean;
+  name?: string;
+  email?: string;
+  age?: number;
+  monthlyIncome?: number;
+  riskProfile?: RiskProfile;
+  hasEmergencyFund?: boolean;
   emergencyFundMonths?: number;
-  hasDebts: boolean;
+  hasDebts?: boolean;
   debtDetails?: DebtDetail[];
-  financialGoals: FinancialGoal[];
-  investments: Investment[];
+  monthlyExpenses?: {
+    userId: string;
+    year: number;
+    data: MonthlyAmount[];
+  };
   monthlySavings?: MonthlySavings;
-  monthlyExpenses?: MonthlyExpenses;
+  financialGoals?: FinancialGoal[];
+  investments?: Investment[];
 }
 
 export interface MonthlySavings {
@@ -32,25 +36,17 @@ export interface MonthlyExpenses {
 }
 
 export interface MonthlyAmount {
-  month: number; // 1-12 representing Jan-Dec
+  month: number;
   amount: number;
-  items?: ExpenseItem[]; // Array of detailed expense items
+  items?: ExpenseItem[];
 }
 
 export interface ExpenseItem {
   id: string;
-  description: string;
+  date: string;
   amount: number;
   category: 'housing' | 'food' | 'transportation' | 'utilities' | 'entertainment' | 'healthcare' | 'other';
-  date: string; // ISO date string
-}
-
-export interface DebtDetail {
-  id: string;
-  type: 'creditCard' | 'personalLoan' | 'studentLoan' | 'other';
-  name: string;
-  amount: number;
-  interestRate: number;
+  description?: string;
 }
 
 export interface FinancialGoal {
@@ -94,4 +90,31 @@ export interface SavingStrategy {
   difficulty: 'easy' | 'medium' | 'hard';
   timeFrame: 'immediate' | 'short-term' | 'long-term';
   steps: string[];
+}
+
+export interface DebtDetail {
+  id: string;
+  type: 'credit_card' | 'loan' | 'mortgage' | 'other';
+  amount: number;
+  interestRate: number;
+  minimumPayment: number;
+}
+
+export interface MarketData {
+  id: string;
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  type: 'index' | 'stock' | 'cryptocurrency' | 'commodity';
+  lastUpdated: Date;
+}
+
+export interface MarketDataUpdate {
+  symbol: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  timestamp: string;
 }

@@ -1,11 +1,10 @@
-
-import { UserProfile, InvestmentRecommendation } from '@/types/finance';
+import { UserProfile, InvestmentRecommendation } from '../../../types/finance';
 
 export const generateRecommendations = (userProfile: UserProfile): InvestmentRecommendation[] => {
   const { riskProfile, age } = userProfile;
-  
+
   const recommendations: InvestmentRecommendation[] = [];
-  
+
   if (riskProfile === 'conservative') {
     recommendations.push({
       id: '1',
@@ -52,24 +51,24 @@ export const generateRecommendations = (userProfile: UserProfile): InvestmentRec
       ]
     });
   }
-  
+
   // Add retirement-focused recommendation based on age
-  if (age < 40) {
+  if (age && age < 40) {
     recommendations.push({
       id: '4',
       title: 'Long-Term Retirement Portfolio',
       description: 'Designed for young investors with a long time horizon before retirement.',
-      riskLevel: age < 30 ? 'aggressive' : 'moderate',
-      expectedReturn: age < 30 ? '8-10%' : '6-8%',
+      riskLevel: age && age < 30 ? 'aggressive' : 'moderate',
+      expectedReturn: age && age < 30 ? '8-10%' : '6-8%',
       timeHorizon: '25+ years',
       allocation: [
-        { type: 'Stocks', percentage: age < 30 ? 80 : 65, color: '#34C759' },
+        { type: 'Stocks', percentage: age && age < 30 ? 80 : 65, color: '#34C759' },
         { type: 'Real Estate', percentage: 10, color: '#FF9500' },
-        { type: 'Bonds', percentage: age < 30 ? 5 : 20, color: '#0A84FF' },
-        { type: 'Alternative Investments', percentage: age < 30 ? 5 : 5, color: '#5E5CE6' }
+        { type: 'Bonds', percentage: age && age < 30 ? 5 : 20, color: '#0A84FF' },
+        { type: 'Alternative Investments', percentage: age && age < 30 ? 5 : 5, color: '#5E5CE6' }
       ]
     });
-  } else if (age >= 40 && age < 55) {
+  } else if (age && age >= 40 && age < 55) {
     recommendations.push({
       id: '5',
       title: 'Mid-Career Retirement Portfolio',
@@ -100,7 +99,7 @@ export const generateRecommendations = (userProfile: UserProfile): InvestmentRec
       ]
     });
   }
-  
+
   // If user has no debt and has emergency fund, add more aggressive option
   if (!userProfile.hasDebts && userProfile.hasEmergencyFund) {
     recommendations.push({
@@ -118,6 +117,6 @@ export const generateRecommendations = (userProfile: UserProfile): InvestmentRec
       ]
     });
   }
-  
+
   return recommendations;
 };

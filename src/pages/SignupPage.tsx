@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { supabase } from "../integrations/supabase/client";
+import { useAuth } from "../hooks/useAuth";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,13 +11,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+} from "../components/ui/card";
+import { Label } from "../components/ui/label";
 import { Mail, Lock, User } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "../components/ui/use-toast";
 import { useTranslation } from "react-i18next";
-import Header from "@/components/Header";
-import { useSupabaseData } from "@/hooks/useSupabaseData";
+import Header from "../components/Header";
+import { useSupabaseData } from "../hooks/useSupabaseData";
 
 const SignupPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -62,7 +61,7 @@ const SignupPage: React.FC = () => {
 
       if (error) {
         toast({
-          title: t('auth.signupFailed'),
+          title: t("auth.signupFailed"),
           description: error.message,
           variant: "destructive",
         });
@@ -71,8 +70,8 @@ const SignupPage: React.FC = () => {
         console.log("User signed up successfully:", data);
 
         toast({
-          title: t('auth.accountCreated'),
-          description: t('auth.accountCreatedDescription'),
+          title: t("auth.accountCreated"),
+          description: t("auth.accountCreatedDescription"),
         });
 
         // Mark signup as successful but don't navigate yet
@@ -98,8 +97,8 @@ const SignupPage: React.FC = () => {
     } catch (error) {
       console.error("Unexpected error during signup:", error);
       toast({
-        title: t('auth.signupFailed'),
-        description: t('auth.unexpectedError'),
+        title: t("auth.signupFailed"),
+        description: t("auth.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -114,22 +113,21 @@ const SignupPage: React.FC = () => {
         <Card className='w-full shadow-lg'>
           <CardHeader className='space-y-1 text-center'>
             <CardTitle className='text-2xl font-bold'>
-              {t('auth.signupTitle')}
+              {t("auth.signupTitle")}
             </CardTitle>
-            <CardDescription>
-              {t('auth.signupDescription')}
-            </CardDescription>
+            <CardDescription>{t("auth.signupDescription")}</CardDescription>
           </CardHeader>
           <form onSubmit={handleSignup}>
             <CardContent className='grid gap-4'>
               <div className='grid gap-2'>
-                <Label htmlFor='name'>{t('auth.fullName')}</Label>
+                <Label htmlFor='name'>{t("auth.fullName")}</Label>
                 <div className='relative'>
                   <User className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
                   <Input
                     id='name'
-                    placeholder={t('auth.fullNamePlaceholder')}
+                    placeholder={t("auth.fullNamePlaceholder")}
                     value={name}
+                    data-testid='signup-name-input'
                     onChange={(e) => setName(e.target.value)}
                     className='pl-10'
                     required
@@ -137,14 +135,15 @@ const SignupPage: React.FC = () => {
                 </div>
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='email'>{t('auth.email')}</Label>
+                <Label htmlFor='email'>{t("auth.email")}</Label>
                 <div className='relative'>
                   <Mail className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
                   <Input
                     id='email'
                     type='email'
-                    placeholder={t('auth.emailPlaceholder')}
+                    placeholder={t("auth.emailPlaceholder")}
                     value={email}
+                    data-testid='signup-email-input'
                     onChange={(e) => setEmail(e.target.value)}
                     className='pl-10'
                     required
@@ -152,14 +151,15 @@ const SignupPage: React.FC = () => {
                 </div>
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='password'>{t('auth.password')}</Label>
+                <Label htmlFor='password'>{t("auth.password")}</Label>
                 <div className='relative'>
                   <Lock className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
                   <Input
                     id='password'
                     type='password'
-                    placeholder={t('auth.passwordPlaceholder')}
+                    placeholder={t("auth.passwordPlaceholder")}
                     value={password}
+                    data-testid='signup-password-input'
                     onChange={(e) => setPassword(e.target.value)}
                     className='pl-10'
                     required
@@ -171,14 +171,15 @@ const SignupPage: React.FC = () => {
             <CardFooter className='flex flex-col'>
               <Button
                 type='submit'
+                data-testid='signup-submit-button'
                 className='w-full bg-finance-blue hover:bg-finance-blue-dark'
                 disabled={loading}>
-                {loading ? t('auth.creatingAccount') : t('auth.createAccount')}
+                {loading ? t("auth.creatingAccount") : t("auth.createAccount")}
               </Button>
               <div className='mt-4 text-center text-sm'>
-                {t('auth.alreadyHaveAccount')}{" "}
+                {t("auth.alreadyHaveAccount")}{" "}
                 <Link to='/login' className='text-finance-blue hover:underline'>
-                  {t('auth.signIn')}
+                  {t("auth.signIn")}
                 </Link>
               </div>
             </CardFooter>

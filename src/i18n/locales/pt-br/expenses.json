@@ -1,4 +1,3 @@
-
 {
   "title": "Despesas",
   "addExpense": "Adicionar Despesa",
@@ -27,7 +26,7 @@
   "viewDetailed": "Ver despesas detalhadas",
   "highSpending": "Alto",
   "moderateSpending": "Moderado",
-  "lowSpending": "Baixo", 
+  "lowSpending": "Baixo",
   "spending": "Gasto",
   "categories": {
     "housing": "Moradia",
@@ -43,5 +42,12 @@
     "description": "Descrição",
     "category": "Categoria",
     "amount": "Valor"
-  }
+  },
+  "monthlyExpensesFor": "Despesas de {{month}}",
+  "editExpenses": "Editar Despesas",
+  "totalCalculated": "Total Calculado",
+  "discrepancyNote": "Observação: Há uma discrepância entre o total armazenado",
+  "discrepancyNote2": "e o total calculado. O total calculado será salvo.",
+  "viewYearly": "Ver Anual",
+  "viewLast3Months": "Ver Últimos 3 Meses"
 }

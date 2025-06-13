@@ -1,9 +1,8 @@
-
-import React from 'react';
-import { UserProfile } from '@/types/finance';
-import ProfileLoadingState from './ProfileLoadingState';
-import ProfileErrorState from './ProfileErrorState';
-import { useProfileData } from '@/hooks/useProfileData';
+import React from "react";
+import { UserProfile } from "../../types/finance";
+import ProfileLoadingState from "./ProfileLoadingState";
+import ProfileErrorState from "./ProfileErrorState";
+import { useProfileData } from "../../hooks/useProfileData";
 
 interface UserDataProviderProps {
   children: (props: {
@@ -15,39 +14,23 @@ interface UserDataProviderProps {
   onProfileUpdate: (updatedProfile: UserProfile) => void;
 }
 
-const UserDataProvider: React.FC<UserDataProviderProps> = ({ 
-  children, 
-  userProfile, 
-  onProfileUpdate
+const UserDataProvider: React.FC<UserDataProviderProps> = ({
+  children,
+  userProfile,
+  onProfileUpdate,
 }) => {
-  const {
-    profile,
-    userName,
-    loading,
-    error,
-    handleInputChange
-  } = useProfileData(userProfile);
-  
-  // Update app-level profile state when profile changes
-  React.useEffect(() => {
-    if (profile && profile.id) {
-      onProfileUpdate(profile);
-    }
-  }, [profile, onProfileUpdate]);
-  
+  const { profile, userName, loading, error, handleInputChange } =
+    useProfileData(userProfile);
+
   if (loading) {
     return <ProfileLoadingState />;
   }
-  
+
   if (error) {
     return <ProfileErrorState error={error} />;
   }
-  
-  return (
-    <>
-      {children({ profile, userName, handleInputChange })}
-    </>
-  );
+
+  return <>{children({ profile, userName, handleInputChange })}</>;
 };
 
 export default UserDataProvider;

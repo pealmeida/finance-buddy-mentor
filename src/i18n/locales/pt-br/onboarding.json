@@ -1,4 +1,3 @@
-
 {
   "personalInfo": "Informações Pessoais",
   "riskProfile": "Perfil de Risco",
@@ -81,5 +80,10 @@
   "financialGoalsAdded": "Adicionar objetivos financeiros",
   "investmentsAdded": "Adicionar investimentos atuais",
   "monthlyExpensesSet": "Definir gastos mensais",
-  "monthlySavingsSet": "Definir poupança mensal"
+  "monthlySavingsSet": "Definir poupança mensal",
+  "reviewModalTitle": "Atenção: Atualização de Perfil",
+  "reviewModalMessage1": "Seus dados de perfil serão atualizados.",
+  "reviewModalMessage2": "Clique em \"Salvar\" para confirmar as mudanças ou \"Continuar Editando\" para fazer ajustes adicionais.",
+  "continueEditing": "Continuar Editando",
+  "save": "Salvar"
 }

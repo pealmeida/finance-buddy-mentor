@@ -1,10 +1,18 @@
-
-import React from 'react';
-import { UserProfile } from '@/types/finance';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { BrainCircuit, BarChart3 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import { UserProfile } from "../../types/finance";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Progress } from "../ui/progress";
+import { Badge } from "../ui/badge";
+import {
+  BrainCircuit,
+  BarChart3,
+  PiggyBank,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle,
+  Target,
+} from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface PersonalizedInsightsProps {
   userProfile: UserProfile;
@@ -15,114 +23,264 @@ interface PersonalizedInsightsProps {
 const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
   userProfile,
   savingsProgress,
-  expensesRatio
+  expensesRatio,
 }) => {
+  console.log(
+    "PersonalizedInsights: received savingsProgress:",
+    savingsProgress
+  );
   const { t } = useTranslation();
-  
+
   // Generate personalized insights based on user data
-  const getPersonalizedInsight = (): string => {
-    const name = userProfile.name?.split(' ')[0] || 'there';
-    
-    if (savingsProgress < 50) {
-      return t('dashboard.savingsInsight.low', {
-        name,
-        defaultValue: `Hi ${name}, we noticed your monthly savings are below the recommended amount. Consider creating a budget to increase your savings rate.`
-      });
+  const getSavingsInsightData = () => {
+    const name = userProfile.name?.split(" ")[0] || "there";
+
+    if (savingsProgress === 0) {
+      return {
+        message: t("dashboard.savingsInsight.noData", {
+          name,
+          defaultValue: `Hi ${name}, it looks like you haven't recorded any savings yet. Start tracking your savings to get personalized insights!`,
+        }),
+        status: "no-data",
+        icon: PiggyBank,
+        color: "text-gray-500",
+        bgColor: "bg-gray-50",
+        progressColor: "bg-gray-300",
+      };
+    } else if (savingsProgress < 50) {
+      return {
+        message: t("dashboard.savingsInsight.low", {
+          name,
+          defaultValue: `Hi ${name}, we noticed your monthly savings are below the recommended amount. Consider creating a budget to increase your savings rate.`,
+        }),
+        status: "needs-improvement",
+        icon: AlertCircle,
+        color: "text-amber-600",
+        bgColor: "bg-amber-50",
+        progressColor: "bg-amber-500",
+      };
     } else if (savingsProgress >= 50 && savingsProgress < 100) {
-      return t('dashboard.savingsInsight.moderate', {
-        name,
-        defaultValue: `Good job ${name}! You're making progress toward your savings goals, but there's still room for improvement.`
-      });
+      return {
+        message: t("dashboard.savingsInsight.moderate", {
+          name,
+          defaultValue: `Good job ${name}! You're making progress toward your savings goals, but there's still room for improvement.`,
+        }),
+        status: "on-track",
+        icon: Target,
+        color: "text-blue-600",
+        bgColor: "bg-blue-50",
+        progressColor: "bg-blue-500",
+      };
     } else {
-      return t('dashboard.savingsInsight.high', {
-        name,
-        defaultValue: `Excellent work ${name}! You're exceeding your savings targets. Consider investing the extra funds to maximize your returns.`
-      });
+      return {
+        message: t("dashboard.savingsInsight.high", {
+          name,
+          defaultValue: `Excellent work ${name}! You're exceeding your savings targets. Consider investing the extra funds to maximize your returns.`,
+        }),
+        status: "excellent",
+        icon: CheckCircle,
+        color: "text-green-600",
+        bgColor: "bg-green-50",
+        progressColor: "bg-green-500",
+      };
     }
   };
-  
-  const getExpenseInsight = (): string => {
-    const name = userProfile.name?.split(' ')[0] || 'there';
-    
+
+  const getExpenseInsightData = () => {
+    const name = userProfile.name?.split(" ")[0] || "there";
+
     if (expensesRatio > 70) {
-      return t('dashboard.expenseInsight.high', {
-        name,
-        defaultValue: `${name}, your expenses are high relative to your income. Consider identifying areas where you can cut back.`
-      });
+      return {
+        message: t("dashboard.expenseInsight.high", {
+          name,
+          defaultValue: `${name}, your expenses are high relative to your income. Consider identifying areas where you can cut back.`,
+        }),
+        status: "high",
+        color: "text-red-600",
+        bgColor: "bg-red-50",
+        progressColor: "bg-red-500",
+      };
     } else if (expensesRatio > 50) {
-      return t('dashboard.expenseInsight.moderate', {
-        name,
-        defaultValue: `${name}, your expenses are at a moderate level. Look for opportunities to reduce non-essential spending.`
-      });
+      return {
+        message: t("dashboard.expenseInsight.moderate", {
+          name,
+          defaultValue: `${name}, your expenses are at a moderate level. Look for opportunities to reduce non-essential spending.`,
+        }),
+        status: "moderate",
+        color: "text-orange-600",
+        bgColor: "bg-orange-50",
+        progressColor: "bg-orange-500",
+      };
     } else {
-      return t('dashboard.expenseInsight.low', {
-        name,
-        defaultValue: `${name}, you're doing well at keeping your expenses in check. This gives you more flexibility for savings and investments.`
-      });
+      return {
+        message: t("dashboard.expenseInsight.low", {
+          name,
+          defaultValue: `${name}, you're doing well at keeping your expenses in check. This gives you more flexibility for savings and investments.`,
+        }),
+        status: "low",
+        color: "text-green-600",
+        bgColor: "bg-green-50",
+        progressColor: "bg-green-500",
+      };
     }
   };
-  
-  const getRiskBasedAdvice = (): string => {
-    const name = userProfile.name?.split(' ')[0] || 'there';
-    const riskProfile = userProfile.riskProfile.toLowerCase();
-    
-    if (riskProfile === 'conservative') {
-      return t('dashboard.investmentAdvice.conservative', {
-        name,
-        defaultValue: `As a conservative investor ${name}, focus on stable investments like bonds and dividend stocks to preserve capital.`
-      });
-    } else if (riskProfile === 'moderate') {
-      return t('dashboard.investmentAdvice.moderate', {
-        name,
-        defaultValue: `With your moderate risk tolerance ${name}, a balanced portfolio of stocks and bonds could work well for you.`
-      });
-    } else {
-      return t('dashboard.investmentAdvice.aggressive', {
-        name,
-        defaultValue: `As an aggressive investor ${name}, you might consider growth stocks and alternative investments for higher potential returns.`
+
+  const getInvestmentAdviceData = () => {
+    const name = userProfile.name?.split(" ")[0] || "there";
+    const riskProfile = userProfile.riskProfile?.toLowerCase() ?? "";
+    let advice = t(`dashboard.investmentAdvice.${riskProfile}`, {
+      name,
+      defaultValue: `As a ${riskProfile} investor ${name}, focus on investments that match your risk tolerance.`,
+    });
+
+    if (userProfile.age && userProfile.age > 50) {
+      advice += t("dashboard.investmentAdvice.ageAdjustment", {
+        defaultValue: " Consider reducing risk as retirement nears.",
       });
     }
+
+    return {
+      message: advice,
+      riskLevel: riskProfile,
+      isAgeAdjusted: userProfile.age && userProfile.age > 50,
+    };
   };
-  
+
+  const formatPercentage = (value: number): string => {
+    return Math.round(value * 100) / 100 + "%";
+  };
+
+  const savingsData = getSavingsInsightData();
+  const expenseData = getExpenseInsightData();
+  const investmentData = getInvestmentAdviceData();
+
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-lg font-medium">
-          <div className="flex items-center gap-2">
-            <BrainCircuit className="h-5 w-5 text-purple-500" />
-            {t('dashboard.personalizedInsights')}
+      <CardHeader className='flex flex-row items-center justify-between pb-2'>
+        <CardTitle className='text-lg font-medium'>
+          <div className='flex items-center gap-2'>
+            <BrainCircuit className='h-5 w-5 text-purple-500' />
+            {t("dashboard.personalizedInsights")}
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div>
-          <h3 className="text-md font-medium mb-2">{t('savings.analysis.title')}</h3>
-          <Progress value={savingsProgress} className="h-2" indicatorClassName="bg-green-500" />
-          <p className="mt-2 text-sm text-gray-600">
-            {getPersonalizedInsight()}
-          </p>
-        </div>
-        
-        <div>
-          <h3 className="text-md font-medium mb-2">{t('expenses.monthlyExpenses')}</h3>
-          <div className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4 text-red-500" />
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-red-500 h-2 rounded-full" 
-                style={{ width: `${Math.min(expensesRatio, 100)}%` }}
-              ></div>
+      <CardContent className='space-y-8'>
+        {/* Savings Analysis */}
+        <div
+          className={`rounded-xl p-5 ${savingsData.bgColor} border border-gray-200/50 shadow-sm`}>
+          <div className='flex items-center gap-3 mb-4'>
+            <div
+              className={`p-2.5 rounded-full bg-white shadow-md border border-gray-100`}>
+              <PiggyBank className={`h-5 w-5 ${savingsData.color}`} />
+            </div>
+            <div className='flex-1'>
+              <h3 className='text-lg font-semibold text-gray-900'>
+                {t("savings.analysis.title")}
+              </h3>
+              <Badge
+                className={`${savingsData.color} border-current bg-white/80 text-xs font-medium`}>
+                {t(`dashboard.status.${savingsData.status}`, {
+                  defaultValue:
+                    savingsData.status === "no-data"
+                      ? "No Data"
+                      : "Needs Improvement", // Fallback
+                })}
+              </Badge>
+            </div>
+            <div className='text-right'>
+              <div className='text-lg font-semibold text-gray-800'>
+                {formatPercentage(savingsProgress)}
+              </div>
+              <div className='text-xs text-gray-500'>
+                {t("dashboard.common.ofTarget", "of target")}
+              </div>
             </div>
           </div>
-          <p className="mt-2 text-sm text-gray-600">
-            {getExpenseInsight()}
+          <div className='mb-4'>
+            <Progress
+              value={savingsProgress}
+              className='h-3 bg-white/50'
+              indicatorClassName={savingsData.progressColor}
+            />
+          </div>
+          <p className={`text-sm ${savingsData.color} leading-relaxed`}>
+            {savingsData.message}
           </p>
         </div>
-        
-        <div>
-          <h3 className="text-md font-medium mb-2">{t('dashboard.investmentStrategy', 'Investment Strategy')}</h3>
-          <p className="text-sm text-gray-600">
-            {getRiskBasedAdvice()}
+
+        {/* Monthly Expenses */}
+        <div
+          className={`rounded-xl p-5 ${expenseData.bgColor} border border-gray-200/50 shadow-sm`}>
+          <div className='flex items-center gap-3 mb-4'>
+            <div
+              className={`p-2.5 rounded-full bg-white shadow-md border border-gray-100`}>
+              <BarChart3 className={`h-5 w-5 ${expenseData.color}`} />
+            </div>
+            <div className='flex-1'>
+              <h3 className='text-lg font-semibold text-gray-900'>
+                {t("expenses.monthlyExpenses")}
+              </h3>
+              <Badge
+                className={`${expenseData.color} border-current bg-white/80 text-xs font-medium`}>
+                {t(`dashboard.status.${expenseData.status}`, {
+                  defaultValue: expenseData.status,
+                })}
+              </Badge>
+            </div>
+            <div className='text-right'>
+              <div className='text-lg font-semibold text-gray-800'>
+                {formatPercentage(expensesRatio)}
+              </div>
+              <div className='text-xs text-gray-500'>
+                {t("dashboard.common.ofIncome", "of income")}
+              </div>
+            </div>
+          </div>
+          <div className='mb-4'>
+            <div className='w-full bg-white/50 rounded-full h-3 relative overflow-hidden'>
+              <div
+                className={`${expenseData.progressColor} h-3 rounded-full transition-all duration-300 ease-out`}
+                style={{ width: `${Math.min(expensesRatio, 100)}%` }}></div>
+            </div>
+          </div>
+          <p className={`text-sm ${expenseData.color} leading-relaxed`}>
+            {expenseData.message}
+          </p>
+        </div>
+
+        {/* Investment Strategy */}
+        <div className='rounded-xl p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/40 shadow-sm'>
+          <div className='flex items-start gap-3 mb-4'>
+            <div className='p-2.5 rounded-full bg-white shadow-md border border-gray-100'>
+              <TrendingUp className='h-5 w-5 text-blue-600' />
+            </div>
+            <div className='flex-1'>
+              <h3 className='text-lg font-semibold text-gray-900'>
+                {t("dashboard.investmentStrategy", "Investment Strategy")}
+              </h3>
+              <div className='flex items-center gap-2 mt-2'>
+                <Badge className='bg-blue-600 hover:bg-blue-700 text-white border-0 text-xs px-2 py-1 shadow-sm'>
+                  {t("dashboard.common.recommendedLabel", "⭐ Recommended")}
+                </Badge>
+                <Badge
+                  variant='outline'
+                  className='text-blue-600 border-blue-300 bg-white/60 text-xs font-medium'>
+                  {t(`dashboard.riskProfiles.${investmentData.riskLevel}`, {
+                    defaultValue: `${investmentData.riskLevel} risk`, // Fallback
+                  })}
+                </Badge>
+                {investmentData.isAgeAdjusted && (
+                  <Badge
+                    variant='outline'
+                    className='text-amber-600 border-amber-300 bg-white/60 text-xs font-medium'>
+                    {t("dashboard.common.ageAdjustedLabel", "Age-adjusted")}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+          <p className='text-sm text-blue-700 leading-relaxed bg-white/60 p-3 rounded-lg'>
+            {investmentData.message}
           </p>
         </div>
       </CardContent>

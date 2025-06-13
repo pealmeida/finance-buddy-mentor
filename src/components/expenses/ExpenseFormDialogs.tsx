@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ExpenseItem } from "@/types/finance";
 import {
@@ -42,24 +41,31 @@ const ExpenseFormDialogs: React.FC<ExpenseFormDialogsProps> = ({
       <Dialog open={isAddDialogOpen} onOpenChange={onCloseAddDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('expenses.addNewExpense', 'Add New Expense')}</DialogTitle>
+            <DialogTitle>
+              {t("expenses.addNewExpense", "Add New Expense")}
+            </DialogTitle>
             <DialogDescription>
-              {t('expenses.addDetailedExpenseFor', 'Add a detailed expense item for')} {monthName}.
+              {t(
+                "expenses.addDetailedExpenseFor",
+                "Add a detailed expense item for"
+              )}{" "}
+              {monthName}.
             </DialogDescription>
           </DialogHeader>
-          <ExpenseItemForm
-            onSubmit={onAddExpense}
-            defaultMonth={monthNumber}
-          />
+          <ExpenseItemForm onSubmit={onAddExpense} defaultMonth={monthNumber} />
         </DialogContent>
       </Dialog>
 
       {/* Edit Expense Dialog */}
-      <Dialog open={!!editingExpense} onOpenChange={(open) => !open && onCloseEditDialog()}>
+      <Dialog
+        open={!!editingExpense}
+        onOpenChange={(open) => !open && onCloseEditDialog()}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('expenses.editExpense', 'Edit Expense')}</DialogTitle>
-            <DialogDescription>{t('expenses.updateExpenseDetails', 'Update the expense details.')}</DialogDescription>
+            <DialogTitle>{t("expenses.editExpense")}</DialogTitle>
+            <DialogDescription>
+              {t("expenses.updateExpenseDetails")}
+            </DialogDescription>
           </DialogHeader>
           {editingExpense && (
             <ExpenseItemForm
