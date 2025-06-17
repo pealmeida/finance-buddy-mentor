@@ -59,7 +59,7 @@ export const saveFinancialProfile = async (userId: string, financialData: {
         monthly_income: financialData.monthlyIncome,
         risk_profile: financialData.riskProfile,
         has_emergency_fund: financialData.hasEmergencyFund,
-        emergency_fund_months: financialData.emergencyFundMonths,
+        emergency_fund_months: financialData.emergencyFundMonths || null,
         has_debts: financialData.hasDebts
       }]);
 

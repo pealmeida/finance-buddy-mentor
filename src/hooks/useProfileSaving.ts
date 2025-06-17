@@ -50,13 +50,13 @@ export const useProfileSaving = () => {
           .delete()
           .eq('user_id', profile.id);
 
-        // Then insert new debt details
+        // Then insert new debt details with proper structure
         const debtDetailsToInsert = profile.debtDetails.map((debt: DebtDetail) => ({
           user_id: profile.id,
+          name: `${debt.type} debt`, // Generate a name based on type
           type: debt.type,
           amount: debt.amount,
-          interest_rate: debt.interestRate,
-          minimum_payment: debt.minimumPayment
+          interest_rate: debt.interestRate
         }));
 
         const { error: debtError } = await supabase

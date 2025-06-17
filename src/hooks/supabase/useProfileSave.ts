@@ -3,8 +3,8 @@ import { useSupabaseBase } from './useSupabaseBase';
 import { UserProfile } from '@/types/finance';
 import { handleFinancialGoals } from './utils/financialGoalsUtils';
 import { handleInvestments } from './utils/investmentsUtils';
-import { handleDebtDetails } from './utils/debtDetailsUtils';
-import { saveBasicProfile } from './utils/profileUtils';
+import { saveDebtDetails } from './utils/debtDetailsUtils';
+import { saveBasicProfile, saveFinancialProfile } from './utils/profileUtils';
 
 /**
  * Hook for saving user profile data
@@ -21,13 +21,24 @@ export function useProfileSave() {
       
       console.log('Saving profile for user:', userId);
       
-      // Validate profile data
-      if (!profile.name) throw new Error("Name is required");
-      if (!profile.email) throw new Error("Email is required");
+      // Validate profile data and provide defaults
+      const name = profile.name || 'User';
+      const email = profile.email || 'user@example.com';
+      const age = profile.age || 0;
+      
       if (!profile.riskProfile) throw new Error("Risk profile is required");
       
-      // Save basic profile and financial profile
-      await saveBasicProfile(userId, profile);
+      // Save basic profile
+      await saveBasicProfile(userId, { name, email, age });
+      
+      // Save financial profile
+      await saveFinancialProfile(userId, {
+        monthlyIncome: profile.monthlyIncome || 0,
+        riskProfile: profile.riskProfile,
+        hasEmergencyFund: profile.hasEmergencyFund || false,
+        emergencyFundMonths: profile.emergencyFundMonths,
+        hasDebts: profile.hasDebts || false
+      });
       
       // Handle financial goals
       if (profile.financialGoals && profile.financialGoals.length > 0) {
@@ -41,7 +52,7 @@ export function useProfileSave() {
       
       // Handle debt details
       if (profile.debtDetails && profile.debtDetails.length > 0) {
-        await handleDebtDetails(userId, profile.debtDetails);
+        await saveDebtDetails(userId, profile.debtDetails);
       }
       
       return true;
