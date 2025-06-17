@@ -1,3 +1,4 @@
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
@@ -5,12 +6,15 @@ import "./index.css";
 import "./i18n";
 import { CurrencyProvider } from "./context/CurrencyContext";
 import { LanguageProvider } from "./context/LanguageContext";
+import { SecurityProvider } from "./components/security/SecurityProvider";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <LanguageProvider>
       <CurrencyProvider>
-        <App />
+        <SecurityProvider>
+          <App />
+        </SecurityProvider>
       </CurrencyProvider>
     </LanguageProvider>
   </React.StrictMode>

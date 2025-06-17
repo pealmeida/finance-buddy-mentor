@@ -1,9 +1,9 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { validateSession } from '@/utils/security/authSecurity';
 
 export const useSimpleAuthCheck = (redirectToLogin = true) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -17,27 +17,31 @@ export const useSimpleAuthCheck = (redirectToLogin = true) => {
     const checkAuth = async () => {
       try {
         setIsLoading(true);
+        setError(null);
         
-        const { data, error: sessionError } = await supabase.auth.getSession();
+        const validation = await validateSession();
         
-        if (sessionError) throw new Error(sessionError.message);
-        
-        if (!data.session) {
+        if (!validation.isValid) {
+          setIsAuthenticated(false);
+          setError(validation.error || 'Authentication failed');
+          
           if (redirectToLogin) {
             toast({
               title: t('auth.authRequired'),
-              description: t('auth.pleaseSignIn'),
+              description: validation.error === 'Session expired' 
+                ? t('auth.sessionExpired') 
+                : t('auth.pleaseSignIn'),
               variant: "destructive"
             });
             navigate('/login');
           }
-          setIsAuthenticated(false);
         } else {
           setIsAuthenticated(true);
         }
       } catch (err) {
         console.error("Auth check error:", err);
-        setError(err instanceof Error ? err.message : "Authentication error");
+        const errorMessage = err instanceof Error ? err.message : "Authentication error";
+        setError(errorMessage);
         setIsAuthenticated(false);
         
         if (redirectToLogin) {
