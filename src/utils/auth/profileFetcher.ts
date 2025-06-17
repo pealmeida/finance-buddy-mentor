@@ -1,3 +1,4 @@
+
 import { supabase } from "../../integrations/supabase/client";
 import { UserProfile, RiskProfile, MonthlyAmount, Currency, Language } from "../../types/finance";
 import { validateRiskProfile } from "./profileValidation";
@@ -41,9 +42,9 @@ const savePreferredLanguage = (language: Language) => {
 /**
  * Convert raw JSON data to typed MonthlyAmount array for expenses
  */
-const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] => {
+const convertToTypedExpensesData = (data: Json | null, year: number = new Date().getFullYear()): MonthlyAmount[] => {
   if (!data || typeof data !== 'object' || !Array.isArray(data)) {
-    return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+    return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, year, amount: 0 }));
   }
 
   try {
@@ -52,13 +53,13 @@ const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] => {
         const itemObj = item as Record<string, unknown>;
         const month = typeof itemObj.month === 'number' ? itemObj.month : 0;
         const amount = typeof itemObj.amount === 'number' ? itemObj.amount : 0;
-        return { month, amount };
+        return { month, year, amount };
       }
-      return { month: 0, amount: 0 };
+      return { month: 0, year, amount: 0 };
     }).filter(item => item.month >= 1 && item.month <= 12);
 
     if (typedData.length !== 12) {
-      const completeData = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+      const completeData = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, year, amount: 0 }));
       typedData.forEach(item => {
         if (item.month >= 1 && item.month <= 12) {
           completeData[item.month - 1] = item;
@@ -70,7 +71,7 @@ const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] => {
     return typedData.sort((a, b) => a.month - b.month);
   } catch (error) {
     console.error("Error converting JSON to typed expenses data:", error);
-    return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+    return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, year, amount: 0 }));
   }
 };
 
@@ -167,17 +168,19 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
     const debtDetails = debtDetailsData ? debtDetailsData.map((debt: any) => ({
       id: debt.id,
       type: debt.type as 'credit_card' | 'loan' | 'mortgage' | 'other',
-      name: debt.name,
       amount: debt.amount,
       interestRate: debt.interest_rate,
-      minimumPayment: debt.minimum_payment
+      minimumPayment: debt.minimum_payment || 0
     })) : [];
+
+    // Get current year for data transformation
+    const currentYear = new Date().getFullYear();
 
     // Transform monthly expenses data
     const monthlyExpenses = monthlyExpensesData && monthlyExpensesData.length > 0 ? {
       userId: userId,
       year: monthlyExpensesData[0].year,
-      data: convertToTypedExpensesData(monthlyExpensesData[0].data)
+      data: convertToTypedExpensesData(monthlyExpensesData[0].data, monthlyExpensesData[0].year)
     } : undefined;
 
     // Transform monthly savings data
@@ -185,7 +188,7 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       id: monthlySavingsData[0].id,
       userId: userId,
       year: monthlySavingsData[0].year,
-      data: convertToTypedSavingsData(monthlySavingsData[0].data)
+      data: convertToTypedSavingsData(monthlySavingsData[0].data, monthlySavingsData[0].year)
     } : undefined;
 
     console.log('fetchUserProfileFromSupabase: Transformed monthly expenses:', monthlyExpenses);

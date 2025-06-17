@@ -83,10 +83,10 @@ export const fetchDebtDetails = async (userId: string): Promise<DebtDetail[]> =>
     // Transform debt details data
     return debtDetailsData ? debtDetailsData.map((debt: any) => ({
       id: debt.id,
-      type: debt.type as 'creditCard' | 'personalLoan' | 'studentLoan' | 'other',
-      name: debt.name,
+      type: debt.type as 'credit_card' | 'loan' | 'mortgage' | 'other',
       amount: debt.amount,
-      interestRate: debt.interest_rate
+      interestRate: debt.interest_rate,
+      minimumPayment: debt.minimum_payment || 0
     })) : [];
   } catch (err) {
     console.error("Error fetching debt details:", err);
@@ -161,7 +161,7 @@ export const fetchProfileData = async (userId: string): Promise<Partial<UserProf
       monthlyIncome: financialProfileData?.monthly_income || 0,
       riskProfile: riskProfile,
       hasEmergencyFund: financialProfileData?.has_emergency_fund || false,
-      emergencyFundMonths: financialProfileData?.emergency_fund_months,
+      emergencyFundMonths: financialProfileData?.emergency_fund_months ?? undefined,
       hasDebts: financialProfileData?.has_debts || false,
     };
   } catch (err) {

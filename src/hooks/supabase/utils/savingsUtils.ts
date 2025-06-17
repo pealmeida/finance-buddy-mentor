@@ -1,3 +1,4 @@
+
 import { MonthlyAmount } from '../../../types/finance';
 import { MONTHS } from '../../../constants/months';
 import { Json } from '../../../integrations/supabase/types';
@@ -20,13 +21,13 @@ export const calculateAverageSavings = (monthlySavings: MonthlyAmount[] | undefi
  * Convert raw JSON data to typed MonthlyAmount array
  * Safely handles any format issues from the database
  */
-export const convertToTypedSavingsData = (data: Json | null): MonthlyAmount[] => {
+export const convertToTypedSavingsData = (data: Json | null, year: number = new Date().getFullYear()): MonthlyAmount[] => {
   console.log("Converting JSON to typed savings data:", data);
 
   // If we get null or non-array data, return empty data
   if (!data || typeof data !== 'object' || !Array.isArray(data)) {
     console.log("Invalid or empty savings data received, initializing empty data");
-    return initializeEmptySavingsData();
+    return initializeEmptySavingsData(year);
   }
 
   try {
@@ -49,11 +50,11 @@ export const convertToTypedSavingsData = (data: Json | null): MonthlyAmount[] =>
             : 0;
 
         // Return a clean MonthlyAmount object
-        return { month, amount };
+        return { month, year, amount };
       }
 
       console.warn("Unexpected data format in savings item:", item);
-      return { month: 0, amount: 0 };
+      return { month: 0, year, amount: 0 };
     }).filter(item => item.month >= 1 && item.month <= 12);
 
     console.log("Converted typed data after filtering:", typedData);
@@ -61,7 +62,7 @@ export const convertToTypedSavingsData = (data: Json | null): MonthlyAmount[] =>
     // Ensure complete data set for all 12 months
     if (typedData.length !== 12) {
       console.log("Savings data doesn't have 12 months, filling missing months");
-      const completeData = initializeEmptySavingsData();
+      const completeData = initializeEmptySavingsData(year);
 
       // Update the complete data with any valid months we received
       typedData.forEach(item => {
@@ -80,17 +81,18 @@ export const convertToTypedSavingsData = (data: Json | null): MonthlyAmount[] =>
     return typedData;
   } catch (error) {
     console.error("Error converting JSON to typed savings data:", error);
-    return initializeEmptySavingsData();
+    return initializeEmptySavingsData(year);
   }
 };
 
 /**
  * Initialize empty monthly savings data for all months
  */
-export const initializeEmptySavingsData = (): MonthlyAmount[] => {
+export const initializeEmptySavingsData = (year: number = new Date().getFullYear()): MonthlyAmount[] => {
   console.log("Initializing empty savings data");
   return MONTHS.map((_, index) => ({
     month: index + 1,
+    year: year,
     amount: 0
   }));
 };
@@ -98,25 +100,26 @@ export const initializeEmptySavingsData = (): MonthlyAmount[] => {
 /**
  * Ensure data consistency and completeness for monthly savings
  */
-export const ensureCompleteSavingsData = (data: MonthlyAmount[]): MonthlyAmount[] => {
+export const ensureCompleteSavingsData = (data: MonthlyAmount[], year: number = new Date().getFullYear()): MonthlyAmount[] => {
   console.log("Ensuring complete savings data:", data);
 
   // If empty or invalid, return completely empty data
   if (!Array.isArray(data) || data.length === 0) {
     console.log("No data provided, initializing empty data");
-    return initializeEmptySavingsData();
+    return initializeEmptySavingsData(year);
   }
 
   // If we don't have exactly 12 months, fill in the missing ones
   if (data.length !== 12) {
     console.log("Data doesn't have 12 months, filling missing months");
-    const completeData = initializeEmptySavingsData();
+    const completeData = initializeEmptySavingsData(year);
 
     // Update with any valid months we have
     data.forEach(item => {
       if (item.month >= 1 && item.month <= 12) {
         completeData[item.month - 1] = {
           month: item.month,
+          year: year,
           amount: typeof item.amount === 'number' ? item.amount : 0
         };
       }
@@ -126,9 +129,10 @@ export const ensureCompleteSavingsData = (data: MonthlyAmount[]): MonthlyAmount[
     return completeData;
   }
 
-  // Ensure all items have proper numeric amounts
+  // Ensure all items have proper numeric amounts and year
   const validatedData = data.map(item => ({
     month: item.month,
+    year: year,
     amount: typeof item.amount === 'number' ? item.amount : 0
   }));
 

@@ -1,51 +1,97 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { UserProfile, RiskProfile } from '@/types/finance';
+import { RiskProfile } from '@/types/finance';
 
 /**
- * Validates if a risk profile is of the correct type
- * @param profile Risk profile string
- * @returns A valid RiskProfile value
+ * Validate and convert risk profile string to RiskProfile type
  */
-export const validateRiskProfile = (profile: string | undefined): RiskProfile => {
-  if (profile === 'conservative' || profile === 'moderate' || profile === 'aggressive') {
-    return profile as RiskProfile;
+export const validateRiskProfile = (value: string | null | undefined): RiskProfile => {
+  if (value === 'conservative' || value === 'moderate' || value === 'aggressive') {
+    return value;
   }
-  return 'moderate'; // Default to moderate if invalid value
+  return 'moderate'; // default value
 };
 
 /**
- * Save basic profile and financial profile data
- * @param userId User ID
- * @param profile User profile data
+ * Save basic profile information to Supabase
  */
-export const saveBasicProfile = async (userId: string, profile: UserProfile) => {
-  // Upsert basic profile
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .upsert({
-      id: userId,
-      name: profile.name,
-      email: profile.email,
-      age: profile.age
-    }, { onConflict: 'id' });
-      
-  if (profileError) throw new Error(`Error updating profile: ${profileError.message}`);
-  
-  // Validate and ensure risk profile is correct
-  const validRiskProfile = validateRiskProfile(profile.riskProfile);
-  
-  // Upsert financial profile
-  const { error: financialProfileError } = await supabase
-    .from('financial_profiles')
-    .upsert({
-      id: userId,
-      monthly_income: profile.monthlyIncome,
-      risk_profile: validRiskProfile,
-      has_emergency_fund: profile.hasEmergencyFund,
-      emergency_fund_months: profile.emergencyFundMonths || null,
-      has_debts: profile.hasDebts
-    }, { onConflict: 'id' });
-        
-  if (financialProfileError) throw new Error(`Error updating financial profile: ${financialProfileError.message}`);
+export const saveBasicProfile = async (userId: string, profileData: {
+  name: string;
+  email: string;
+  age: number;
+}) => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .upsert([{
+        id: userId,
+        name: profileData.name,
+        email: profileData.email,
+        age: profileData.age
+      }]);
+
+    if (error) {
+      throw new Error(`Error saving basic profile: ${error.message}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in saveBasicProfile:', error);
+    throw error;
+  }
+};
+
+/**
+ * Save financial profile information to Supabase
+ */
+export const saveFinancialProfile = async (userId: string, financialData: {
+  monthlyIncome: number;
+  riskProfile: RiskProfile;
+  hasEmergencyFund: boolean;
+  emergencyFundMonths?: number;
+  hasDebts: boolean;
+}) => {
+  try {
+    const { data, error } = await supabase
+      .from('financial_profiles')
+      .upsert([{
+        id: userId,
+        monthly_income: financialData.monthlyIncome,
+        risk_profile: financialData.riskProfile,
+        has_emergency_fund: financialData.hasEmergencyFund,
+        emergency_fund_months: financialData.emergencyFundMonths,
+        has_debts: financialData.hasDebts
+      }]);
+
+    if (error) {
+      throw new Error(`Error saving financial profile: ${error.message}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in saveFinancialProfile:', error);
+    throw error;
+  }
+};
+
+/**
+ * Check if a user profile exists
+ */
+export const checkProfileExists = async (userId: string): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
+
+    return !!data;
+  } catch (error) {
+    console.error('Error checking profile existence:', error);
+    return false;
+  }
 };

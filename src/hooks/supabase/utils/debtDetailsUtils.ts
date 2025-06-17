@@ -1,56 +1,72 @@
-import { supabase } from '../../../integrations/supabase/client';
-import { v4 as uuidv4 } from 'uuid';
-import { DebtDetail } from '../../../types/finance';
+
+import { DebtDetail } from '@/types/finance';
+import { supabase } from '@/integrations/supabase/client';
 
 /**
- * Handle debt details updates for a user
- * @param userId The user's ID
- * @param debtDetails Array of debt details
+ * Fetch debt details for a user from Supabase
  */
-export const handleDebtDetails = async (userId: string, debtDetails: DebtDetail[]) => {
+export const fetchDebtDetails = async (userId: string): Promise<DebtDetail[]> => {
   try {
-    // Get existing debts
-    const { data: existingDebts, error: fetchDebtsError } = await supabase
+    const { data, error } = await supabase
       .from('debt_details')
-      .select('id')
+      .select('*')
       .eq('user_id', userId);
 
-    if (fetchDebtsError) throw new Error(`Error fetching existing debts: ${fetchDebtsError.message}`);
-
-    const existingDebtIds = existingDebts ? existingDebts.map((d: any) => d.id) : [];
-    const newDebtIds = debtDetails.map(d => d.id);
-
-    // Find debts to delete
-    const debtsToDelete = existingDebtIds.filter(id => !newDebtIds.includes(id));
-
-    // Delete removed debts
-    if (debtsToDelete.length > 0) {
-      const { error: deleteDebtsError } = await supabase
-        .from('debt_details')
-        .delete()
-        .in('id', debtsToDelete);
-
-      if (deleteDebtsError) throw new Error(`Error deleting debts: ${deleteDebtsError.message}`);
+    if (error) {
+      throw new Error(`Error fetching debt details: ${error.message}`);
     }
 
-    // Upsert all current debts - ensure each debt has a valid ID
-    const debtsToUpsert = debtDetails.map(debt => ({
-      id: debt.id || uuidv4(),
-      user_id: userId,
-      type: debt.type,
-      name: debt.name,
+    // Transform the data to match our DebtDetail interface
+    return data ? data.map((debt: any) => ({
+      id: debt.id,
+      type: debt.type as 'credit_card' | 'loan' | 'mortgage' | 'other',
       amount: debt.amount,
-      interest_rate: debt.interestRate
-    }));
+      interestRate: debt.interest_rate,
+      minimumPayment: debt.minimum_payment || 0
+    })) : [];
+  } catch (error) {
+    console.error('Error fetching debt details:', error);
+    return [];
+  }
+};
 
-    const { error: upsertDebtsError } = await supabase
+/**
+ * Save debt details to Supabase
+ */
+export const saveDebtDetails = async (userId: string, debtDetails: DebtDetail[]): Promise<boolean> => {
+  try {
+    // First, delete existing debt details for this user
+    const { error: deleteError } = await supabase
       .from('debt_details')
-      .upsert(debtsToUpsert, { onConflict: 'id' });
+      .delete()
+      .eq('user_id', userId);
 
-    if (upsertDebtsError) throw new Error(`Error updating debts: ${upsertDebtsError.message}`);
+    if (deleteError) {
+      throw new Error(`Error deleting existing debt details: ${deleteError.message}`);
+    }
 
-  } catch (err) {
-    console.error("Error handling debt details:", err);
-    throw err;
+    // Then insert the new debt details
+    if (debtDetails.length > 0) {
+      const debtDetailsToInsert = debtDetails.map(debt => ({
+        user_id: userId,
+        type: debt.type,
+        amount: debt.amount,
+        interest_rate: debt.interestRate,
+        minimum_payment: debt.minimumPayment
+      }));
+
+      const { error: insertError } = await supabase
+        .from('debt_details')
+        .insert(debtDetailsToInsert);
+
+      if (insertError) {
+        throw new Error(`Error inserting debt details: ${insertError.message}`);
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error saving debt details:', error);
+    return false;
   }
 };

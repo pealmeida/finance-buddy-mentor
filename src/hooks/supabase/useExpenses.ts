@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ExpenseItem, MonthlyAmount } from '@/types/finance';
@@ -70,7 +71,7 @@ export const useExpenses = (userId: string, year: number) => {
                 throw summaryError;
             }
 
-            let monthlyData: MonthlyAmount[] = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+            let monthlyData: MonthlyAmount[] = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, year, amount: 0 }));
 
             if (existingSummary && existingSummary.data) {
                 monthlyData = existingSummary.data as unknown as MonthlyAmount[];

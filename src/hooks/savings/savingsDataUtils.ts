@@ -5,10 +5,11 @@ import { MONTHS } from '@/constants/months';
 /**
  * Initialize empty monthly savings data for all months
  */
-export const initializeEmptySavingsData = (): MonthlyAmount[] => {
+export const initializeEmptySavingsData = (year: number = new Date().getFullYear()): MonthlyAmount[] => {
   console.log("Initializing empty savings data");
   return MONTHS.map((_, index) => ({
     month: index + 1,
+    year: year,
     amount: 0
   }));
 };
@@ -16,23 +17,24 @@ export const initializeEmptySavingsData = (): MonthlyAmount[] => {
 /**
  * Process fetched data to ensure it's in the right format
  */
-export const processFetchedData = (data: MonthlyAmount[]): MonthlyAmount[] => {
+export const processFetchedData = (data: MonthlyAmount[], year: number = new Date().getFullYear()): MonthlyAmount[] => {
   // If empty or invalid, return completely empty data
   if (!Array.isArray(data) || data.length === 0) {
     console.log("No data provided, initializing empty data");
-    return initializeEmptySavingsData();
+    return initializeEmptySavingsData(year);
   }
   
   // If we don't have exactly 12 months, fill in the missing ones
   if (data.length !== 12) {
     console.log("Data doesn't have 12 months, filling missing months");
-    const completeData = initializeEmptySavingsData();
+    const completeData = initializeEmptySavingsData(year);
     
     // Update with any valid months we have
     data.forEach(item => {
       if (item.month >= 1 && item.month <= 12) {
         completeData[item.month - 1] = {
           month: item.month,
+          year: year,
           amount: typeof item.amount === 'number' ? item.amount : 0
         };
       }
@@ -42,9 +44,10 @@ export const processFetchedData = (data: MonthlyAmount[]): MonthlyAmount[] => {
     return completeData;
   }
   
-  // Ensure all items have proper numeric amounts
+  // Ensure all items have proper numeric amounts and year
   const validatedData = data.map(item => ({
     month: item.month,
+    year: year,
     amount: typeof item.amount === 'number' ? item.amount : 0
   }));
   

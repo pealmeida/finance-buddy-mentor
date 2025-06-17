@@ -2,9 +2,9 @@
 import { useEffect, useRef } from 'react';
 import { UserProfile } from '@/types/finance';
 import { useToast } from '@/components/ui/use-toast';
-import { useSavingsDataFetcher } from './useSavingsDataFetcher';
 import { useSavingsDataState } from './useSavingsDataState';
 import { initializeEmptySavingsData, processFetchedData } from './savingsDataUtils';
+import { useGetMonthlySavings } from '../supabase/useGetMonthlySavings';
 
 /**
  * Hook to manage monthly savings data loading and saving
@@ -30,10 +30,11 @@ export const useMonthlySavingsData = (
   } = useSavingsDataState();
   
   const {
-    fetchData,
-    refreshData,
-    isFetching
-  } = useSavingsDataFetcher(profile, selectedYear, checkAndRefreshAuth);
+    data: fetchedData,
+    isLoading: isFetching,
+    error: fetchError,
+    refetch
+  } = useGetMonthlySavings(profile.id, selectedYear);
 
   // Fetch data when year changes or auth is confirmed
   useEffect(() => {
@@ -68,16 +69,14 @@ export const useMonthlySavingsData = (
       }
       
       try {
-        const savedData = await fetchData();
-        
         if (!isMounted) return;
         
-        if (savedData && savedData.data) {
-          console.log("Setting savings data from fetch:", savedData.data);
-          setSavingsData(processFetchedData(savedData.data));
+        if (fetchedData && fetchedData.data) {
+          console.log("Setting savings data from fetch:", fetchedData.data);
+          setSavingsData(processFetchedData(fetchedData.data, selectedYear));
         } else {
           console.log("No saved data found, initializing empty data");
-          setSavingsData(initializeEmptySavingsData());
+          setSavingsData(initializeEmptySavingsData(selectedYear));
         }
       } finally {
         if (isMounted) {
@@ -96,7 +95,7 @@ export const useMonthlySavingsData = (
     profile?.id, 
     selectedYear, 
     authChecked, 
-    fetchData, 
+    fetchedData,
     loadingData, 
     isFetching, 
     toast, 
@@ -105,7 +104,7 @@ export const useMonthlySavingsData = (
     setSavingsData
   ]);
 
-  // Wrapper around refreshData to handle UI state
+  // Wrapper around refetch to handle UI state
   const handleRefreshData = async () => {
     if (!profile?.id) return;
     
@@ -117,16 +116,16 @@ export const useMonthlySavingsData = (
     setError(null);
     
     try {
-      const savedData = await refreshData();
+      const result = await refetch();
       
-      if (savedData && savedData.data) {
-        setSavingsData(processFetchedData(savedData.data));
+      if (result.data && result.data.data) {
+        setSavingsData(processFetchedData(result.data.data, selectedYear));
         toast({
           title: "Data Refreshed",
           description: "Your savings data has been refreshed successfully."
         });
       } else {
-        setSavingsData(initializeEmptySavingsData());
+        setSavingsData(initializeEmptySavingsData(selectedYear));
         toast({
           title: "No Data Found",
           description: "No savings data was found for the selected year."
@@ -139,11 +138,11 @@ export const useMonthlySavingsData = (
 
   return {
     savingsData,
-    loadingData,
-    error,
+    loadingData: loadingData || isFetching,
+    error: error || fetchError,
     refreshData: handleRefreshData,
     setSavingsData,
     setError,
-    initializeEmptyData: () => setSavingsData(initializeEmptySavingsData())
+    initializeEmptyData: () => setSavingsData(initializeEmptySavingsData(selectedYear))
   };
 };
