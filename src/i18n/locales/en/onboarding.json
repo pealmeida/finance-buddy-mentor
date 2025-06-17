@@ -58,6 +58,7 @@
   "realEstate": "Real Estate",
   "cash": "Cash / Savings",
   "crypto": "Cryptocurrency",
+  "addInvestmentButton": "Add Investment",
   "investmentNamePlaceholder": "S&P 500 ETF, Bitcoin, etc.",
   "reviewComplete": "Review & Complete",
   "personalInformation": "Personal Information",

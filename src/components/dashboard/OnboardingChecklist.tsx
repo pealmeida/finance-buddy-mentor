@@ -9,6 +9,7 @@ import { UserProfile } from "../../types/finance";
 
 interface OnboardingChecklistProps {
   userProfile: UserProfile;
+  isMobile: boolean;
 }
 
 interface ChecklistItem {
@@ -20,10 +21,12 @@ interface ChecklistItem {
 
 const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
   userProfile,
+  isMobile,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   const hasMonthlyExpensesData = useCallback((): boolean => {
     if (
@@ -125,12 +128,21 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
     navigate("/full-profile");
   };
 
+  if (!isVisible) {
+    return null;
+  }
+
+  const bottomPositionClass = isMobile ? "bottom-20" : "bottom-4";
+
   return (
-    <div className='fixed bottom-4 left-4 z-50 animate-fade-in'>
+    <div className={`fixed ${bottomPositionClass} left-4 z-50 animate-fade-in`}>
       <Card className='w-80 shadow-lg border-finance-blue/20 transition-all duration-300'>
         {isExpanded ? (
           <>
-            <CardHeader className='pb-3'>
+            <CardHeader
+              className='pb-3'
+              onClick={() => setIsExpanded(false)}
+              style={{ cursor: "pointer" }}>
               <div className='flex items-center justify-between'>
                 <CardTitle className='text-lg text-finance-blue'>
                   {t("dashboard.onboardingProgress")}
@@ -139,9 +151,12 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
                   <Button
                     variant='ghost'
                     size='sm'
-                    onClick={() => setIsExpanded(false)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsVisible(false);
+                    }}
                     className='h-6 w-6 p-0'>
-                    <ChevronDown className='h-4 w-4' />
+                    <X className='h-4 w-4' />
                   </Button>
                 </div>
               </div>
@@ -153,7 +168,10 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
                 </p>
               </div>
             </CardHeader>
-            <CardContent className='space-y-3'>
+            <CardContent
+              className='space-y-3'
+              onClick={() => setIsExpanded(false)}
+              style={{ cursor: "pointer" }}>
               {checklistItems.map((item) => (
                 <div key={item.id} className='flex items-center gap-3'>
                   {item.completed ? (
@@ -186,7 +204,10 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
             </CardContent>
           </>
         ) : (
-          <CardContent className='p-4'>
+          <CardContent
+            className='p-4'
+            onClick={() => setIsExpanded(true)}
+            style={{ cursor: "pointer" }}>
             <div className='flex items-center justify-between'>
               <div className='flex-1'>
                 <h4 className='text-sm font-medium text-finance-blue mb-2'>
@@ -202,9 +223,12 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
                 <Button
                   variant='ghost'
                   size='sm'
-                  onClick={() => setIsExpanded(true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsVisible(false);
+                  }}
                   className='h-6 w-6 p-0'>
-                  <ChevronUp className='h-4 w-4' />
+                  <X className='h-4 w-4' />
                 </Button>
               </div>
             </div>

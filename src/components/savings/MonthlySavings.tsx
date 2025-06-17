@@ -20,11 +20,9 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     selectedYear,
     savingsData,
     editingMonth,
-    loadingData,
     error,
     handleSaveAmount,
     handleEditMonth,
-    handleSaveAll,
     handleYearChange,
     setEditingMonth,
   } = useMonthlySavingsState(profile, onSave || (() => {}), isSaving);
@@ -40,24 +38,28 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     );
   }
 
+  // Extract financial data for auto-calculation
+  const monthlyIncome = profile.monthlyIncome;
+  const monthlyExpenses = profile.monthlyExpenses?.data || [];
+
   return (
     <div className='space-y-8'>
       <MonthlySavingsHeader
         selectedYear={selectedYear}
         onYearChange={handleYearChange}
-        onSaveAll={handleSaveAll}
-        disabled={loadingData || isSaving}
-        isSaving={isSaving}
+        disabled={isSaving}
       />
 
       <MonthlySavingsContent
-        loadingData={loadingData}
+        loadingData={false}
         savingsData={savingsData}
         editingMonth={editingMonth}
         onEditMonth={handleEditMonth}
         onSaveAmount={handleSaveAmount}
         onCancelEdit={() => setEditingMonth(null)}
         error={error}
+        monthlyIncome={monthlyIncome}
+        monthlyExpenses={monthlyExpenses}
       />
     </div>
   );

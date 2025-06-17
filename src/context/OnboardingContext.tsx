@@ -1,5 +1,10 @@
-import React, { createContext, useContext, useState } from "react";
-import { UserProfile } from "../types/finance";
+import React, { createContext, useContext, useState, useCallback } from "react";
+import {
+  UserProfile,
+  Investment,
+  FinancialGoal,
+  RiskProfile,
+} from "../types/finance";
 import { v4 as uuidv4 } from "uuid";
 
 interface OnboardingContextType {
@@ -14,15 +19,7 @@ interface OnboardingContextType {
   updateCurrentGoal: (updates: Partial<typeof initialCurrentGoal>) => void;
   addGoal: () => void;
   removeGoal: (id: string) => void;
-  currentInvestment: {
-    type: "stocks" | "bonds" | "realEstate" | "cash" | "crypto" | "other";
-    name: string;
-    value: number;
-  };
-  updateCurrentInvestment: (
-    updates: Partial<typeof initialCurrentInvestment>
-  ) => void;
-  addInvestment: () => void;
+  addInvestment: (investment: Omit<Investment, "id">) => void;
   removeInvestment: (id: string) => void;
 }
 
@@ -45,12 +42,6 @@ const initialCurrentGoal = {
   priority: "medium" as const,
 };
 
-const initialCurrentInvestment = {
-  type: "stocks" as const,
-  name: "",
-  value: 0,
-};
-
 const OnboardingContext = createContext<OnboardingContextType | undefined>(
   undefined
 );
@@ -60,11 +51,8 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [profile, setProfile] = useState<Partial<UserProfile>>(initialProfile);
   const [currentGoal, setCurrentGoal] = useState(initialCurrentGoal);
-  const [currentInvestment, setCurrentInvestment] = useState(
-    initialCurrentInvestment
-  );
 
-  const updateProfile = (updates: Partial<UserProfile>) => {
+  const updateProfile = useCallback((updates: Partial<UserProfile>) => {
     console.log(
       "OnboardingContext: updateProfile called with updates:",
       updates
@@ -77,19 +65,16 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       return newProfile;
     });
-  };
+  }, []);
 
-  const updateCurrentGoal = (updates: Partial<typeof initialCurrentGoal>) => {
-    setCurrentGoal((prev) => ({ ...prev, ...updates }));
-  };
+  const updateCurrentGoal = useCallback(
+    (updates: Partial<typeof initialCurrentGoal>) => {
+      setCurrentGoal((prev) => ({ ...prev, ...updates }));
+    },
+    []
+  );
 
-  const updateCurrentInvestment = (
-    updates: Partial<typeof initialCurrentInvestment>
-  ) => {
-    setCurrentInvestment((prev) => ({ ...prev, ...updates }));
-  };
-
-  const addGoal = () => {
+  const addGoal = useCallback(() => {
     if (currentGoal.name && currentGoal.targetAmount > 0) {
       const newGoal = {
         id: uuidv4(),
@@ -104,7 +89,7 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setCurrentGoal(initialCurrentGoal);
     }
-  };
+  }, [currentGoal]);
 
   const removeGoal = (id: string) => {
     setProfile((prev) => ({
@@ -114,21 +99,22 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
     }));
   };
 
-  const addInvestment = () => {
-    if (currentInvestment.name && currentInvestment.value > 0) {
-      const newInvestment = {
+  const addInvestment = useCallback((investment: Omit<Investment, "id">) => {
+    if (investment.name && investment.value > 0 && investment.type) {
+      const newInvestment: Investment = {
         id: uuidv4(),
-        ...currentInvestment,
+        ...investment,
+        type: investment.type,
+        name: investment.name,
+        value: investment.value,
       };
 
       setProfile((prev) => ({
         ...prev,
         investments: [...(prev.investments || []), newInvestment],
       }));
-
-      setCurrentInvestment(initialCurrentInvestment);
     }
-  };
+  }, []);
 
   const removeInvestment = (id: string) => {
     setProfile((prev) => ({
@@ -147,8 +133,6 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
         updateCurrentGoal,
         addGoal,
         removeGoal,
-        currentInvestment,
-        updateCurrentInvestment,
         addInvestment,
         removeInvestment,
       }}>

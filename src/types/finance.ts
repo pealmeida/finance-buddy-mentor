@@ -1,5 +1,8 @@
 export type RiskProfile = 'conservative' | 'moderate' | 'aggressive';
 
+export type Currency = 'USD' | 'EUR' | 'BRL';
+export type Language = 'en' | 'pt-BR';
+
 export interface UserProfile {
   id: string;
   name?: string;
@@ -10,6 +13,8 @@ export interface UserProfile {
   hasEmergencyFund?: boolean;
   emergencyFundMonths?: number;
   hasDebts?: boolean;
+  preferredCurrency?: Currency;
+  preferredLanguage?: Language;
   debtDetails?: DebtDetail[];
   monthlyExpenses?: {
     userId: string;
@@ -37,6 +42,7 @@ export interface MonthlyExpenses {
 
 export interface MonthlyAmount {
   month: number;
+  year: number;
   amount: number;
   items?: ExpenseItem[];
 }

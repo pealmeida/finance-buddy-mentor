@@ -230,7 +230,7 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
   };
 
   return (
-    <div className='flex flex-col gap-8'>
+    <div className='flex flex-col gap-8 pb-16'>
       <StepIndicator steps={stepIndicatorSteps} currentStep={step} />
 
       <OnboardingStepContent

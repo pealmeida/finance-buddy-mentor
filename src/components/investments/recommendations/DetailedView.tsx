@@ -1,9 +1,8 @@
-
-import React from 'react';
-import { InvestmentRecommendation } from '@/types/finance';
-import AllocationChart from './AllocationChart';
-import AllocationBreakdown from './AllocationBreakdown';
-import ActionButton from './ActionButton';
+import React from "react";
+import { InvestmentRecommendation } from "../../../types/finance";
+import AllocationChart from "./AllocationChart";
+import AllocationBreakdown from "./AllocationBreakdown";
+import ActionButton from "./ActionButton";
 
 interface DetailedViewProps {
   recommendation: InvestmentRecommendation;
@@ -11,10 +10,10 @@ interface DetailedViewProps {
 
 const DetailedView: React.FC<DetailedViewProps> = ({ recommendation }) => {
   return (
-    <div className="mt-6 animate-scale-in">
+    <div className='mt-6 animate-scale-in'>
       <AllocationSection recommendation={recommendation} />
-      
-      <div className="mt-6 flex justify-end">
+
+      <div className='mt-6 flex justify-end'>
         <ActionButton />
       </div>
     </div>
@@ -25,11 +24,13 @@ interface AllocationSectionProps {
   recommendation: InvestmentRecommendation;
 }
 
-const AllocationSection: React.FC<AllocationSectionProps> = ({ recommendation }) => {
+const AllocationSection: React.FC<AllocationSectionProps> = ({
+  recommendation,
+}) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
       <AllocationChart allocation={recommendation.allocation} />
-      
+
       <AllocationBreakdown
         allocation={recommendation.allocation}
         riskLevel={recommendation.riskLevel}

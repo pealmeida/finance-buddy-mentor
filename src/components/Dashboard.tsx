@@ -9,6 +9,7 @@ import OnboardingChecklist from "./dashboard/OnboardingChecklist";
 import { useTranslation } from "react-i18next";
 import { useMonthlySavings } from "../hooks/supabase/useMonthlySavings";
 import { useExpenses } from "../hooks/supabase/useExpenses";
+import MobileBottomNav from "../components/ui/mobile-bottom-nav"; // Ensure this is imported for context
 
 interface DashboardProps {
   userProfile: UserProfile;
@@ -36,6 +37,16 @@ const Dashboard: React.FC<DashboardProps> = ({
   const [savingsProgress, setSavingsProgress] = useState<number>(0); // Default value changed to 0
   const [expensesRatio, setExpensesRatio] = useState<number>(50); // Default value
   const [refreshTrigger, setRefreshTrigger] = useState(0); // New state to trigger refresh
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Calculate key metrics for child components
   const monthlyIncome = userProfile.monthlyIncome;
@@ -207,7 +218,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   ]);
 
   return (
-    <div className='w-full max-w-[1400px] mx-auto py-8 px-4 sm:px-6 animate-fade-in'>
+    <div className='w-full max-w-[1400px] mx-auto py-4 px-4 sm:px-6 animate-fade-in'>
       <div className='flex flex-col md:flex-row gap-8'>
         <div className='w-full md:w-3/5 space-y-8'>
           <FinancialOverview userProfile={userProfile} />
@@ -229,7 +240,7 @@ const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Floating Onboarding Checklist */}
-      <OnboardingChecklist userProfile={userProfile} />
+      <OnboardingChecklist userProfile={userProfile} isMobile={isMobile} />
     </div>
   );
 };

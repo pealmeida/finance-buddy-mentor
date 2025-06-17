@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Checkbox } from "../ui/checkbox";
@@ -11,13 +11,14 @@ const RiskProfileStep: React.FC = () => {
   const { t } = useTranslation();
   const { profile, updateProfile } = useOnboarding();
 
-  console.log("profile.riskProfile in RiskProfileStep:", profile.riskProfile);
-
-  const handleEmergencyFundMonthsChange = (value: number[]) => {
-    updateProfile({
-      emergencyFundMonths: value[0],
-    });
-  };
+  const handleEmergencyFundMonthsChange = useCallback(
+    (value: number[]) => {
+      updateProfile({
+        emergencyFundMonths: value[0],
+      });
+    },
+    [updateProfile]
+  );
 
   return (
     <div>
@@ -75,8 +76,8 @@ const RiskProfileStep: React.FC = () => {
 
       <div className='mt-6 space-y-6'>
         <div className='space-y-4'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center space-x-2'>
+          <div className='flex items-center justify-between gap-2'>
+            <div className='flex items-center space-x-2 flex-1'>
               <Checkbox
                 id='emergency'
                 checked={profile.hasEmergencyFund}
@@ -84,8 +85,10 @@ const RiskProfileStep: React.FC = () => {
                   updateProfile({
                     hasEmergencyFund: !!checked,
                     emergencyFundMonths: !!checked
-                      ? profile.emergencyFundMonths || 3
-                      : 0,
+                      ? profile.emergencyFundMonths === 0
+                        ? 3
+                        : profile.emergencyFundMonths || 3
+                      : profile.emergencyFundMonths,
                   });
                 }}
               />
@@ -94,20 +97,22 @@ const RiskProfileStep: React.FC = () => {
               </Label>
             </div>
             {profile.hasEmergencyFund && (
-              <span className='font-medium text-sm text-gray-700'>
+              <span className='font-medium text-sm text-gray-700 min-w-[80px] text-right'>
                 {profile.emergencyFundMonths || 0}{" "}
-                {profile.emergencyFundMonths === 1 ? "month" : "months"}
+                {t("common.month", {
+                  count: profile.emergencyFundMonths || 0,
+                })}
               </span>
             )}
           </div>
 
           {profile.hasEmergencyFund && (
-            <div className='px-8 pt-2'>
+            <div className='px-4 sm:px-8 pt-2'>
               <Label className='mb-2 block text-sm text-gray-600'>
                 {t("onboarding.emergencyFundMonths")}
               </Label>
               <Slider
-                defaultValue={[profile.emergencyFundMonths || 3]}
+                key='emergency-fund-slider'
                 value={[profile.emergencyFundMonths || 3]}
                 onValueChange={handleEmergencyFundMonthsChange}
                 max={6}

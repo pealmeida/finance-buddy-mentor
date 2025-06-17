@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useTranslatedMonths } from "@/constants/months";
 import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 import ExpenseItemsTable from "./ExpenseItemsTable";
 import ExpenseDeleteConfirmDialog from "./ExpenseDeleteConfirmDialog";
 import ExpenseFormDialogs from "./ExpenseFormDialogs";
@@ -24,6 +25,7 @@ interface DetailedExpensesListProps {
   onAddItem: (item: Omit<ExpenseItem, "id">) => Promise<void>;
   onUpdateItem: (item: ExpenseItem) => Promise<void>;
   onDeleteItem: (itemId: string) => Promise<void>;
+  isMobile?: boolean;
 }
 
 const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
@@ -32,6 +34,7 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
   onAddItem,
   onUpdateItem,
   onDeleteItem,
+  isMobile = false,
 }) => {
   const { t } = useTranslation();
   const { getTranslatedMonths } = useTranslatedMonths();
@@ -71,19 +74,32 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
   const hasDiscrepancy = Math.abs(calculatedTotal - monthData.amount) > 0.01;
 
   return (
-    <Card className='w-full'>
-      <CardHeader>
-        <CardTitle className='flex justify-between items-center'>
-          <span>{t("expenses.editExpenses", "Edit Expenses")}</span>
+    <Card
+      className={cn(
+        "w-full",
+        isMobile && "border-0 shadow-none bg-transparent"
+      )}>
+      <CardHeader className={cn(isMobile && "px-0 pt-4")}>
+        <CardTitle
+          className={cn(
+            "flex justify-between items-center",
+            isMobile ? "flex-col space-y-3 items-stretch" : "flex-row"
+          )}>
+          <span className={cn(isMobile ? "text-xl text-center" : "text-2xl")}>
+            {t("expenses.editExpenses", "Edit Expenses")}
+          </span>
           <Button
-            size='sm'
+            size={isMobile ? "default" : "sm"}
             onClick={() => setIsAddDialogOpen(true)}
-            className='flex items-center gap-1'>
-            <Plus className='h-4 w-4' />
+            className={cn(
+              "flex items-center gap-2",
+              isMobile && "w-full h-12 text-base font-medium"
+            )}>
+            <Plus className={cn(isMobile ? "h-5 w-5" : "h-4 w-4")} />
             {t("expenses.addExpense", "Add Expense")}
           </Button>
         </CardTitle>
-        <CardDescription>
+        <CardDescription className={cn(isMobile && "px-0")}>
           <ExpenseHeaderInfo
             monthAmount={monthData.amount}
             items={items}
@@ -92,7 +108,7 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
           />
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className={cn(isMobile && "px-0 space-y-6")}>
         <ExpenseItemsTable
           items={items}
           onEdit={setEditingExpense}

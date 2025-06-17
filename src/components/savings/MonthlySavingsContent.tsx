@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { MonthlyAmount } from "../../types/finance";
-import MonthlySavingsForm from "./MonthlySavingsForm";
+import MonthlySavingsModalDialog from "./MonthlySavingsModalDialog";
 import SavingsLoadingState from "./content/SavingsLoadingState";
 import SavingsErrorState from "./content/SavingsErrorState";
 import SavingsEmptyState from "./content/SavingsEmptyState";
@@ -15,6 +15,8 @@ interface MonthlySavingsContentProps {
   onSaveAmount: (month: number, amount: number) => void;
   onCancelEdit: () => void;
   error?: string | null;
+  monthlyIncome?: number;
+  monthlyExpenses?: MonthlyAmount[];
 }
 
 const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
@@ -25,7 +27,13 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
   onSaveAmount,
   onCancelEdit,
   error,
+  monthlyIncome,
+  monthlyExpenses,
 }) => {
+  const [selectedMonthData, setSelectedMonthData] =
+    useState<MonthlyAmount | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Log data for debugging
   console.log("MonthlySavingsContent received data:", savingsData);
   console.log("Loading state:", loadingData);
@@ -43,22 +51,47 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
     return <SavingsEmptyState />;
   }
 
+  const handleOpenModal = (month: number) => {
+    const monthData = savingsData.find((item) => item.month === month) || {
+      month,
+      amount: 0,
+      year: new Date().getFullYear(),
+    };
+    setSelectedMonthData(monthData);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMonthData(null);
+    onCancelEdit();
+  };
+
+  const handleUpdateMonthData = (updatedData: MonthlyAmount) => {
+    // Update the savings data locally
+    setSelectedMonthData(updatedData);
+  };
+
+  const handleSaveAmount = (month: number, amount: number) => {
+    onSaveAmount(month, amount);
+    handleCloseModal();
+  };
+
   return (
     <>
-      <SavingsChartSection data={savingsData} onSelectMonth={onEditMonth} />
+      <SavingsChartSection data={savingsData} onSelectMonth={handleOpenModal} />
 
-      {editingMonth !== null && (
-        <MonthlySavingsForm
-          month={editingMonth}
-          amount={
-            savingsData.find((item) => item.month === editingMonth)?.amount || 0
-          }
-          onSave={onSaveAmount}
-          onCancel={onCancelEdit}
-        />
-      )}
+      <SavingsCardGrid data={savingsData} onEditMonth={handleOpenModal} />
 
-      <SavingsCardGrid data={savingsData} onEditMonth={onEditMonth} />
+      <MonthlySavingsModalDialog
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        selectedMonthData={selectedMonthData}
+        onUpdateMonthData={handleUpdateMonthData}
+        onSaveAmount={handleSaveAmount}
+        monthlyIncome={monthlyIncome}
+        monthlyExpenses={monthlyExpenses}
+      />
     </>
   );
 };

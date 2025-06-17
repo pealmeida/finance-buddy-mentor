@@ -9,6 +9,15 @@
   "trackMonthlySavings": "Track your monthly savings to visualize your progress throughout the year.",
   "editSavingsFor": "Edit Savings for",
   "savingsAmount": "Savings Amount",
+  "monthlyIncome": "Monthly Income",
+  "monthlyExpenses": "Monthly Expenses",
+  "suggestedSavings": "Suggested Savings",
+  "autoCalculate": "Auto-calculate",
+  "autoCalculateDescription": "Automatically update savings amount based on income and expenses (Income - Expenses)",
+  "disableAutoToEdit": "Disable automatic calculation to edit manually",
+  "autoCalculatedValue": "Value calculated automatically based on income and expenses (Income - Expenses)",
+  "autoCalculatedSuccess": "Monthly savings auto-calculated and updated!",
+  "noIncomeDataError": "No monthly income data available for automatic calculation",
   "chartView": "Chart View",
   "tableView": "Table View",
   "monthlySavingsData": "Monthly Savings Data",
@@ -34,5 +43,9 @@
     "automaticSavings": "Automatic Savings",
     "budgetOptimization": "Budget Optimization",
     "expenseReduction": "Expense Reduction"
-  }
+  },
+  "monthlySavingsFor": "Monthly Savings for {{month}}",
+  "adjustSavingsDescription": "Adjust your savings amount for this month based on your income and expenses",
+  "currentSavings": "Current Savings",
+  "monthlySummary": "Monthly Summary"
 }

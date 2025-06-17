@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { DollarSign, LineChart } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -6,6 +6,8 @@ import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { useOnboarding } from "../../context/OnboardingContext";
 import { useTranslation } from "react-i18next";
+import AddInvestmentDialog from "../investments/AddInvestmentDialog";
+import { Investment } from "../../types/finance";
 
 interface InvestmentsStepProps {
   isLastStep?: boolean;
@@ -21,13 +23,16 @@ const InvestmentsStep: React.FC<InvestmentsStepProps> = ({
   onNext,
 }) => {
   const { t } = useTranslation();
-  const {
-    profile,
-    currentInvestment,
-    updateCurrentInvestment,
-    addInvestment,
-    removeInvestment,
-  } = useOnboarding();
+  const [isAddInvestmentModalOpen, setIsAddInvestmentModalOpen] =
+    useState(false);
+
+  const { profile, addInvestment, removeInvestment } = useOnboarding();
+
+  const handleAddInvestment = async (investment: Omit<Investment, "id">) => {
+    await addInvestment(investment);
+    setIsAddInvestmentModalOpen(false);
+    return true;
+  };
 
   const handleNext = () => {
     console.log(`InvestmentsStep: handleNext - isLastStep: ${isLastStep}`);
@@ -50,74 +55,18 @@ const InvestmentsStep: React.FC<InvestmentsStepProps> = ({
       </p>
 
       <div className='space-y-4 mb-6'>
-        <div className='space-y-2'>
-          <Label htmlFor='investmentType'>
-            {t("onboarding.investmentType")}
-          </Label>
-          <select
-            id='investmentType'
-            value={currentInvestment.type}
-            onChange={(e) =>
-              updateCurrentInvestment({
-                type: e.target.value as any,
-              })
-            }
-            className='w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'>
-            <option value='stocks'>{t("onboarding.stocks")}</option>
-            <option value='bonds'>{t("onboarding.bonds")}</option>
-            <option value='realEstate'>{t("onboarding.realEstate")}</option>
-            <option value='cash'>{t("onboarding.cash")}</option>
-            <option value='crypto'>{t("onboarding.crypto")}</option>
-            <option value='other'>{t("onboarding.other")}</option>
-          </select>
-        </div>
-
-        <div className='space-y-2'>
-          <Label htmlFor='investmentName'>
-            {t("onboarding.investmentName")}
-          </Label>
-          <Input
-            id='investmentName'
-            value={currentInvestment.name}
-            onChange={(e) => updateCurrentInvestment({ name: e.target.value })}
-            placeholder={t("onboarding.investmentNamePlaceholder")}
-            className='transition-all duration-300 focus:ring-2 focus:ring-finance-blue'
-          />
-        </div>
-
-        <div className='space-y-2'>
-          <Label htmlFor='investmentValue'>
-            {t("onboarding.currentValue")}
-          </Label>
-          <div className='relative'>
-            <DollarSign className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
-            <Input
-              id='investmentValue'
-              type='number'
-              value={currentInvestment.value || ""}
-              onChange={(e) =>
-                updateCurrentInvestment({
-                  value: parseInt(e.target.value) || 0,
-                })
-              }
-              placeholder='10000'
-              className='pl-10 transition-all duration-300 focus:ring-2 focus:ring-finance-blue'
-            />
-          </div>
-        </div>
-
-        <div className='flex gap-4 justify-end mt-6'>
-          <Button variant='outline' onClick={onPrevious}>
-            Back
-          </Button>
-          <Button
-            onClick={handleNext}
-            disabled={!currentInvestment.name || currentInvestment.value <= 0}
-            className='w-full bg-finance-blue hover:bg-finance-blue-dark transition-all duration-300'>
-            {isLastStep ? "Review" : "Next"}
-          </Button>
-        </div>
+        <Button
+          onClick={() => setIsAddInvestmentModalOpen(true)}
+          className='w-full bg-finance-blue hover:bg-finance-blue-dark transition-all duration-300'>
+          {t("onboarding.addInvestmentButton")}
+        </Button>
       </div>
+
+      <AddInvestmentDialog
+        isOpen={isAddInvestmentModalOpen}
+        onOpenChange={setIsAddInvestmentModalOpen}
+        onSubmit={handleAddInvestment}
+      />
 
       <Separator className='my-6' />
 

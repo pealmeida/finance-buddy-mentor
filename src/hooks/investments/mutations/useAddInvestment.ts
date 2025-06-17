@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Investment } from '@/types/finance';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,47 +27,47 @@ export const useAddInvestment = (
       });
       return false;
     }
-    
+
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const newInvestment = {
         id: uuidv4(),
         user_id: userId,
         type: investment.type,
         name: investment.name,
         value: investment.value,
-        annual_return: investment.annualReturn
+        annual_return: investment.annualReturn || null
       };
-      
+
       const { error: saveError } = await supabase
         .from('investments')
         .insert(newInvestment);
-      
+
       if (saveError) throw new Error(saveError.message);
-      
+
       toast({
         title: 'Investment Added',
         description: `${investment.name} has been added to your portfolio`,
       });
-      
+
       // Refresh the investments list if callback provided
       if (onSuccess) {
         await onSuccess();
       }
-      
+
       return true;
     } catch (err) {
       console.error('Error adding investment:', err);
       setError(err instanceof Error ? err.message : 'Failed to add investment');
-      
+
       toast({
         title: 'Save Error',
         description: 'Could not save your investment. Please try again.',
         variant: 'destructive'
       });
-      
+
       return false;
     } finally {
       setIsLoading(false);

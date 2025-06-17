@@ -1,4 +1,3 @@
-
 {
   "title": "Poupança",
   "monthlySavings": "Poupança Mensal",
@@ -10,6 +9,15 @@
   "trackMonthlySavings": "Acompanhe sua poupança mensal para visualizar seu progresso ao longo do ano.",
   "editSavingsFor": "Editar Poupança para",
   "savingsAmount": "Valor da Poupança",
+  "monthlyIncome": "Renda Mensal",
+  "monthlyExpenses": "Gastos Mensais",
+  "suggestedSavings": "Poupança Sugerida",
+  "autoCalculate": "Calcular Automaticamente",
+  "autoCalculateDescription": "Atualizar automaticamente o valor de poupança baseado na renda e gastos (Renda - Gastos)",
+  "disableAutoToEdit": "Desative o cálculo automático para editar manualmente",
+  "autoCalculatedValue": "Valor calculado automaticamente baseado na renda e gastos (Renda - Gastos)",
+  "autoCalculatedSuccess": "Poupança mensal calculada e atualizada automaticamente!",
+  "noIncomeDataError": "Nenhum dado de renda mensal disponível para cálculo automático",
   "chartView": "Visualização em Gráfico",
   "tableView": "Visualização em Tabela",
   "monthlySavingsData": "Dados de Poupança Mensal",
@@ -35,5 +43,9 @@
     "automaticSavings": "Poupança Automática",
     "budgetOptimization": "Otimização de Orçamento",
     "expenseReduction": "Redução de Despesas"
-  }
+  },
+  "monthlySavingsFor": "Poupança Mensal para {{month}}",
+  "adjustSavingsDescription": "Ajuste o valor da sua poupança para este mês baseado na sua renda e gastos",
+  "currentSavings": "Poupança Atual",
+  "monthlySummary": "Resumo Mensal"
 }

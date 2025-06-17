@@ -14,6 +14,8 @@ import { XCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/context/CurrencyContext";
 import ExpenseItemActions from "./ExpenseItemActions";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ExpenseItemsTableProps {
   items: ExpenseItem[];
@@ -28,6 +30,7 @@ const ExpenseItemsTable: React.FC<ExpenseItemsTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const { formatCurrency } = useCurrency();
+  const isMobile = useIsMobile();
 
   const getCategoryBadgeColor = (category: ExpenseItem["category"]) => {
     const colors: Record<ExpenseItem["category"], string> = {
@@ -67,54 +70,97 @@ const ExpenseItemsTable: React.FC<ExpenseItemsTableProps> = ({
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{t("expenses.table.date", "Date")}</TableHead>
-          <TableHead>
-            {t("expenses.table.description", "Description")}
-          </TableHead>
-          <TableHead>{t("expenses.table.category", "Category")}</TableHead>
-          <TableHead className='text-right'>
-            {t("expenses.table.amount", "Amount")}
-          </TableHead>
-          <TableHead className='text-right'>
-            {t("common.actions", "Actions")}
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {items
-          .sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-          )
-          .map((expense) => (
-            <TableRow key={expense.id}>
-              <TableCell>
-                {format(new Date(expense.date), "MMM dd, yyyy")}
-              </TableCell>
-              <TableCell className='font-medium'>
-                {expense.description}
-              </TableCell>
-              <TableCell>
-                <Badge className={getCategoryBadgeColor(expense.category)}>
-                  {getCategoryTranslation(expense.category)}
-                </Badge>
-              </TableCell>
-              <TableCell className='text-right font-medium'>
-                {formatCurrency(expense.amount)}
-              </TableCell>
-              <TableCell className='text-right'>
-                <ExpenseItemActions
-                  expense={expense}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                />
-              </TableCell>
+    <>
+      {isMobile ? (
+        <div className='space-y-4'>
+          {items
+            .sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            )
+            .map((expense) => (
+              <Card key={expense.id} className='w-full'>
+                <CardHeader className='p-5 pb-1 flex-row items-center justify-between'>
+                  <CardTitle className='text-base flex-grow'>
+                    <span>{expense.description}</span>
+                    <Badge
+                      className={
+                        getCategoryBadgeColor(expense.category) + " ml-1"
+                      }>
+                      {getCategoryTranslation(expense.category)}
+                    </Badge>
+                  </CardTitle>
+                  <span className='font-medium text-right text-foreground text-base'>
+                    {formatCurrency(expense.amount)}
+                  </span>
+                </CardHeader>
+                <CardContent className='p-5 pt-0'>
+                  <div className='flex justify-between items-center text-sm text-muted-foreground'>
+                    <span>
+                      {t("expenses.table.date", "Date")}:{" "}
+                      {format(new Date(expense.date), "MMM dd, yyyy")}
+                    </span>
+                    <ExpenseItemActions
+                      expense={expense}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+        </div>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t("expenses.table.date", "Date")}</TableHead>
+              <TableHead>
+                {t("expenses.table.description", "Description")}
+              </TableHead>
+              <TableHead>{t("expenses.table.category", "Category")}</TableHead>
+              <TableHead className='text-right'>
+                {t("expenses.table.amount", "Amount")}
+              </TableHead>
+              <TableHead className='text-right'>
+                {t("common.actions", "Actions")}
+              </TableHead>
             </TableRow>
-          ))}
-      </TableBody>
-    </Table>
+          </TableHeader>
+          <TableBody>
+            {items
+              .sort(
+                (a, b) =>
+                  new Date(b.date).getTime() - new Date(a.date).getTime()
+              )
+              .map((expense) => (
+                <TableRow key={expense.id}>
+                  <TableCell>
+                    {format(new Date(expense.date), "MMM dd, yyyy")}
+                  </TableCell>
+                  <TableCell className='font-medium'>
+                    {expense.description}
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={getCategoryBadgeColor(expense.category)}>
+                      {getCategoryTranslation(expense.category)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className='text-right font-medium'>
+                    {formatCurrency(expense.amount)}
+                  </TableCell>
+                  <TableCell className='text-right'>
+                    <ExpenseItemActions
+                      expense={expense}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      )}
+    </>
   );
 };
 

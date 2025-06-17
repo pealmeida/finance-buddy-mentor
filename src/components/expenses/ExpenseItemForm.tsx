@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,6 +24,7 @@ import {
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/context/CurrencyContext";
+import { cn } from "@/lib/utils";
 
 // Define expense categories
 const EXPENSE_CATEGORIES = [
@@ -66,6 +66,7 @@ interface ExpenseItemFormProps {
   defaultMonth: number;
   expense?: ExpenseItem;
   isEditing?: boolean;
+  isMobile?: boolean;
 }
 
 const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
@@ -73,6 +74,7 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
   defaultMonth,
   expense,
   isEditing = false,
+  isMobile = false,
 }) => {
   const { t } = useTranslation();
   const { currencyConfig } = useCurrency();
@@ -123,15 +125,26 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-4'>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className={cn("space-y-4", isMobile && "space-y-6 pt-4")}>
         <FormField
           control={form.control}
           name='description'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('expenses.table.description', 'Description')}</FormLabel>
+              <FormLabel className={cn(isMobile && "text-base font-medium")}>
+                {t("expenses.table.description", "Description")}
+              </FormLabel>
               <FormControl>
-                <Input placeholder={t('expenses.descriptionPlaceholder', 'Rent, Groceries, etc.')} {...field} />
+                <Input
+                  placeholder={t(
+                    "expenses.descriptionPlaceholder",
+                    "Rent, Groceries, etc."
+                  )}
+                  className={cn(isMobile && "h-12 text-base")}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -143,18 +156,24 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
           name='amount'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('expenses.table.amount', 'Amount')} ({currencyConfig.symbol})</FormLabel>
+              <FormLabel className={cn(isMobile && "text-base font-medium")}>
+                {t("expenses.table.amount", "Amount")} ({currencyConfig.symbol})
+              </FormLabel>
               <FormControl>
                 <Input
                   type='number'
                   placeholder='0.00'
                   step='0.01'
                   min='0'
+                  className={cn(isMobile && "h-12 text-base")}
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
-                {t('expenses.enterAmountDescription', 'Enter the expense amount')}
+              <FormDescription className={cn(isMobile && "text-sm")}>
+                {t(
+                  "expenses.enterAmountDescription",
+                  "Enter the expense amount"
+                )}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -166,16 +185,26 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
           name='category'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('expenses.table.category', 'Category')}</FormLabel>
+              <FormLabel className={cn(isMobile && "text-base font-medium")}>
+                {t("expenses.table.category", "Category")}
+              </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('expenses.selectCategory', 'Select a category')} />
+                  <SelectTrigger className={cn(isMobile && "h-12 text-base")}>
+                    <SelectValue
+                      placeholder={t(
+                        "expenses.selectCategory",
+                        "Select a category"
+                      )}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {EXPENSE_CATEGORIES.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
+                    <SelectItem
+                      key={category.value}
+                      value={category.value}
+                      className={cn(isMobile && "py-3 text-base")}>
                       {t(category.key, category.value)}
                     </SelectItem>
                   ))}
@@ -191,18 +220,33 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
           name='date'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('expenses.table.date', 'Date')}</FormLabel>
+              <FormLabel className={cn(isMobile && "text-base font-medium")}>
+                {t("expenses.table.date", "Date")}
+              </FormLabel>
               <FormControl>
-                <Input type='date' {...field} />
+                <Input
+                  type='date'
+                  className={cn(isMobile && "h-12 text-base")}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <div className='flex justify-end space-x-2 pt-4'>
-          <Button type='submit'>
-            {isEditing ? t('expenses.updateExpense', 'Update') : t('expenses.addExpense', 'Add')} {t('expenses.expense', 'Expense')}
+        <div
+          className={cn(
+            "flex justify-end space-x-2 pt-4",
+            isMobile && "pt-8 pb-4"
+          )}>
+          <Button
+            type='submit'
+            className={cn(isMobile && "w-full h-12 text-base font-medium")}>
+            {isEditing
+              ? t("expenses.updateExpense", "Update")
+              : t("expenses.addExpense", "Add")}{" "}
+            {t("expenses.expense", "Expense")}
           </Button>
         </div>
       </form>

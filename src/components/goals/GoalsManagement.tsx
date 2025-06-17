@@ -7,6 +7,7 @@ import { PlusCircle, Loader2 } from "lucide-react";
 import { useToast } from "../ui/use-toast";
 import { useTranslation } from "react-i18next";
 import GoalModal from "./GoalModal";
+import { useResponsive } from "../../hooks/use-responsive";
 
 interface GoalsManagementProps {
   goals: FinancialGoal[];
@@ -17,10 +18,17 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ goals }) => {
   const [editingGoal, setEditingGoal] = useState<FinancialGoal | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const { isMobile } = useResponsive();
+
+  // Debug logs
+  useEffect(() => {
+    console.log("GoalsManagement component - Initial goals prop:", goals);
+  }, [goals]);
 
   useEffect(() => {
     console.log("Modal state changed:", isModalOpen); // Debug log
   }, [isModalOpen]);
+
   const {
     goals: currentGoals,
     loading,
@@ -31,6 +39,25 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ goals }) => {
     refreshGoals,
   } = useGoals();
   const { toast } = useToast();
+
+  // Prioritize profile goals over fetched goals
+  // Use profile data if available, otherwise fall back to fetched data
+  const effectiveGoals = goals && goals.length > 0 ? goals : currentGoals;
+
+  // More debug logs
+  useEffect(() => {
+    console.log("GoalsManagement component - Profile goals prop:", goals);
+    console.log(
+      "GoalsManagement component - Current goals from hook:",
+      currentGoals
+    );
+    console.log(
+      "GoalsManagement component - Using effective goals:",
+      effectiveGoals
+    );
+    console.log("GoalsManagement component - Loading:", loading);
+    console.log("GoalsManagement component - Error:", error);
+  }, [goals, currentGoals, effectiveGoals, loading, error]);
 
   useEffect(() => {
     // This effect should only be used to initialize the goals in the useGoals hook
@@ -113,7 +140,7 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ goals }) => {
     }
   };
 
-  if (loading && !currentGoals.length) {
+  if (loading && !effectiveGoals.length) {
     return (
       <div className='flex justify-center items-center p-10'>
         <Loader2 className='h-8 w-8 animate-spin text-finance-blue' />
@@ -133,18 +160,19 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ goals }) => {
 
   return (
     <div className='space-y-6'>
-      <div className='flex justify-between items-center'>
+      <div
+        className={`flex ${
+          isMobile ? "flex-col items-start" : "justify-between items-center"
+        } gap-4`}>
         <h2 className='text-xl font-semibold'>
           {t("goals.yourFinancialGoals")}
         </h2>
-        <div className='flex gap-2'>
-          <Button
-            onClick={handleAddGoal}
-            className='flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark'>
-            <PlusCircle size={16} />
-            {t("goals.addNewGoal")}
-          </Button>
-        </div>
+        <Button
+          onClick={handleAddGoal}
+          className='flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark w-full md:w-auto'>
+          <PlusCircle size={16} />
+          {t("goals.addNewGoal")}
+        </Button>
       </div>
 
       <GoalModal
@@ -160,14 +188,14 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ goals }) => {
         isSaving={isSaving}
       />
 
-      {currentGoals.length === 0 ? (
+      {effectiveGoals.length === 0 ? (
         <div className='text-center py-8 bg-gray-50 rounded-lg border border-gray-200'>
           <p className='text-gray-500'>{t("goals.noGoalsYet")}</p>
           <p className='text-gray-400 text-sm mt-1'>{t("goals.clickToAdd")}</p>
         </div>
       ) : (
         <GoalList
-          goals={currentGoals}
+          goals={effectiveGoals}
           onEdit={handleEditGoal}
           onDelete={handleDeleteGoal}
         />

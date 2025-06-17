@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-// Optimized auth hooks with better state management
-=======
 import { useAuthState } from "./useAuthState.ts";
 import { useSessionHandler } from "./useSessionHandler.ts";
 
@@ -38,4 +35,3 @@ export const useAuth = () => {
     handleProfileUpdate,
   };
 };
->>>>>>> combined-features

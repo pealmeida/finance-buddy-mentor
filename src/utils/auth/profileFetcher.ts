@@ -1,6 +1,78 @@
 import { supabase } from "../../integrations/supabase/client";
-import { UserProfile, RiskProfile } from "../../types/finance";
+import { UserProfile, RiskProfile, MonthlyAmount, Currency, Language } from "../../types/finance";
 import { validateRiskProfile } from "./profileValidation";
+import { convertToTypedSavingsData } from "../../hooks/supabase/utils/savingsUtils";
+import { Json } from "../../integrations/supabase/types";
+
+/**
+ * Get preferred currency from localStorage or default to USD
+ */
+const getPreferredCurrency = (): Currency => {
+  const saved = localStorage.getItem('currency');
+  return (saved as Currency) || 'USD';
+};
+
+/**
+ * Get preferred language from localStorage or default to en
+ */
+const getPreferredLanguage = (): Language => {
+  const saved = localStorage.getItem('language');
+  return (saved as Language) || 'en';
+};
+
+/**
+ * Save currency preference to localStorage and update currency context
+ */
+const savePreferredCurrency = (currency: Currency) => {
+  localStorage.setItem('currency', currency);
+  // Trigger currency context update if available
+  window.dispatchEvent(new CustomEvent('currencyChange', { detail: currency }));
+};
+
+/**
+ * Save language preference to localStorage and update i18n
+ */
+const savePreferredLanguage = (language: Language) => {
+  localStorage.setItem('language', language);
+  // Trigger i18n language change if available
+  window.dispatchEvent(new CustomEvent('languageChange', { detail: language }));
+};
+
+/**
+ * Convert raw JSON data to typed MonthlyAmount array for expenses
+ */
+const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] => {
+  if (!data || typeof data !== 'object' || !Array.isArray(data)) {
+    return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+  }
+
+  try {
+    const typedData = data.map(item => {
+      if (typeof item === 'object' && item !== null) {
+        const itemObj = item as Record<string, unknown>;
+        const month = typeof itemObj.month === 'number' ? itemObj.month : 0;
+        const amount = typeof itemObj.amount === 'number' ? itemObj.amount : 0;
+        return { month, amount };
+      }
+      return { month: 0, amount: 0 };
+    }).filter(item => item.month >= 1 && item.month <= 12);
+
+    if (typedData.length !== 12) {
+      const completeData = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+      typedData.forEach(item => {
+        if (item.month >= 1 && item.month <= 12) {
+          completeData[item.month - 1] = item;
+        }
+      });
+      return completeData;
+    }
+
+    return typedData.sort((a, b) => a.month - b.month);
+  } catch (error) {
+    console.error("Error converting JSON to typed expenses data:", error);
+    return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+  }
+};
 
 /**
  * Fetches user profile data from Supabase
@@ -35,6 +107,7 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
     }
 
     // Fetch the related data
+    console.log('fetchUserProfileFromSupabase: Fetching related data for user:', userId);
     const { data: goalsData } = await supabase
       .from('financial_goals')
       .select('*')
@@ -49,6 +122,24 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       .from('debt_details')
       .select('*')
       .eq('user_id', userId);
+
+    // Fetch monthly expenses data
+    const { data: monthlyExpensesData } = await supabase
+      .from('monthly_expenses')
+      .select('*')
+      .eq('user_id', userId);
+
+    // Fetch monthly savings data
+    const { data: monthlySavingsData } = await supabase
+      .from('monthly_savings')
+      .select('*')
+      .eq('user_id', userId);
+
+    console.log('fetchUserProfileFromSupabase: Raw goals data:', goalsData);
+    console.log('fetchUserProfileFromSupabase: Raw investments data:', investmentsData);
+    console.log('fetchUserProfileFromSupabase: Raw debt data:', debtDetailsData);
+    console.log('fetchUserProfileFromSupabase: Raw monthly expenses data:', monthlyExpensesData);
+    console.log('fetchUserProfileFromSupabase: Raw monthly savings data:', monthlySavingsData);
 
     // Transform goals data
     const financialGoals = goalsData ? goalsData.map((goal: any) => ({
@@ -69,6 +160,9 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       annualReturn: investment.annual_return
     })) : [];
 
+    console.log('fetchUserProfileFromSupabase: Transformed goals:', financialGoals);
+    console.log('fetchUserProfileFromSupabase: Transformed investments:', investments);
+
     // Transform debt details data
     const debtDetails = debtDetailsData ? debtDetailsData.map((debt: any) => ({
       id: debt.id,
@@ -79,8 +173,36 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       minimumPayment: debt.minimum_payment
     })) : [];
 
+    // Transform monthly expenses data
+    const monthlyExpenses = monthlyExpensesData && monthlyExpensesData.length > 0 ? {
+      userId: userId,
+      year: monthlyExpensesData[0].year,
+      data: convertToTypedExpensesData(monthlyExpensesData[0].data)
+    } : undefined;
+
+    // Transform monthly savings data
+    const monthlySavings = monthlySavingsData && monthlySavingsData.length > 0 ? {
+      id: monthlySavingsData[0].id,
+      userId: userId,
+      year: monthlySavingsData[0].year,
+      data: convertToTypedSavingsData(monthlySavingsData[0].data)
+    } : undefined;
+
+    console.log('fetchUserProfileFromSupabase: Transformed monthly expenses:', monthlyExpenses);
+    console.log('fetchUserProfileFromSupabase: Transformed monthly savings:', monthlySavings);
+
     // Ensure riskProfile is a valid RiskProfile type
     const riskProfile = validateRiskProfile(financialProfileData?.risk_profile ?? null);
+
+    // Get preferences from localStorage or database, with localStorage taking priority
+    const preferredCurrency = (profileData as any)?.preferred_currency as Currency || getPreferredCurrency();
+    const preferredLanguage = (profileData as any)?.preferred_language as Language || getPreferredLanguage();
+
+    console.log('fetchUserProfileFromSupabase: Loaded preferences:', { preferredCurrency, preferredLanguage });
+
+    // Save preferences to localStorage to ensure consistency
+    if (preferredCurrency) savePreferredCurrency(preferredCurrency);
+    if (preferredLanguage) savePreferredLanguage(preferredLanguage);
 
     // Combine data from both tables into a user profile object
     return {
@@ -93,9 +215,13 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       hasEmergencyFund: financialProfileData?.has_emergency_fund || false,
       emergencyFundMonths: financialProfileData?.emergency_fund_months ?? undefined,
       hasDebts: financialProfileData?.has_debts || false,
+      preferredCurrency,
+      preferredLanguage,
       financialGoals,
       investments,
       debtDetails,
+      monthlyExpenses,
+      monthlySavings,
     };
   } catch (err) {
     console.error("Error fetching user profile:", err);

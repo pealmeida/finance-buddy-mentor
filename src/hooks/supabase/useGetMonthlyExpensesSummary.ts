@@ -34,18 +34,29 @@ export function useGetMonthlyExpensesSummary(userId: string, year: number) {
         if (error) {
             if (error.code === 'PGRST116') {
                 console.log("useGetMonthlyExpensesSummary: No monthly_expenses entry found for this user/year (PGRST116). Returning default empty array.");
-                return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+                return Array.from({ length: 12 }, (_, i) => ({
+                    month: i + 1,
+                    amount: 0,
+                    year: year
+                }));
             }
             throw error;
         }
 
         if (data && data.data) {
             console.log("useGetMonthlyExpensesSummary: Found monthly_expenses data:", data.data);
-            return data.data as unknown as MonthlyAmount[];
+            return (data.data as unknown as MonthlyAmount[]).map(item => ({
+                ...item,
+                year: year
+            }));
         }
 
         console.log("useGetMonthlyExpensesSummary: No data.data found in monthly_expenses response. Returning default empty array.");
-        return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+        return Array.from({ length: 12 }, (_, i) => ({
+            month: i + 1,
+            amount: 0,
+            year: year
+        }));
     }, [userId, year]);
 
     const { data, isLoading, error } = useQuery<MonthlyAmount[], Error>({

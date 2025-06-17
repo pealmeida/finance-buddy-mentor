@@ -28,7 +28,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   userProfile,
   onProfileUpdate,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("personal-info");
   const navigate = useNavigate();
@@ -54,20 +54,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       </div>
 
       {/* Mobile Header */}
-      <MobileHeader
-        title={t("profile.title", "Profile Settings")}
-        showBack={true}
-        showMenu={false}
-        actions={
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={handleEditFullProfile}
-            className='text-finance-blue'>
-            <Pencil className='h-4 w-4' />
-          </Button>
-        }
-      />
+      <MobileHeader title={t("profile.title", "Profile Settings")} />
 
       {/* Main Content */}
       <main className='pb-20 md:pb-8'>
@@ -75,7 +62,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
           userProfile={userProfile}
           onProfileUpdate={onProfileUpdate}>
           {({ profile, userName, handleInputChange }) => (
-            <ResponsiveContainer className='py-4 md:py-8'>
+            <ResponsiveContainer className='py-4 md:py-8 px-4'>
               {/* Desktop Header Section */}
               <div className='hidden md:flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4'>
                 <div>
@@ -105,14 +92,21 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                 </div>
               </div>
 
-              {/* Mobile Welcome Message */}
-              <div className='md:hidden mb-4 text-center'>
-                <p className='text-gray-600'>
+              {/* Mobile Welcome Message and Edit Button */}
+              <div className='md:hidden mb-4 flex flex-row items-center justify-between gap-3 px-4'>
+                <p className='text-gray-600 text-left flex-1'>
                   {t("profile.welcome", "Welcome")},{" "}
                   <span className='font-medium text-finance-blue'>
                     {userName}
                   </span>
                 </p>
+                <Button
+                  variant='outline'
+                  onClick={handleEditFullProfile}
+                  className='flex-shrink-0 flex items-center justify-center gap-2 border-finance-blue text-finance-blue hover:bg-finance-blue hover:text-white'>
+                  <Pencil className='h-4 w-4' />{" "}
+                  {t("profile.editFullProfile", "Edit Full Profile")}
+                </Button>
               </div>
 
               {/* Tabs */}
@@ -123,36 +117,39 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                   onValueChange={setActiveTab}
                   className='w-full'>
                   {/* Mobile Tab List - Scrollable */}
-                  <TabsList className='w-full justify-start mb-6 bg-transparent p-0 md:space-x-6 border-b border-gray-200 overflow-x-auto transition-colors duration-300'>
-                    <div className='flex space-x-4 md:space-x-6 min-w-max px-4 md:px-0'>
+                  <TabsList className='w-full justify-center mb-6 bg-transparent p-0 md:space-x-6 border-b border-gray-200 overflow-x-auto overflow-y-hidden transition-colors duration-300 my-3'>
+                    <div
+                      className={`flex space-x-2 md:space-x-6 w-max px-5 ${
+                        i18n.language === "pt-BR" ? "ml-[100px]" : "ml-5"
+                      }`}>
                       <TabsTrigger
                         value='personal-info'
-                        className='flex items-center gap-2 px-3 py-3 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none'>
-                        <User className='h-4 w-4' />
-                        <span className='font-medium text-sm md:text-base'>
+                        className='flex items-center gap-2 px-3 py-4 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none justify-center'>
+                        <User className='h-5 w-5' />
+                        <span className='font-medium text-base md:text-lg'>
                           {t("profile.personalInfoTab", "Personal Info")}
                         </span>
                       </TabsTrigger>
                       <TabsTrigger
                         value='investments'
-                        className='flex items-center gap-2 px-3 py-3 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none'>
-                        <LineChart className='h-4 w-4' />
-                        <span className='font-medium text-sm md:text-base'>
+                        className='flex items-center gap-2 px-3 py-4 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none justify-center'>
+                        <LineChart className='h-5 w-5' />
+                        <span className='font-medium text-base md:text-lg'>
                           {t("profile.investmentsTab", "Investments")}
                         </span>
                       </TabsTrigger>
                       <TabsTrigger
                         value='savings'
-                        className='flex items-center gap-2 px-3 py-3 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none'>
-                        <PiggyBank className='h-4 w-4' />
-                        <span className='font-medium text-sm md:text-base'>
+                        className='flex items-center gap-2 px-3 py-4 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none justify-center'>
+                        <PiggyBank className='h-5 w-5' />
+                        <span className='font-medium text-base md:text-lg'>
                           {t("profile.strategiesTab", "Strategies")}
                         </span>
                       </TabsTrigger>
                     </div>
                   </TabsList>
 
-                  <TabsContent value='personal-info' className='mt-6'>
+                  <TabsContent value='personal-info' className=''>
                     <PersonalInfoTab
                       profile={profile}
                       onInputChange={handleInputChange}
@@ -171,11 +168,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                     </div>
                   </TabsContent>
 
-                  <TabsContent value='investments' className='mt-6'>
+                  <TabsContent value='investments' className=''>
                     <InvestmentRecommendations userProfile={userProfile} />
                   </TabsContent>
 
-                  <TabsContent value='savings' className='mt-6'>
+                  <TabsContent value='savings' className=''>
                     <SavingStrategies userProfile={userProfile} />
                   </TabsContent>
                 </Tabs>

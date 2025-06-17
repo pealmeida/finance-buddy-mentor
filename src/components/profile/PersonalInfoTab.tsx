@@ -79,7 +79,7 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
           <Label htmlFor='currency'>
             {t("profile.preferredCurrency", "Preferred Currency")}
           </Label>
-          <div className='flex justify-start'>
+          <div className='flex justify-start w-full'>
             <CurrencySelector />
           </div>
         </div>

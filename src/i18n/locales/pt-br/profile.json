@@ -1,4 +1,3 @@
-
 {
   "title": "Configurações do Perfil",
   "personalInfo": "Informações Pessoais",
@@ -8,7 +7,7 @@
   "preferredCurrency": "Moeda Preferida",
   "saveChanges": "Salvar Alterações",
   "saving": "Salvando...",
-  "welcome": "Bem-vindo",
+  "welcome": "Olá",
   "editFullProfile": "Editar Perfil Completo",
   "backToDashboard": "Voltar ao Painel",
   "logout": "Sair",

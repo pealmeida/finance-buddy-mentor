@@ -4,6 +4,7 @@ import { UserProfile } from "../../types/finance";
 import { toast } from "../../components/ui/use-toast";
 import { fetchUserProfileFromSupabase } from "../../utils/auth/profileFetcher";
 import { loadFromLocalStorage } from "../../utils/session/localStorageLoader";
+import { isProfileComplete } from "../../utils/profileCompletion";
 
 interface SessionCoreProps {
   setUserProfile: (profile: UserProfile | null) => void;
@@ -40,10 +41,18 @@ export const useSessionCore = ({
           console.log('Session found, fetching profile for user:', session.user.id);
           const profile = await fetchUserProfileFromSupabase(session.user.id);
           if (isMounted && profile) {
-            const profileIsComplete = profile.monthlyIncome && profile.monthlyIncome > 0 && profile.age && profile.age > 0 && profile.riskProfile !== undefined;
+            console.log('useSessionCore: Raw profile from Supabase:', profile);
+            console.log('useSessionCore: Profile investments:', profile.investments);
+            console.log('useSessionCore: Profile goals:', profile.financialGoals);
+
+            const profileIsComplete = isProfileComplete(profile);
+            console.log('useSessionCore: Profile fetched from Supabase:', profile);
+            console.log('useSessionCore: Profile completion check result:', profileIsComplete);
             setIsProfileComplete(profileIsComplete);
             setUserProfile(profile);
             localStorage.setItem('userProfile', JSON.stringify(profile));
+          } else {
+            console.warn('useSessionCore: No profile returned from fetchUserProfileFromSupabase');
           }
         } else {
           console.log('No session, loading from localStorage for guest.');
@@ -77,6 +86,9 @@ export const useSessionCore = ({
           setUserProfile(null);
           setIsProfileComplete(false);
           localStorage.removeItem('userProfile');
+        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+          // Don't re-initialize on token refresh, just log it
+          console.log('Token refreshed for user:', session.user.id);
         }
       }
     );

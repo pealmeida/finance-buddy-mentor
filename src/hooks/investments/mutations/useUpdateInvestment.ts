@@ -27,45 +27,45 @@ export const useUpdateInvestment = (
       });
       return false;
     }
-    
+
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const { error: updateError } = await supabase
         .from('investments')
         .update({
           type: investment.type,
           name: investment.name,
           value: investment.value,
-          annual_return: investment.annualReturn
+          annual_return: investment.annualReturn || null
         })
         .eq('id', investment.id)
         .eq('user_id', userId);
-      
+
       if (updateError) throw new Error(updateError.message);
-      
+
       toast({
         title: 'Investment Updated',
         description: `${investment.name} has been updated`,
       });
-      
+
       // Refresh the investments list if callback provided
       if (onSuccess) {
         await onSuccess();
       }
-      
+
       return true;
     } catch (err) {
       console.error('Error updating investment:', err);
       setError(err instanceof Error ? err.message : 'Failed to update investment');
-      
+
       toast({
         title: 'Update Error',
         description: 'Could not update your investment. Please try again.',
         variant: 'destructive'
       });
-      
+
       return false;
     } finally {
       setIsLoading(false);
