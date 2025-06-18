@@ -22,7 +22,7 @@ export const fetchDebtDetails = async (userId: string): Promise<DebtDetail[]> =>
       type: debt.type as 'credit_card' | 'loan' | 'mortgage' | 'other',
       amount: debt.amount,
       interestRate: debt.interest_rate,
-      minimumPayment: debt.minimum_payment || 0
+      minimumPayment: 0 // Set default since it's not stored in DB
     })) : [];
   } catch (error) {
     console.error('Error fetching debt details:', error);
@@ -49,10 +49,10 @@ export const saveDebtDetails = async (userId: string, debtDetails: DebtDetail[])
     if (debtDetails.length > 0) {
       const debtDetailsToInsert = debtDetails.map(debt => ({
         user_id: userId,
+        name: `${debt.type} debt`, // Generate a name based on type
         type: debt.type,
         amount: debt.amount,
-        interest_rate: debt.interestRate,
-        minimum_payment: debt.minimumPayment
+        interest_rate: debt.interestRate
       }));
 
       const { error: insertError } = await supabase
