@@ -49,6 +49,8 @@
   "signup": "Cadastrar",
   "by": "Por",
   "of": "de",
+  "showDetails": "Mostrar Detalhes",
+  "hideDetails": "Ocultar Detalhes",
   "noEmergencyFundData": "Nenhum dado de fundo de emergência disponível.",
   "emergencyFundCallToAction": "Adicione os detalhes do seu fundo de emergência para ver o seu progresso.",
   "noInvestmentData": "Nenhum dado disponível.",
@@ -57,12 +59,20 @@
   "addGoal": "Adicionar Meta",
   "enterValidNumber": "Por favor, insira um número válido",
   "amountNotNegative": "O valor não pode ser negativo",
+  "errorLoadingData": "Erro ao carregar dados",
   "amountSavedIn": "Valor economizado em",
   "onTrack": "No Caminho Certo",
   "backToDashboard": "Voltar ao Painel",
   "tryAgain": "Tentar Novamente",
   "actions": "Ações",
   "continueEditing": "Continuar Editando",
+  "retry": "Tentar Novamente",
+  "month": "Mês",
+  "riskProfile": {
+    "conservative": "Conservador",
+    "moderate": "Moderado",
+    "aggressive": "Agressivo"
+  },
   "months": {
     "january": "Janeiro",
     "february": "Fevereiro",
@@ -86,6 +96,9 @@
     "sep": "Set",
     "oct": "Out",
     "nov": "Nov",
-    "dec": "Dez"
+    "dez": "Dez"
+  },
+  "chart": {
+    "clickOnBars": "Clique nas barras para ver detalhes"
   }
 }

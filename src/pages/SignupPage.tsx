@@ -67,8 +67,6 @@ const SignupPage: React.FC = () => {
         });
         console.error("Signup error:", error);
       } else {
-        console.log("User signed up successfully:", data);
-
         toast({
           title: t("auth.accountCreated"),
           description: t("auth.accountCreatedDescription"),

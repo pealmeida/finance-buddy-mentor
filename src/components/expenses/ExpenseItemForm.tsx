@@ -25,6 +25,7 @@ import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/context/CurrencyContext";
 import { cn } from "@/lib/utils";
+import { CurrencyInput } from "@/components/ui/currency-input";
 
 // Define expense categories
 const EXPENSE_CATEGORIES = [
@@ -160,13 +161,13 @@ const ExpenseItemForm: React.FC<ExpenseItemFormProps> = ({
                 {t("expenses.table.amount", "Amount")} ({currencyConfig.symbol})
               </FormLabel>
               <FormControl>
-                <Input
-                  type='number'
-                  placeholder='0.00'
-                  step='0.01'
-                  min='0'
+                <CurrencyInput
+                  value={field.value}
+                  onChange={(value) => field.onChange(value)}
+                  placeholder='0,00'
                   className={cn(isMobile && "h-12 text-base")}
-                  {...field}
+                  id={field.name}
+                  name={field.name}
                 />
               </FormControl>
               <FormDescription className={cn(isMobile && "text-sm")}>

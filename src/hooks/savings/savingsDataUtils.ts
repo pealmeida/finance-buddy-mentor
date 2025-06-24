@@ -6,7 +6,6 @@ import { MONTHS } from '@/constants/months';
  * Initialize empty monthly savings data for all months
  */
 export const initializeEmptySavingsData = (): MonthlyAmount[] => {
-  console.log("Initializing empty savings data");
   return MONTHS.map((_, index) => ({
     month: index + 1,
     amount: 0
@@ -37,8 +36,6 @@ export const processFetchedData = (data: MonthlyAmount[]): MonthlyAmount[] => {
         };
       }
     });
-    
-    console.log("Filled complete data:", completeData);
     return completeData;
   }
   
@@ -50,8 +47,6 @@ export const processFetchedData = (data: MonthlyAmount[]): MonthlyAmount[] => {
   
   // Sort by month number to ensure consistent order
   const sortedData = [...validatedData].sort((a, b) => a.month - b.month);
-  console.log("Sorted savings data:", sortedData);
-  
   return sortedData;
 };
 

@@ -33,21 +33,21 @@ const MobileNav: React.FC = () => {
       label: t("navigation.dashboard", "Dashboard"),
     },
     {
-      href: "/monthly-savings",
-      icon: PiggyBank,
-      label: t("navigation.savings", "Savings"),
-    },
-    {
       href: "/monthly-expenses",
       icon: DollarSign,
       label: t("navigation.expenses", "Expenses"),
     },
     {
+      href: "/monthly-savings",
+      icon: PiggyBank,
+      label: t("navigation.savings", "Savings"),
+    },
+    { href: "/goals", icon: Target, label: t("navigation.goals", "Goals") },
+    {
       href: "/investments",
       icon: TrendingUp,
       label: t("navigation.investments", "Investments"),
     },
-    { href: "/goals", icon: Target, label: t("navigation.goals", "Goals") },
     { href: "/profile", icon: User, label: t("navigation.profile", "Profile") },
   ];
 

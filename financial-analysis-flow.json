@@ -1,0 +1,11 @@
+{
+  "flowName": "FinancialAnalysisFlow",
+  "version": "1.0.0",
+  "generated": "2025-06-23T21:01:30.321Z",
+  "statistics": {
+    "totalSteps": 12,
+    "parallelSteps": 4,
+    "decisionPoints": 1,
+    "conditionalPaths": 3
+  }
+}

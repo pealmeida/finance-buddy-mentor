@@ -35,9 +35,6 @@ const MonthlySavingsContent: React.FC<MonthlySavingsContentProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Log data for debugging
-  console.log("MonthlySavingsContent received data:", savingsData);
-  console.log("Loading state:", loadingData);
-
   if (loadingData) {
     return <SavingsLoadingState />;
   }

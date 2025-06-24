@@ -65,7 +65,6 @@ const LoginPage: React.FC = () => {
           variant: "destructive",
         });
       } else if (data?.user) {
-        console.log("Login successful, user:", data.user.id);
         toast({
           title: t("auth.loginSuccessful"),
           description: t("auth.loginSuccessDescription"),
@@ -86,7 +85,6 @@ const LoginPage: React.FC = () => {
             const storedProfile = localStorage.getItem("userProfile");
 
             if (session?.user?.id === data.user.id && storedProfile) {
-              console.log("Session confirmed, redirecting to dashboard");
               const from = location.state?.from?.pathname || "/dashboard";
               navigate(from, { replace: true });
               return;
@@ -97,7 +95,6 @@ const LoginPage: React.FC = () => {
           }
 
           // If we've exhausted attempts, force navigation anyway
-          console.warn("Auth state not fully established, forcing redirect");
           const from = location.state?.from?.pathname || "/dashboard";
           navigate(from, { replace: true });
         };

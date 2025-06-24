@@ -6,7 +6,7 @@
   "savingsGoal": "Savings Goal",
   "savingsRate": "Savings Rate",
   "emergencyFund": "Emergency Fund",
-  "trackMonthlySavings": "Track your monthly savings to visualize your progress throughout the year.",
+  "trackMonthlySavings": "Track your monthly savings to visualize your progress.",
   "editSavingsFor": "Edit Savings for",
   "savingsAmount": "Savings Amount",
   "monthlyIncome": "Monthly Income",
@@ -39,10 +39,103 @@
     "averageSaved": "Average Saved"
   },
   "strategies": {
-    "title": "Savings Strategies",
+    "title": "Money-Saving Strategies",
+    "description": "Personalized strategies to help you save more and reach your financial goals faster",
+    "createPlan": "Create Savings Plan",
+    "trackProgress": "Track Progress",
+    "hideDetails": "Hide Details",
+    "potentialSavings": "Potential Savings",
+    "strategiesTitle": "Strategies",
+    "available": "Available",
+    "quickWins": "Quick Wins",
+    "easy": "Easy",
+    "avgSaving": "Avg. Saving",
+    "recommendedTitle": "Recommended Saving Strategies",
     "automaticSavings": "Automatic Savings",
     "budgetOptimization": "Budget Optimization",
-    "expenseReduction": "Expense Reduction"
+    "expenseReduction": "Expense Reduction",
+    "potentialMonthly": "potential monthly",
+    "timelineDifficulty": "Timeline & Difficulty",
+    "implementationSteps": "Implementation Steps",
+    "of": "of",
+    "completed": "completed",
+    "proTips": "Pro Tips",
+    "potentialImpact": "Potential Impact",
+    "monthlySavingsLabel": "Monthly Savings",
+    "annualSavings": "Annual Savings",
+    "startStrategy": "Start This Strategy",
+    "scheduleReminder": "Schedule Reminder",
+    "strategyTitles": {
+      "budgetRule": "Implement the 50/30/20 Budget Rule",
+      "subscriptions": "Audit and Reduce Subscription Services",
+      "emergencyFund": "Build an Emergency Fund",
+      "debtElimination": "High-Interest Debt Elimination Strategy",
+      "automatedSavings": "Set Up Automated Savings",
+      "mealPlanning": "Implement Meal Planning and Grocery Optimization",
+      "energyEfficiency": "Reduce Utility Costs Through Energy Efficiency"
+    },
+    "strategyDescriptions": {
+      "budgetRule": "Allocate 50% of income to needs, 30% to wants, and 20% to savings and debt payments.",
+      "subscriptions": "Review and cancel unused or unnecessary subscription services to reduce monthly expenses.",
+      "emergencyFund": "Create a dedicated savings fund covering 3-6 months of essential expenses for financial security.",
+      "debtElimination": "Focus on paying off high-interest debt to reduce interest payments and improve financial health.",
+      "automatedSavings": "Create automatic transfers to savings accounts on payday to ensure consistent savings before spending.",
+      "mealPlanning": "Reduce food expenses through strategic meal planning and smarter grocery shopping.",
+      "energyEfficiency": "Lower monthly utility bills by implementing energy-saving practices and upgrades."
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "timeFrame": {
+      "immediate": "Immediate",
+      "shortTerm": "Short-term",
+      "longTerm": "Long-term"
+    },
+    "timeFrames": {
+      "immediate": "Start today and see results within 1-2 weeks",
+      "shortTerm": "Implement over 1-3 months for best results",
+      "longTerm": "Build consistently over 6+ months for maximum impact",
+      "default": "Timeline varies based on your situation"
+    },
+    "tips": {
+      "budgetRule": [
+        "Use budgeting apps like YNAB or Mint to track expenses automatically",
+        "Review your budget weekly and adjust as needed",
+        "Start with the 80/20 rule and gradually work toward 50/30/20"
+      ],
+      "subscriptions": [
+        "Use apps like Truebill or Honey to find and cancel subscriptions",
+        "Set calendar reminders before free trial periods end",
+        "Consider annual subscriptions for services you definitely use - they're often cheaper"
+      ],
+      "emergencyFund": [
+        "Keep your emergency fund in a high-yield savings account",
+        "Aim for 3 months of expenses first, then build to 6 months",
+        "Don't invest emergency fund money - keep it liquid and safe"
+      ],
+      "debtPayment": [
+        "Use the debt avalanche method for mathematical optimization",
+        "Consider debt snowball method for psychological wins",
+        "Look into balance transfer cards for high-interest credit card debt"
+      ],
+      "automatedSavings": [
+        "Start with just 1% of income and increase gradually",
+        "Set up transfers for the day after payday",
+        "Use separate accounts for different savings goals"
+      ],
+      "mealPlanning": [
+        "Batch cook on weekends to save time and money",
+        "Shop seasonal produce and freeze extras",
+        "Use cashback credit cards for grocery purchases (if you pay them off monthly)"
+      ],
+      "energyEfficiency": [
+        "Unplug electronics when not in use - they draw power even when off",
+        "Use a smart thermostat to optimize heating/cooling schedules",
+        "Check if your utility company offers energy audits"
+      ]
+    }
   },
   "monthlySavingsFor": "Monthly Savings for {{month}}",
   "adjustSavingsDescription": "Adjust your savings amount for this month based on your income and expenses",

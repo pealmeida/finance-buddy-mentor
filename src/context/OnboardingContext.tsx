@@ -53,16 +53,8 @@ export const OnboardingProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentGoal, setCurrentGoal] = useState(initialCurrentGoal);
 
   const updateProfile = useCallback((updates: Partial<UserProfile>) => {
-    console.log(
-      "OnboardingContext: updateProfile called with updates:",
-      updates
-    );
     setProfile((prev) => {
       const newProfile = { ...prev, ...updates };
-      console.log(
-        "OnboardingContext: new profile state after update:",
-        newProfile
-      );
       return newProfile;
     });
   }, []);

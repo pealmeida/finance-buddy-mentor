@@ -49,6 +49,8 @@
   "signup": "Sign Up",
   "by": "By",
   "of": "of",
+  "showDetails": "Show Details",
+  "hideDetails": "Hide Details",
   "noEmergencyFundData": "No emergency fund data available.",
   "emergencyFundCallToAction": "Add your emergency fund details to see your progress.",
   "noInvestmentData": "No investment data available.",
@@ -57,12 +59,20 @@
   "addGoal": "Add Goal",
   "enterValidNumber": "Please enter a valid number",
   "amountNotNegative": "Amount cannot be negative",
+  "errorLoadingData": "Error loading data",
   "amountSavedIn": "Amount saved in",
   "onTrack": "On Track",
   "backToDashboard": "Back to Dashboard",
   "tryAgain": "Try Again",
   "actions": "Actions",
   "continueEditing": "Continue Editing",
+  "retry": "Retry",
+  "month": "Month",
+  "riskProfile": {
+    "conservative": "Conservative",
+    "moderate": "Moderate",
+    "aggressive": "Aggressive"
+  },
   "months": {
     "january": "January",
     "february": "February",
@@ -87,5 +97,8 @@
     "oct": "Oct",
     "nov": "Nov",
     "dec": "Dec"
+  },
+  "chart": {
+    "clickOnBars": "Click on bars to view details"
   }
 }

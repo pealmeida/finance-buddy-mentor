@@ -122,10 +122,19 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
 
   const completedItems = checklistItems.filter((item) => item.completed).length;
   const totalItems = checklistItems.length;
-  const progressPercentage = (completedItems / totalItems) * 100;
+  const progressPercentage = Math.round((completedItems / totalItems) * 100);
 
   const handleCompleteProfile = () => {
     navigate("/full-profile");
+  };
+
+  const handleDismiss = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsVisible(false);
+  };
+
+  const handleToggleExpanded = () => {
+    setIsExpanded(!isExpanded);
   };
 
   if (!isVisible) {
@@ -136,13 +145,24 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
 
   return (
     <div className={`fixed ${bottomPositionClass} left-4 z-50 animate-fade-in`}>
-      <Card className='w-80 shadow-lg border-finance-blue/20 transition-all duration-300'>
+      <Card
+        className='shadow-lg border-finance-blue/20 transition-all duration-300'
+        style={{ width: "252px", backgroundColor: "rgb(255, 255, 255)" }}>
         {isExpanded ? (
           <>
             <CardHeader
               className='pb-3'
-              onClick={() => setIsExpanded(false)}
-              style={{ cursor: "pointer" }}>
+              onClick={handleToggleExpanded}
+              style={{ cursor: "pointer" }}
+              role='button'
+              tabIndex={0}
+              onKeyPress={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleToggleExpanded();
+                }
+              }}
+              aria-label={t("dashboard.onboardingProgress")}>
               <div className='flex items-center justify-between'>
                 <CardTitle className='text-lg text-finance-blue'>
                   {t("dashboard.onboardingProgress")}
@@ -151,27 +171,37 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
                   <Button
                     variant='ghost'
                     size='sm'
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsVisible(false);
-                    }}
-                    className='h-6 w-6 p-0'>
+                    onClick={handleDismiss}
+                    className='h-6 w-6 p-0'
+                    aria-label='Fechar checklist'>
                     <X className='h-4 w-4' />
                   </Button>
                 </div>
               </div>
               <div className='space-y-2'>
-                <Progress value={progressPercentage} className='h-2' />
+                <Progress
+                  value={progressPercentage}
+                  className='h-2'
+                  aria-label={`Progresso: ${progressPercentage}%`}
+                />
                 <p className='text-sm text-gray-600'>
                   {completedItems}/{totalItems} {t("dashboard.completed")} (
-                  {Math.round(progressPercentage)}%)
+                  {progressPercentage}%)
                 </p>
               </div>
             </CardHeader>
             <CardContent
               className='space-y-3'
-              onClick={() => setIsExpanded(false)}
-              style={{ cursor: "pointer" }}>
+              onClick={handleToggleExpanded}
+              style={{ cursor: "pointer" }}
+              role='button'
+              tabIndex={0}
+              onKeyPress={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleToggleExpanded();
+                }
+              }}>
               {checklistItems.map((item) => (
                 <div key={item.id} className='flex items-center gap-3'>
                   {item.completed ? (
@@ -197,7 +227,10 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
                   variant='outline'
                   size='sm'
                   className='w-full text-finance-blue border-finance-blue hover:bg-finance-blue hover:text-white'
-                  onClick={handleCompleteProfile}>
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCompleteProfile();
+                  }}>
                   {t("dashboard.completeProfile")}
                 </Button>
               </div>
@@ -206,28 +239,39 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
         ) : (
           <CardContent
             className='p-4'
-            onClick={() => setIsExpanded(true)}
-            style={{ cursor: "pointer" }}>
+            onClick={handleToggleExpanded}
+            style={{ cursor: "pointer" }}
+            role='button'
+            tabIndex={0}
+            onKeyPress={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleToggleExpanded();
+              }
+            }}
+            aria-label='Expandir checklist de progresso'>
             <div className='flex items-center justify-between'>
               <div className='flex-1'>
                 <h4 className='text-sm font-medium text-finance-blue mb-2'>
                   {t("dashboard.setupProgress")}
                 </h4>
-                <Progress value={progressPercentage} className='h-2 mb-1' />
+                <Progress
+                  value={progressPercentage}
+                  className='h-2 mb-1'
+                  aria-label={`Progresso: ${progressPercentage}%`}
+                />
                 <p className='text-xs text-gray-600'>
                   {completedItems}/{totalItems} {t("dashboard.completed")} (
-                  {Math.round(progressPercentage)}%)
+                  {progressPercentage}%)
                 </p>
               </div>
               <div className='flex gap-1 ml-3'>
                 <Button
                   variant='ghost'
                   size='sm'
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsVisible(false);
-                  }}
-                  className='h-6 w-6 p-0'>
+                  onClick={handleDismiss}
+                  className='h-6 w-6 p-0'
+                  aria-label='Fechar checklist'>
                   <X className='h-4 w-4' />
                 </Button>
               </div>

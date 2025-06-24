@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { ExpenseItem, MonthlyAmount } from "@/types/finance";
+import { ExpenseItem, MonthlyAmount } from "../../types/finance";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "../ui/card";
+import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
-import { useTranslatedMonths } from "@/constants/months";
+import { useTranslatedMonths } from "../../constants/months";
 import { useTranslation } from "react-i18next";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import ExpenseItemsTable from "./ExpenseItemsTable";
 import ExpenseDeleteConfirmDialog from "./ExpenseDeleteConfirmDialog";
 import ExpenseFormDialogs from "./ExpenseFormDialogs";
@@ -21,7 +21,6 @@ import ExpenseSummarySection, {
 
 interface DetailedExpensesListProps {
   monthData: MonthlyAmount;
-  onUpdateMonthData: (updatedData: MonthlyAmount) => void;
   onAddItem: (item: Omit<ExpenseItem, "id">) => Promise<void>;
   onUpdateItem: (item: ExpenseItem) => Promise<void>;
   onDeleteItem: (itemId: string) => Promise<void>;
@@ -30,7 +29,6 @@ interface DetailedExpensesListProps {
 
 const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
   monthData,
-  onUpdateMonthData,
   onAddItem,
   onUpdateItem,
   onDeleteItem,
@@ -99,26 +97,21 @@ const DetailedExpensesList: React.FC<DetailedExpensesListProps> = ({
             {t("expenses.addExpense", "Add Expense")}
           </Button>
         </CardTitle>
-        <CardDescription className={cn(isMobile && "px-0")}>
+        <div
+          className={cn("text-sm text-muted-foreground", isMobile && "px-0")}>
           <ExpenseHeaderInfo
             monthAmount={monthData.amount}
             items={items}
             calculatedTotal={calculatedTotal}
             hasDiscrepancy={hasDiscrepancy}
           />
-        </CardDescription>
+        </div>
       </CardHeader>
       <CardContent className={cn(isMobile && "px-0 space-y-6")}>
         <ExpenseItemsTable
           items={items}
           onEdit={setEditingExpense}
           onDelete={handleDeleteExpense}
-        />
-
-        <ExpenseSummarySection
-          items={items}
-          monthAmount={monthData.amount}
-          hasDiscrepancy={hasDiscrepancy}
         />
       </CardContent>
 

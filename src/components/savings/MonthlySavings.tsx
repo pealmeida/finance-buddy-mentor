@@ -4,6 +4,7 @@ import MonthlySavingsHeader from "./MonthlySavingsHeader";
 import MonthlySavingsContent from "./MonthlySavingsContent";
 import { Alert, AlertDescription } from "../../components/ui/alert";
 import { useMonthlySavingsState } from "../../hooks/savings/useMonthlySavingsState";
+import { useTranslation } from "react-i18next";
 
 interface MonthlySavingsProps {
   profile: UserProfile;
@@ -16,6 +17,7 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
   onSave,
   isSaving = false,
 }) => {
+  const { t } = useTranslation();
   const {
     selectedYear,
     savingsData,
@@ -31,8 +33,10 @@ const MonthlySavings: React.FC<MonthlySavingsProps> = ({
     return (
       <Alert variant='destructive'>
         <AlertDescription>
-          User profile is not available. Please log in to view your savings
-          data.
+          {t(
+            "auth.profileNotAvailable",
+            "User profile is not available. Please log in to view your savings data."
+          )}
         </AlertDescription>
       </Alert>
     );

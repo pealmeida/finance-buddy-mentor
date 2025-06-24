@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { MonthlyAmount } from "@/types/finance";
-import { useTranslatedMonths } from "@/constants/months";
-import { useCurrency } from "@/context/CurrencyContext";
+import { MonthlyAmount } from "../../types/finance";
+import { useTranslatedMonths } from "../../constants/months";
+import { useCurrency } from "../../context/CurrencyContext";
 import {
   BarChart,
   Bar,
@@ -16,6 +16,7 @@ import {
 import { Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "../../hooks/use-mobile";
+import { formatNumber } from "../../lib/utils";
 
 interface MonthlyExpensesChartProps {
   data: MonthlyAmount[];
@@ -77,6 +78,7 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
   };
 
   const chartData = getFilteredChartData();
+  const allMonthNames = translatedMonthsShort;
 
   // Define a type for the chart click event data
   type ChartClickEvent = {
@@ -128,13 +130,17 @@ const MonthlyExpensesChart: React.FC<MonthlyExpensesChartProps> = ({
               axisLine={{ stroke: "#e5e7eb" }}
             />
             <YAxis
-              tickFormatter={(value) => formatCurrency(value)}
+              tickFormatter={(value) =>
+                `${formatCurrency(value).split(",")[0].replace(" ", "")}`
+              }
               tick={{ fill: "#6b7280" }}
               axisLine={{ stroke: "#e5e7eb" }}
             />
             <Tooltip
               formatter={(value) => [
-                formatCurrency(Number(value)),
+                `${formatCurrency(Number(value))
+                  .split(",")[0]
+                  .replace(" ", "")}`,
                 t("common.amount"),
               ]}
               labelFormatter={(label) => `${t("common.month")}: ${label}`}

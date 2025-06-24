@@ -111,7 +111,6 @@ export const useMonthlySavingsState = (
 
   // Handle saving a month's amount
   const handleSaveAmount = useCallback(async (month: number, amount: number) => {
-    console.log("Saving amount for month:", month, "amount:", amount);
     let updatedSavingsData: MonthlyAmount[] = [];
     setSavingsData(prev => {
       const newState = prev.map(item => item.month === month ? { ...item, amount } : item);
@@ -128,7 +127,6 @@ export const useMonthlySavingsState = (
       });
       return;
     }
-    console.log("Saving all savings data for user:", profile.id, "year:", selectedYear);
     const monthlySavingsId = profile.monthlySavings?.id || uuidv4();
     console.log("savingsData before sending to saveMonthlySavings:", JSON.stringify(updatedSavingsData, null, 2));
 
@@ -138,11 +136,7 @@ export const useMonthlySavingsState = (
       year: selectedYear,
       data: updatedSavingsData
     });
-
-    console.log("saveMonthlySavings success:", success);
-
     if (success && onSave) {
-      console.log("Savings data saved successfully");
       onSave({
         ...profile,
         monthlySavings: {
@@ -162,7 +156,6 @@ export const useMonthlySavingsState = (
 
   // Handle year change
   const handleYearChange = useCallback((year: number) => {
-    console.log("Year changed to:", year);
     setSelectedYear(year);
     setEditingMonth(null);
   }, []);

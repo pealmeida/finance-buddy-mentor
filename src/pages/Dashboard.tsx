@@ -28,13 +28,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
       </div>
 
       {/* Mobile Header */}
-      <MobileHeader
-        title={t("navigation.dashboard", "Dashboard")}
-        showMenu={true}
-      />
+      <MobileHeader title={t("navigation.dashboard", "Dashboard")} />
 
-      {/* Main Content with bottom padding for mobile nav */}
-      <main className='pb-20 md:pb-0'>
+      {/* Main Content with padding for fixed mobile nav and header */}
+      <main className='pt-16 pb-20 md:pt-0 md:pb-0'>
         <QueryClientProvider client={queryClient}>
           <Dashboard
             userProfile={userProfile}

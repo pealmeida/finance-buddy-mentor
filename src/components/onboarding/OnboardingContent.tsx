@@ -187,10 +187,6 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
 
   useEffect(() => {
     if (isEditMode && existingProfile) {
-      console.log(
-        "OnboardingContent: Updating context profile with existing profile:",
-        existingProfile
-      );
       updateProfile(existingProfile);
     }
   }, [isEditMode, existingProfile, updateProfile]);
@@ -206,7 +202,6 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
 
   const handleSaveProfile = async () => {
     setIsLoading(true);
-    console.log("Attempting to save profile:", profile);
     try {
       await onComplete(profile as UserProfile); // Always call onComplete
       toast({

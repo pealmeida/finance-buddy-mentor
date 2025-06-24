@@ -16,8 +16,6 @@ export const useInvestmentsQuery = (userId: string | undefined) => {
    * Fetch investments data from Supabase
    */
   const fetchInvestments = async () => {
-    console.log("fetchInvestments called with userId:", userId);
-
     if (!userId) {
       console.log("No userId provided, setting empty investments");
       setInvestments([]);
@@ -28,20 +26,13 @@ export const useInvestmentsQuery = (userId: string | undefined) => {
     try {
       setIsLoading(true);
       setError(null);
-
-      console.log("Fetching investments from Supabase for userId:", userId);
-
       const { data, error: fetchError } = await supabase
         .from('investments')
         .select('*')
         .eq('user_id', userId);
-
-      console.log("Supabase response:", { data, error: fetchError });
-
       if (fetchError) throw new Error(fetchError.message);
 
       if (data) {
-        console.log("Raw investments data:", data);
         const mappedInvestments = data.map(item => ({
           id: item.id,
           type: item.type as 'stocks' | 'bonds' | 'realEstate' | 'cash' | 'crypto' | 'other',
@@ -49,7 +40,6 @@ export const useInvestmentsQuery = (userId: string | undefined) => {
           value: item.value,
           annualReturn: item.annual_return || undefined
         }));
-        console.log("Mapped investments:", mappedInvestments);
         setInvestments(mappedInvestments);
       } else {
         console.log("No data returned from Supabase");

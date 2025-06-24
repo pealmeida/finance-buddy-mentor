@@ -9,8 +9,6 @@ export function useGetMonthlyExpensesSummary(userId: string, year: number) {
     const queryKey = ['monthlyExpensesSummary', userId, year];
 
     const fetcher = useCallback(async (): Promise<MonthlyAmount[]> => {
-        console.log("useGetMonthlyExpensesSummary: Fetching monthly_expenses summary for userId:", userId, "year:", year);
-
         // Check session validity
         const { data: sessionData } = await supabase.auth.getSession();
         if (!sessionData.session) {
@@ -28,9 +26,6 @@ export function useGetMonthlyExpensesSummary(userId: string, year: number) {
             .eq('user_id', userId)
             .eq('year', year)
             .single();
-
-        console.log("useGetMonthlyExpensesSummary: Supabase response for monthly_expenses - data:", data, "error:", error);
-
         if (error) {
             if (error.code === 'PGRST116') {
                 console.log("useGetMonthlyExpensesSummary: No monthly_expenses entry found for this user/year (PGRST116). Returning default empty array.");
@@ -44,7 +39,6 @@ export function useGetMonthlyExpensesSummary(userId: string, year: number) {
         }
 
         if (data && data.data) {
-            console.log("useGetMonthlyExpensesSummary: Found monthly_expenses data:", data.data);
             return (data.data as unknown as MonthlyAmount[]).map(item => ({
                 ...item,
                 year: year

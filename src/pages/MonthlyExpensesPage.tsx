@@ -49,13 +49,10 @@ const MonthlyExpensesPage: React.FC<MonthlyExpensesPageProps> = ({
       </div>
 
       {/* Mobile Header */}
-      <MobileHeader
-        title={t("expenses.monthlyExpenses", "Monthly Expenses")}
-        showMenu={true}
-      />
+      <MobileHeader title={t("expenses.monthlyExpenses", "Monthly Expenses")} />
 
       {/* Main Content */}
-      <main className='pb-20 md:pb-8'>
+      <main className='pt-16 pb-20 md:pt-0 md:pb-8'>
         <ResponsiveContainer className='py-4 md:py-8'>
           {/* Page Title - Hidden on mobile (shown in header) */}
           <div className='hidden md:block mb-8'>

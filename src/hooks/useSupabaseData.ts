@@ -26,6 +26,8 @@ export function useSupabaseData() {
         id: profile.id,
         email: profile.email || '',
         name: profile.name || 'User',
+        phone: profile.phone || '',
+        phoneVerified: profile.phoneVerified || false,
         age: profile.age || 0,
         monthlyIncome: profile.monthlyIncome || 0,
         riskProfile: profile.riskProfile || 'moderate',

@@ -19,29 +19,19 @@ const MonthlyExpensesHeader: React.FC<MonthlyExpensesHeaderProps> = ({
   const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
 
   return (
-    <>
-      <div className='flex items-center justify-between mb-4'>
-        <h2 className='text-2xl font-semibold flex items-center gap-2'>
-          <DollarSign className='text-red-500' />
-          {t("expenses.monthlyExpenses")}
-        </h2>
-
-        <div className='flex gap-4 items-center'>
-          <YearSelector
-            selectedYear={selectedYear}
-            onYearChange={onYearChange}
-            disabled={disabled}
-          />
-        </div>
-      </div>
-
+    <div className='flex justify-between items-center gap-4 mb-4'>
       <p className='text-gray-600'>
         {t(
           "expenses.trackMonthlyExpenses",
           "Track your monthly expenses to visualize your spending patterns throughout the year."
         )}
       </p>
-    </>
+      <YearSelector
+        selectedYear={selectedYear}
+        onYearChange={onYearChange}
+        disabled={disabled}
+      />
+    </div>
   );
 };
 

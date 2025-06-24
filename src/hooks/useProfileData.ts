@@ -10,6 +10,8 @@ export function useProfileData(initialProfile: UserProfile) {
     id: baseProfile.id || 'default-id',
     email: baseProfile.email || '',
     name: baseProfile.name || '',
+    phone: baseProfile.phone || '',
+    phoneVerified: baseProfile.phoneVerified || false,
     age: baseProfile.age || 0,
     monthlyIncome: baseProfile.monthlyIncome || 0,
     riskProfile: baseProfile.riskProfile || 'moderate',
@@ -59,19 +61,22 @@ export function useProfileData(initialProfile: UserProfile) {
 
       if (session?.user) {
         const { email, user_metadata, id } = session.user;
+        const phone = session.user.phone || '';
+        const phoneVerified = session.user.phone_confirmed_at ? true : false;
 
         // Get profile data from Supabase
         const supabaseProfile = await fetchUserProfile(id);
 
         // If we have Supabase profile data, use it
         if (supabaseProfile) {
-          console.log('Loaded profile from Supabase:', supabaseProfile);
           // Create a complete profile with all required fields
           const completeProfile = createDefaultProfile({
             ...supabaseProfile,
             id: supabaseProfile.id || id,
             email: supabaseProfile.email || email || '',
             name: supabaseProfile.name || (user_metadata?.name as string) || 'User',
+            phone: phone,
+            phoneVerified: phoneVerified,
           });
 
           setProfile(completeProfile);
@@ -84,6 +89,8 @@ export function useProfileData(initialProfile: UserProfile) {
             id,
             email: email || profile.email,
             name: (user_metadata?.name as string) || profile.name,
+            phone: phone || profile.phone,
+            phoneVerified: phoneVerified,
           });
 
           setProfile(updatedProfile);

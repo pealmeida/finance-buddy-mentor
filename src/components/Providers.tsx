@@ -1,10 +1,10 @@
-
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from '@/components/ui/toaster';
-import { Toaster as Sonner } from '@/components/ui/sonner';
-import { TooltipProvider } from '@/components/ui/tooltip';
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "./ui/toaster";
+import { Toaster as Sonner } from "./ui/sonner";
+import { TooltipProvider } from "./ui/tooltip";
+import { DashboardProvider } from "../context/DashboardContext";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -17,11 +17,11 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          {children}
-        </BrowserRouter>
+        <DashboardProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>{children}</BrowserRouter>
+        </DashboardProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

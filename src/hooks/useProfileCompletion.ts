@@ -29,7 +29,6 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
       let profileWithId: UserProfile = { ...profile };
 
       if (session?.user) {
-        console.log('Session user found, using their ID for the profile:', session.user.id);
         profileWithId = {
           ...profile,
           id: session.user.id,
@@ -38,13 +37,11 @@ export function useProfileCompletion(onProfileComplete: (profile: UserProfile) =
         };
 
         // Save profile to Supabase
-        console.log('About to save profile to Supabase:', profileWithId);
         const success = await saveProfile(profileWithId);
 
         if (!success) {
           throw new Error("Failed to save profile to database");
         }
-        console.log('Profile saved to Supabase successfully');
       } else {
         // No auth session, use existing ID if available or placeholder
         console.log('No session found, using local profile data');

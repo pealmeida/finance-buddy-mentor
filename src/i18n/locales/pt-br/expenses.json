@@ -19,8 +19,9 @@
   "health": "Saúde",
   "other": "Outros",
   "monthlyExpenses": "Despesas Mensais",
+  "monthlyExpensesData": "Dados de Despesas Mensais",
   "yearlyExpenses": "Despesas Anuais",
-  "trackMonthlyExpenses": "Acompanhe suas despesas mensais para visualizar seus padrões de gastos ao longo do ano.",
+  "trackMonthlyExpenses": "Acompanhe suas despesas mensais para visualizar os seus padrões de gastos.",
   "clickBarInfo": "Clique nas barras para ver detalhes",
   "loadingExpenses": "Carregando despesas...",
   "viewDetailed": "Ver despesas detalhadas",
@@ -49,5 +50,15 @@
   "discrepancyNote": "Observação: Há uma discrepância entre o total armazenado",
   "discrepancyNote2": "e o total calculado. O total calculado será salvo.",
   "viewYearly": "Ver Anual",
-  "viewLast3Months": "Ver Últimos 3 Meses"
+  "viewLast3Months": "Ver Últimos 3 Meses",
+  "configure": "Configurar Exibição de Despesas",
+  "period": "Período",
+  "last3Months": "Últimos 3 Meses",
+  "thisYear": "Este Ano",
+  "noData": "Nenhum dado de despesas disponível",
+  "addExpenses": "Adicionar Despesas",
+  "view3Months": "Ver 3 Meses",
+  "viewAnnual": "Ver Anual",
+  "ratioTooltip": "Porcentagem da renda gasta em despesas",
+  "startTracking": "Comece a rastrear suas despesas para ver insights"
 }

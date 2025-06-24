@@ -46,7 +46,6 @@ export const useMarketData = () => {
                     filter: 'symbol=in.(SPY,BTC-USD,GLD,AAPL)'
                 },
                 (payload) => {
-                    console.log('Market data update received:', payload);
                     refetch(); // Refetch data when changes occur
                 }
             )

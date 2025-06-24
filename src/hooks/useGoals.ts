@@ -21,7 +21,6 @@ export const useGoals = () => {
       setError(null);
       console.log('Loading goals...');
       const fetchedGoals = await fetchUserGoals();
-      console.log('Loaded goals:', fetchedGoals);
       setGoals(fetchedGoals);
       return fetchedGoals;
     } catch (err) {
@@ -42,10 +41,7 @@ export const useGoals = () => {
   const addGoal = async (newGoalData: Omit<FinancialGoal, 'id'>) => {
     try {
       setLoading(true);
-      console.log('Adding new goal:', newGoalData);
       const newGoal = await createGoal(newGoalData);
-      console.log('Goal created successfully:', newGoal);
-      
       setGoals(prev => [...prev, newGoal]);
       
       toast({
@@ -73,8 +69,6 @@ export const useGoals = () => {
   const editGoal = async (updatedGoal: FinancialGoal) => {
     try {
       setLoading(true);
-      console.log('Editing goal:', updatedGoal);
-      
       await updateGoal(updatedGoal);
       console.log('Goal updated successfully');
       
@@ -103,8 +97,6 @@ export const useGoals = () => {
   const removeGoal = async (goalId: string) => {
     try {
       setLoading(true);
-      console.log('Removing goal:', goalId);
-      
       await deleteGoal(goalId);
       console.log('Goal deleted successfully');
       

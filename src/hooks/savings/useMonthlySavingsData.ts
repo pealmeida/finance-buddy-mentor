@@ -73,7 +73,6 @@ export const useMonthlySavingsData = (
         if (!isMounted) return;
         
         if (savedData && savedData.data) {
-          console.log("Setting savings data from fetch:", savedData.data);
           setSavingsData(processFetchedData(savedData.data));
         } else {
           console.log("No saved data found, initializing empty data");

@@ -14,6 +14,7 @@
   "noExpensesData": "No expenses data available",
   "totalExpenses": "Total Expenses",
   "monthlyExpenses": "Monthly Expenses",
+  "monthlyExpensesData": "Monthly Expenses Overview",
   "yearlyExpenses": "Yearly Expenses",
   "expenseCategories": "Expense Categories",
   "food": "Food",
@@ -22,7 +23,7 @@
   "utilities": "Utilities",
   "entertainment": "Entertainment",
   "other": "Other",
-  "trackMonthlyExpenses": "Track your monthly expenses to visualize your spending patterns throughout the year.",
+  "trackMonthlyExpenses": "Track your monthly expenses to visualize your spending patterns.",
   "clickBarInfo": "Click on bars to view details",
   "loadingExpenses": "Loading expenses...",
   "viewDetailed": "View detailed expenses",
@@ -51,5 +52,15 @@
   "discrepancyNote": "Note: There's a discrepancy between the stored total",
   "discrepancyNote2": "and calculated total. The calculated total will be saved.",
   "viewYearly": "View Yearly",
-  "viewLast3Months": "View Last 3 Months"
+  "viewLast3Months": "View Last 3 Months",
+  "configure": "Configure Expenses Display",
+  "period": "Period",
+  "last3Months": "Last 3 Months",
+  "thisYear": "This Year",
+  "noData": "No expense data available",
+  "addExpenses": "Add Expenses",
+  "view3Months": "View 3 Months",
+  "viewAnnual": "View Annual",
+  "ratioTooltip": "Percentage of income spent on expenses",
+  "startTracking": "Start tracking your expenses to see insights"
 }

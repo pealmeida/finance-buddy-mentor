@@ -1,9 +1,8 @@
-
 {
   "dashboard": "Painel",
   "expenses": "Despesas",
-  "savings": "Poupança",
   "investments": "Investimentos",
+  "savings": "Economias",
   "goals": "Metas",
   "profile": "Perfil",
   "logout": "Sair"

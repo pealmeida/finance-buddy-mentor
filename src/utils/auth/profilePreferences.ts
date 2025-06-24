@@ -12,8 +12,6 @@ export const updateProfilePreferences = async (
     }
 ): Promise<boolean> => {
     try {
-        console.log('updateProfilePreferences: Updating preferences for user:', userId, preferences);
-
         // Update the profiles table with preferences
         const { error } = await supabase
             .from('profiles')

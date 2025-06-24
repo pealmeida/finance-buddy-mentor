@@ -1,4 +1,21 @@
-
 {
-  "errorCalculating": "Erro ao calcular métricas financeiras"
+  "errorCalculating": "Erro ao calcular métricas financeiras",
+  "expensesFetchFailed": "Falha ao buscar dados de despesas",
+  "savingsFetchFailed": "Falha ao buscar dados de Economias",
+  "investmentsFetchFailed": "Falha ao buscar dados de investimentos",
+  "goalsFetchFailed": "Falha ao buscar dados de metas",
+  "profileUpdateFailed": "Falha ao atualizar perfil",
+  "authenticationFailed": "Falha na autenticação",
+  "networkError": "Erro de conexão de rede",
+  "validationError": "Erro de validação",
+  "unknownError": "Ocorreu um erro desconhecido",
+  "sessionExpired": "Sua sessão expirou",
+  "somethingWentWrong": "Algo deu errado. Por favor, tente novamente.",
+  "profileFetchFailed": "Falha ao buscar dados de perfil",
+  "loginFailed": "Falha no login. Verifique suas credenciais.",
+  "signupFailed": "Falha no cadastro. Por favor, tente novamente.",
+  "logoutFailed": "Falha ao fazer logout. Por favor, tente novamente.",
+  "updateFailed": "Falha ao atualizar dados. Por favor, tente novamente.",
+  "addFailed": "Falha ao adicionar dados. Por favor, tente novamente.",
+  "deleteFailed": "Falha ao excluir dados. Por favor, tente novamente."
 }

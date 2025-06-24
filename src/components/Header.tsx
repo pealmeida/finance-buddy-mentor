@@ -71,24 +71,24 @@ const Header: React.FC<HeaderProps> = ({ onboardingComplete = false }) => {
                 {t("navigation.dashboard", "Dashboard")}
               </Link>
               <Link
-                to='/monthly-savings'
-                className='text-gray-700 hover:text-finance-blue transition-colors'>
-                {t("navigation.savings", "Savings")}
-              </Link>
-              <Link
                 to='/monthly-expenses'
                 className='text-gray-700 hover:text-finance-blue transition-colors'>
                 {t("navigation.expenses", "Expenses")}
               </Link>
               <Link
-                to='/investments'
+                to='/monthly-savings'
                 className='text-gray-700 hover:text-finance-blue transition-colors'>
-                {t("navigation.investments", "Investments")}
+                {t("navigation.savings", "Savings")}
               </Link>
               <Link
                 to='/goals'
                 className='text-gray-700 hover:text-finance-blue transition-colors'>
                 {t("navigation.goals", "Goals")}
+              </Link>
+              <Link
+                to='/investments'
+                className='text-gray-700 hover:text-finance-blue transition-colors'>
+                {t("navigation.investments", "Investments")}
               </Link>
               <Link
                 to='/profile'

@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import { UserProfile } from "../types/finance";
 import { useSimpleAuthCheck } from "../hooks/useSimpleAuthCheck";
 import MonthlySavings from "../components/savings/MonthlySavings";
+import SavingStrategies from "../components/SavingStrategies";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import MobileHeader from "../components/ui/mobile-header";
@@ -49,14 +50,11 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
       </div>
 
       {/* Mobile Header */}
-      <MobileHeader
-        title={t("savings.monthlySavings", "Monthly Savings")}
-        showMenu={true}
-      />
+      <MobileHeader title={t("savings.monthlySavings", "Monthly Savings")} />
 
       {/* Main Content */}
-      <main className='pb-20 md:pb-8'>
-        <ResponsiveContainer className='py-4 md:py-8'>
+      <main className='pt-16 pb-20 md:pt-0 md:pb-8'>
+        <ResponsiveContainer className='py-4 md:py-8 space-y-8'>
           {/* Page Title - Hidden on mobile (shown in header) */}
           <div className='hidden md:block mb-8'>
             <h1 className='text-3xl font-bold'>
@@ -64,9 +62,16 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
             </h1>
           </div>
 
-          {/* Content Card */}
-          <div className='bg-white rounded-lg md:rounded-2xl shadow-sm md:shadow-lg p-4 md:p-8'>
+          {/* Monthly Savings Tracking Section */}
+          <div
+            className='bg-white rounded-lg md:rounded-2xl shadow-sm md:shadow-lg p-4 md:p-8'
+            style={{ marginTop: "0px" }}>
             <MonthlySavings profile={userProfile} onSave={handleSave} />
+          </div>
+
+          {/* Saving Strategies Section */}
+          <div className='w-full'>
+            <SavingStrategies userProfile={userProfile} />
           </div>
         </ResponsiveContainer>
       </main>

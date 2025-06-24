@@ -88,8 +88,6 @@ app.post("/api/signup", async (req, res) => {
 // Webhook endpoint for receiving market data updates
 app.post("/api/webhook/market-data", async (req, res) => {
   try {
-    console.log("Received market data webhook:", req.body);
-
     const updates = Array.isArray(req.body) ? req.body : [req.body];
     const results = [];
 
@@ -127,14 +125,12 @@ app.post("/api/webhook/market-data", async (req, res) => {
           });
         } else if (data && data.length === 0) {
           // Symbol not found in database
-          console.warn(`Symbol ${update.symbol} not found in database`);
           results.push({
             symbol: update.symbol,
             success: false,
             error: "Symbol not found",
           });
         } else {
-          console.log(`Successfully updated ${update.symbol}:`, data[0]);
           results.push({
             symbol: update.symbol,
             success: true,

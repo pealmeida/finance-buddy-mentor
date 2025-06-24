@@ -7,6 +7,13 @@ export interface UserProfile {
   id: string;
   name?: string;
   email?: string;
+  phone?: string;
+  phoneVerified?: boolean;
+  whatsAppNumber?: string;
+  whatsAppVerified?: boolean;
+  whatsAppAgentEnabled?: boolean;
+  whatsAppAgentConfig?: WhatsAppAgentConfig;
+  birthdate?: string;
   age?: number;
   monthlyIncome?: number;
   riskProfile?: RiskProfile;
@@ -66,10 +73,12 @@ export interface FinancialGoal {
 
 export interface Investment {
   id: string;
-  type: 'stocks' | 'bonds' | 'realEstate' | 'cash' | 'crypto' | 'other';
+  type: 'stocks' | 'bonds' | 'fixedIncome' | 'realEstate' | 'cash' | 'crypto' | 'other';
   name: string;
   value: number;
   annualReturn?: number;
+  isEmergencyFund?: boolean;
+  purchaseDate?: string;
 }
 
 export interface InvestmentRecommendation {
@@ -123,4 +132,16 @@ export interface MarketDataUpdate {
   change: number;
   changePercent: number;
   timestamp: string;
+}
+
+export interface WhatsAppAgentConfig {
+  dailyUpdates: boolean;
+  weeklyReports: boolean;
+  goalReminders: boolean;
+  expenseAlerts: boolean;
+  investmentUpdates: boolean;
+  spendingLimitAlerts: boolean;
+  emergencyFundAlerts: boolean;
+  customAlertThreshold?: number;
+  preferredUpdateTime?: string; // HH:MM format
 }

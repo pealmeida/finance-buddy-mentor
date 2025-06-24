@@ -21,9 +21,7 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ goals }) => {
   const { isMobile } = useResponsive();
 
   // Debug logs
-  useEffect(() => {
-    console.log("GoalsManagement component - Initial goals prop:", goals);
-  }, [goals]);
+  useEffect(() => {}, [goals]);
 
   useEffect(() => {
     console.log("Modal state changed:", isModalOpen); // Debug log
@@ -45,19 +43,7 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ goals }) => {
   const effectiveGoals = goals && goals.length > 0 ? goals : currentGoals;
 
   // More debug logs
-  useEffect(() => {
-    console.log("GoalsManagement component - Profile goals prop:", goals);
-    console.log(
-      "GoalsManagement component - Current goals from hook:",
-      currentGoals
-    );
-    console.log(
-      "GoalsManagement component - Using effective goals:",
-      effectiveGoals
-    );
-    console.log("GoalsManagement component - Loading:", loading);
-    console.log("GoalsManagement component - Error:", error);
-  }, [goals, currentGoals, effectiveGoals, loading, error]);
+  useEffect(() => {}, [goals, currentGoals, effectiveGoals, loading, error]);
 
   useEffect(() => {
     // This effect should only be used to initialize the goals in the useGoals hook
@@ -164,12 +150,10 @@ const GoalsManagement: React.FC<GoalsManagementProps> = ({ goals }) => {
         className={`flex ${
           isMobile ? "flex-col items-start" : "justify-between items-center"
         } gap-4`}>
-        <h2 className='text-xl font-semibold'>
-          {t("goals.yourFinancialGoals")}
-        </h2>
+        <p className='text-gray-600'>{t("goals.goalsDescription")}</p>
         <Button
           onClick={handleAddGoal}
-          className='flex items-center gap-2 bg-finance-blue hover:bg-finance-blue-dark w-full md:w-auto'>
+          className='flex items-center gap-2 font-medium px-6 py-3 text-sm bg-gradient-to-r from-finance-blue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200 rounded-lg w-full md:w-auto'>
           <PlusCircle size={16} />
           {t("goals.addNewGoal")}
         </Button>

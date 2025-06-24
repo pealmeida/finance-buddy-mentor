@@ -25,6 +25,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useResponsive } from "../../hooks/use-responsive";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { formatNumber } from "../../lib/utils";
 
 interface GoalListProps {
   goals: FinancialGoal[];
@@ -103,8 +104,8 @@ const GoalList: React.FC<GoalListProps> = ({ goals, onEdit, onDelete }) => {
                     {goal.name}
                   </CardTitle>
                   <div className='text-sm text-gray-500'>
-                    ${goal.currentAmount.toLocaleString()} of $
-                    {goal.targetAmount.toLocaleString()}
+                    ${formatNumber(goal.currentAmount, 2)} of $
+                    {formatNumber(goal.targetAmount, 2)}
                   </div>
                 </div>
                 <div className='flex space-x-2'>
@@ -213,8 +214,8 @@ const GoalList: React.FC<GoalListProps> = ({ goals, onEdit, onDelete }) => {
                   <div className='flex flex-col'>
                     <span>{goal.name}</span>
                     <span className='text-xs text-gray-500'>
-                      ${goal.currentAmount.toLocaleString()} of $
-                      {goal.targetAmount.toLocaleString()}
+                      ${formatNumber(goal.currentAmount, 2)} of $
+                      {formatNumber(goal.targetAmount, 2)}
                     </span>
                   </div>
                 </TableCell>

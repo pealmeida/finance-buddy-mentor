@@ -1,27 +1,45 @@
 {
   "welcome": "Bem-vindo(a)",
   "totalExpenses": "Despesas Totais",
-  "totalSavings": "Poupança Total",
+  "totalSavings": "Economias Total",
   "investmentOverview": "Visão Geral dos Investimentos",
   "financialOverview": "Visão Geral Financeira",
-  "financialGoals": "Objetivos Financeiros",
+  "financialGoals": "Metas Financeiras",
   "debtsOverview": "Visão Geral das Dívidas",
   "emergencyFundStatus": "Status do Fundo de Emergência",
   "debts": "Dívidas",
   "investments": "Investimentos",
-  "savings": "Poupanças",
+  "savings": "Economias",
   "expenses": "Despesas",
   "goals": "Metas",
   "monthlyIncome": "Renda Mensal",
-  "monthlySavings": "Poupança Mensal",
+  "monthlySavings": "Economias Mensal",
+  "monthlyExpenses": "Despesas Mensais",
   "emergencyFund": "Fundo de Emergência",
   "emergencyFundProgress": "da meta de 6 meses",
+  "emergencyFundProgressShort": "da meta",
   "emergencyFundTarget": "Fundo de emergência completo!",
-  "emergencyFundRecommended": "Recomendado: 6 meses de despesas",
-  "belowRecommended": "abaixo da poupança recomendada",
-  "meetingRecommended": "Atingindo a poupança recomendada",
+  "emergencyFundRecommended": "Recomendado: 6 meses de renda",
+  "emergencyFundRecommendedExpenses": "Recomendado: 6 meses de despesas",
+  "emergencyFundRecommendedIncome": "Recomendado: 6 meses de renda",
+  "emergencyFundRecommendedIncomeFull": "Recomendado: {{months}} meses de renda",
+  "emergencyFundRecommendedExpensesFull": "Recomendado: {{months}} meses de despesas",
+  "emergencyFundDetails": "Detalhes do Fundo de Emergência",
+  "emergencyFundDetailsDescription": "Visualize o progresso do seu fundo de emergência e recomendações para segurança financeira.",
+  "portfolioDistributionDetails": "Visualize um detalhamento da alocação e desempenho do seu portfólio de investimentos.",
+  "currentProgress": "Progresso Atual",
+  "portfolioOverview": "Visão Geral do Portfólio",
+  "investmentBreakdown": "Detalhamento dos Investimentos",
+  "investmentTip": "Dica de Investimento",
+  "conservativeTip": "Foque em títulos e investimentos estáveis para preservação de capital.",
+  "moderateTip": "Equilibre crescimento e estabilidade com uma mistura de ações e títulos.",
+  "aggressiveTip": "Considere ações de crescimento e investimentos alternativos para maiores retornos potenciais.",
+  "investmentPortfolioDetails": "Detalhes do Portfólio de Investimentos",
+  "avgReturn": "retorno médio",
+  "belowRecommended": "abaixo da Economias recomendada",
+  "meetingRecommended": "Atingindo a Economias recomendada",
   "investmentDistribution": "Distribuição de Investimentos",
-  "recommendedAllocation": "Alocação recomendada baseada no seu perfil de risco",
+  "recommendedAllocation": "Alocação recomendada - ainda sem investimentos",
   "riskProfile": "perfil de risco",
   "marketTrends": "Tendências do Mercado",
   "expensesSummary": "Resumo de Despesas",
@@ -38,20 +56,20 @@
     "bondYield": "Rendimento de Títulos"
   },
   "savingsInsight": {
-    "noData": "Olá {{name}}, parece que você ainda não registrou nenhum valor. Comece a registrar suas poupanças para obter insights personalizados!",
-    "low": "Olá {{name}}, notamos que sua poupança mensal está abaixo do valor recomendado. Considere criar um orçamento para aumentar sua taxa de poupança.",
-    "moderate": "Bom trabalho {{name}}! Você está progredindo em direção às suas metas de poupança, mas ainda há espaço para melhoria.",
-    "high": "Excelente trabalho {{name}}! Você está superando suas metas de poupança. Considere investir os fundos extras para maximizar seus retornos."
+    "noData": "Olá {{name}}, parece que você ainda não registrou nenhum valor. Comece a registrar suas Economias para obter insights personalizados!",
+    "low": "Olá {{name}}, notamos que sua Economias mensal está abaixo do valor recomendado. Considere criar um orçamento para aumentar sua taxa de Economias.",
+    "moderate": "Bom trabalho {{name}}! Você está progredindo em direção às suas metas de Economias, mas ainda há espaço para melhoria.",
+    "high": "Excelente {{name}}! Você está superando suas metas de Economias. Considere investir os fundos extras para maximizar seus retornos."
   },
   "expenseInsight": {
     "high": "{{name}}, suas despesas são altas em relação à sua renda. Considere identificar áreas onde você pode reduzir gastos.",
     "moderate": "{{name}}, suas despesas estão em um nível moderado. Procure oportunidades para reduzir gastos não essenciais.",
-    "low": "{{name}}, você está indo bem em manter suas despesas sob controle. Isso lhe dá mais flexibilidade para poupança e investimentos."
+    "low": "{{name}}, você está indo bem em manter suas despesas sob controle. Isso lhe dá mais flexibilidade para Economias e investimentos."
   },
   "investmentAdvice": {
     "conservative": "Como um investidor conservador {{name}}, foque em investimentos estáveis como títulos e ações de dividendos para preservar capital.",
     "moderate": "Com sua tolerância de risco moderada {{name}}, uma carteira equilibrada de ações e títulos pode funcionar bem para você.",
-    "aggressive": "Como um investidor agressivo {{name}}, você pode considerar ações de crescimento e investimentos alternativos para maiores retornos potenciais."
+    "aggressive": "Como um investidor agressivo {{name}}, você pode considerar investimentos alternativos para maiores retornos."
   },
   "common": {
     "ofTarget": "da meta",
@@ -82,5 +100,115 @@
     "crypto": "Cripto",
     "other": "Outros"
   },
-  "investmentItem": "{{type}}: {{percentage}}%"
+  "investmentItem": "{{type}}: {{percentage}}%",
+  "aiAssistant": {
+    "title": "Assistente Financeiro IA",
+    "beta": "BETA",
+    "botName": "Finance Bot",
+    "thinking": "Analisando seus dados...",
+    "placeholder": "Digite sua pergunta sobre finanças...",
+    "error": "Desculpe, ocorreu um erro. Tente novamente.",
+    "tooltip": "Assistente Financeiro IA",
+    "tooltipSubtext": "Clique para começar uma conversa",
+    "welcome": "Olá {{name}}! 👋 Sou seu assistente financeiro pessoal. Analisei seus dados e estou pronto para ajudar com estratégias de economia, sugestões de investimento e análise de gastos. Como posso ajudá-lo hoje?",
+    "quickSuggestionsTitle": "Perguntas frequentes:",
+    "quickSuggestions": {
+      "savings": "Como melhorar minha Economias?",
+      "expenses": "Analisar meus gastos",
+      "investment": "Sugestões de investimento"
+    },
+    "savings": {
+      "improvement": "{{name}}, analisando seus dados, você está poupando {{current}}% do valor recomendado. Para melhorar, sugiro:\n\n💰 Meta: {{recommended}}/mês (20% da renda)\n🤖 Automatizar transferências\n📊 Revisar gastos não essenciais\n🎯 Criar metas específicas\n\nQuer que eu analise alguma categoria específica de gastos?",
+      "good": "Parabéns {{name}}! 🎉 Você está poupando {{current}}% do valor recomendado, superando a meta!\n\n📈 Considere investir o excedente\n🏦 Diversificar em CDBs ou Tesouro Direto\n💼 Avaliar fundos de investimento\n\nPosso sugerir opções específicas baseadas no seu perfil de risco!"
+    },
+    "expenses": {
+      "high": "{{name}}, suas despesas representam {{ratio}}% da renda - acima do ideal (máx. 70%).\n\n📋 Categorize todos os gastos\n✂️ Identifique gastos supérfluos\n📊 Regra 50/30/20: 50% necessidades, 30% desejos, 20% Economias\n🔄 Revise assinaturas não utilizadas\n\nQuer ajuda para criar um plano de redução de gastos?",
+      "good": "Muito bem {{name}}! 👏 Suas despesas estão controladas em {{ratio}}% da renda.\n\n✅ Continue monitorando\n�� Considere aumentar Economias\n📈 Explore oportunidades de investimento\n🎯 Defina metas de longo prazo\n\nPosso ajudar a otimizar ainda mais suas finanças!"
+    },
+    "investment": {
+      "conservative": "{{name}}, baseado no seu perfil conservador, recomendo:\n\n🏦 Tesouro Direto (IPCA+ ou Selic)\n💳 CDBs de bancos sólidos\n📊 Fundos DI ou Renda Fixa\n🛡️ Foco na preservação do capital\n\nIdeal: 80% renda fixa, 20% variável. Quer detalhes sobre algum produto?",
+      "moderate": "{{name}}, com seu perfil moderado, sugiro uma carteira equilibrada:\n\n📊 60% Renda Fixa (Tesouro, CDBs)\n📈 30% Ações (fundos de índice)\n🏠 10% REITs ou multimercado\n⚖️ Balanceamento trimestral\n\nPosso ajudar a escolher fundos específicos para seu perfil!",
+      "aggressive": "{{name}}, seu perfil agressivo permite mais riscos e retornos:\n\n📈 50% Ações (growth stocks, small caps)\n🌍 20% Ações internacionais\n🏠 15% REITs\n💰 10% Cripto (opcional)\n🏦 5% Renda fixa (emergência)\n\nLembre-se: maior risco = maior potencial de retorno e perdas!"
+    },
+    "goals": "{{name}}, definir metas claras é fundamental! Baseado na sua situação:\n\n🚨 **Emergência**: 6 meses de gastos (prioridade #1)\n🏖️ **Aposentadoria**: 25x gastos anuais\n🎯 **Metas específicas**: viagem, casa, etc.\n📅 **Prazo definido** para cada objetivo\n\nQuer que eu calcule valores e prazos específicos para alguma meta?",
+    "general": "{{name}}, posso ajudar com várias questões financeiras! 💡\n\n📊 **Análise personalizada** baseada nos seus dados reais\n💰 **Estratégias de economia** e controle de gastos\n📈 **Sugestões de investimento** para seu perfil\n🎯 **Planejamento de metas** e aposentadoria\n📱 **Dicas práticas** para o dia a dia\n\nO que gostaria de saber especificamente?",
+    "minimized": "Chat minimizado",
+    "newMessage": "Nova mensagem!"
+  },
+  "emergencyFundInvestmentTitle": "Adicionar Fundo de Emergência aos Investimentos",
+  "emergencyFundInvestmentDescription": "Gostaria de rastrear seu fundo de emergência como parte do seu portfólio de investimentos?",
+  "emergencyFundAmount": "Valor do Fundo de Emergência",
+  "emergencyFundSafetyWarning": "⚠️ Requisitos Importantes de Segurança",
+  "emergencyFundSafetyText": "Seu fundo de emergência deve APENAS ser considerado como investimento se estiver alocado em instrumentos seguros e líquidos, tais como:",
+  "safeInvestmentFixedIncome": "Títulos de Renda Fixa (CDBs, Tesouro Direto)",
+  "safeInvestmentBonds": "Títulos governamentais ou corporativos de alta qualidade",
+  "safeInvestmentCash": "Equivalentes a dinheiro e contas Economias",
+  "safeInvestmentInsured": "Instrumentos financeiros garantidos pelo FGC ou seguros de depósito federais oficiais",
+  "safeInvestmentMMF": "Fundos do mercado monetário ou CDBs de alta liquidez",
+  "acknowledgeSafety": "Confirmo que meu fundo de emergência está investido apenas em instrumentos seguros e de baixo risco, conforme listado acima",
+  "acknowledgeLiquidity": "Entendo que fundos de emergência devem permanecer altamente líquidos e acessíveis em 24-48 horas",
+  "addToInvestments": "Adicionar aos Investimentos",
+  "addEmergencyFundToPortfolio": "Rastrear como Investimento",
+  "insights": {
+    "configure": "Configurar Exibição de Insights"
+  },
+  "customization": {
+    "title": "Personalizar Dashboard",
+    "description": "Configure quais componentes estão visíveis no seu dashboard. Você pode ocultar ou mostrar componentes para criar uma experiência personalizada.",
+    "summary": "Resumo do Dashboard",
+    "visibleComponents": "Componentes Visíveis",
+    "configureFinancialOverview": "Configurar Visão Geral Financeira",
+    "categories": {
+      "overview": "Visão Geral do App",
+      "goals": "Metas",
+      "charts": "Gráficos e Análises",
+      "insights": "Insights"
+    },
+    "comingSoon": "Em Breve",
+    "futureFeatures": "Mais opções de personalização estarão disponíveis em atualizações futuras",
+    "features": {
+      "dragAndDrop": "Reordenação por Arrastar e Soltar",
+      "colorThemes": "Temas de Cor",
+      "widgetSizes": "Tamanhos de Widget",
+      "customWidgets": "Widgets Personalizados"
+    },
+    "resetToDefaults": "Restaurar Padrões"
+  },
+  "components": {
+    "financial-overview": "Visão Geral Financeira",
+    "financial-overview.description": "Visão geral principal do seu status financeiro",
+    "financial-goals": "Metas Financeiras",
+    "financial-goals.description": "Acompanhe e gerencie suas metas financeiras",
+    "expenses-summary": "Resumo de Gastos",
+    "expenses-summary.description": "Detalhamento e análise dos gastos mensais",
+    "personalized-insights": "Insights Personalizados",
+    "personalized-insights.description": "Insights e recomendações baseados em IA",
+    "market-trends": "Tendências do Mercado",
+    "market-trends.description": "Dados atuais do mercado e tendências",
+    "onboarding-checklist": "Lista de Integração",
+    "onboarding-checklist.description": "Rastreador de progresso da conclusão do perfil"
+  },
+  "financialOverviewComponents": {
+    "title": "Visão Geral Financeira",
+    "titleApp": "Visão Geral do App",
+    "description": "Configure quais dados são exibidos na seção Visão Geral Financeira",
+    "monthlyIncomeCard": {
+      "name": "Renda Mensal",
+      "description": "Exibir informações da sua renda mensal"
+    },
+    "totalInvestmentsCard": {
+      "name": "Investimentos",
+      "description": "Mostrar valor total do portfólio de investimentos"
+    },
+    "emergencyFund": {
+      "name": "Fundo de Emergência",
+      "description": "Status e progresso do fundo de emergência"
+    },
+    "investmentDistribution": {
+      "name": "Distribuição de Investimentos",
+      "description": "Detalhamento da alocação do portfólio"
+    },
+    "required": "(Obrigatório)",
+    "atLeastOneVisible": "Pelo menos um componente deve permanecer visível"
+  }
 }

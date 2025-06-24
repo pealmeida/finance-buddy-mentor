@@ -1,17 +1,17 @@
-
 import { SavingStrategy, UserProfile } from '@/types/finance';
+import i18n from '../i18n';
 
 // Generate saving strategies based on user profile
 export const generateSavingStrategies = (userProfile: UserProfile): SavingStrategy[] => {
-  const { monthlyIncome, hasDebts, hasEmergencyFund } = userProfile;
-  
+  const { monthlyIncome = 0, hasDebts, hasEmergencyFund } = userProfile;
+
   const strategies: SavingStrategy[] = [];
-  
+
   // Strategy 1: 50/30/20 Budget Rule
   strategies.push({
     id: '1',
-    title: 'Implement the 50/30/20 Budget Rule',
-    description: 'Allocate 50% of income to needs, 30% to wants, and 20% to savings and debt payments.',
+    title: i18n.t('savings.strategies.strategyTitles.budgetRule', 'Implement the 50/30/20 Budget Rule'),
+    description: i18n.t('savings.strategies.strategyDescriptions.budgetRule', 'Allocate 50% of income to needs, 30% to wants, and 20% to savings and debt payments.'),
     potentialSaving: monthlyIncome * 0.05, // Assumes user can save an additional 5% through better budgeting
     difficulty: 'medium',
     timeFrame: 'immediate',
@@ -22,12 +22,12 @@ export const generateSavingStrategies = (userProfile: UserProfile): SavingStrate
       'Use automated transfers to ensure the savings portion is consistently set aside'
     ]
   });
-  
+
   // Strategy 2: Reduce recurring subscriptions
   strategies.push({
     id: '2',
-    title: 'Audit and Reduce Subscription Services',
-    description: 'Review and cancel unused or unnecessary subscription services to reduce monthly expenses.',
+    title: i18n.t('savings.strategies.strategyTitles.subscriptions', 'Audit and Reduce Subscription Services'),
+    description: i18n.t('savings.strategies.strategyDescriptions.subscriptions', 'Review and cancel unused or unnecessary subscription services to reduce monthly expenses.'),
     potentialSaving: 50, // Assumes $50/month in potential savings
     difficulty: 'easy',
     timeFrame: 'immediate',
@@ -39,13 +39,13 @@ export const generateSavingStrategies = (userProfile: UserProfile): SavingStrate
       'Consider sharing subscription costs with family members when possible'
     ]
   });
-  
+
   // Strategy 3: Emergency fund if they don't have one
   if (!hasEmergencyFund) {
     strategies.push({
       id: '3',
-      title: 'Build an Emergency Fund',
-      description: 'Create a dedicated savings fund covering 3-6 months of essential expenses for financial security.',
+      title: i18n.t('savings.strategies.strategyTitles.emergencyFund', 'Build an Emergency Fund'),
+      description: i18n.t('savings.strategies.strategyDescriptions.emergencyFund', 'Create a dedicated savings fund covering 3-6 months of essential expenses for financial security.'),
       potentialSaving: 0, // This is about building savings, not reducing expenses
       difficulty: 'medium',
       timeFrame: 'long-term',
@@ -58,13 +58,13 @@ export const generateSavingStrategies = (userProfile: UserProfile): SavingStrate
       ]
     });
   }
-  
+
   // Strategy 4: High-interest debt payoff if they have debt
   if (hasDebts) {
     strategies.push({
       id: '4',
-      title: 'High-Interest Debt Elimination Strategy',
-      description: 'Focus on paying off high-interest debt to reduce interest payments and improve financial health.',
+      title: i18n.t('savings.strategies.strategyTitles.debtElimination', 'High-Interest Debt Elimination Strategy'),
+      description: i18n.t('savings.strategies.strategyDescriptions.debtElimination', 'Focus on paying off high-interest debt to reduce interest payments and improve financial health.'),
       potentialSaving: monthlyIncome * 0.10, // Assumes 10% of income going to interest payments that could be saved
       difficulty: 'hard',
       timeFrame: 'long-term',
@@ -77,12 +77,12 @@ export const generateSavingStrategies = (userProfile: UserProfile): SavingStrate
       ]
     });
   }
-  
+
   // Strategy 5: Automated savings
   strategies.push({
     id: '5',
-    title: 'Set Up Automated Savings',
-    description: 'Create automatic transfers to savings accounts on payday to ensure consistent savings before spending.',
+    title: i18n.t('savings.strategies.strategyTitles.automatedSavings', 'Set Up Automated Savings'),
+    description: i18n.t('savings.strategies.strategyDescriptions.automatedSavings', 'Create automatic transfers to savings accounts on payday to ensure consistent savings before spending.'),
     potentialSaving: monthlyIncome * 0.08, // Assumes 8% of income could be saved through automation
     difficulty: 'easy',
     timeFrame: 'immediate',
@@ -94,12 +94,12 @@ export const generateSavingStrategies = (userProfile: UserProfile): SavingStrate
       'Gradually increase the percentage saved as your income increases'
     ]
   });
-  
+
   // Strategy 6: Meal planning
   strategies.push({
     id: '6',
-    title: 'Implement Meal Planning and Grocery Optimization',
-    description: 'Reduce food expenses through strategic meal planning and smarter grocery shopping.',
+    title: i18n.t('savings.strategies.strategyTitles.mealPlanning', 'Implement Meal Planning and Grocery Optimization'),
+    description: i18n.t('savings.strategies.strategyDescriptions.mealPlanning', 'Reduce food expenses through strategic meal planning and smarter grocery shopping.'),
     potentialSaving: 200, // Assumes $200/month in potential savings
     difficulty: 'medium',
     timeFrame: 'short-term',
@@ -111,12 +111,12 @@ export const generateSavingStrategies = (userProfile: UserProfile): SavingStrate
       'Limit eating out to special occasions'
     ]
   });
-  
+
   // Strategy 7: Energy efficiency
   strategies.push({
     id: '7',
-    title: 'Reduce Utility Costs Through Energy Efficiency',
-    description: 'Lower monthly utility bills by implementing energy-saving practices and upgrades.',
+    title: i18n.t('savings.strategies.strategyTitles.energyEfficiency', 'Reduce Utility Costs Through Energy Efficiency'),
+    description: i18n.t('savings.strategies.strategyDescriptions.energyEfficiency', 'Lower monthly utility bills by implementing energy-saving practices and upgrades.'),
     potentialSaving: 100, // Assumes $100/month in potential savings
     difficulty: 'medium',
     timeFrame: 'short-term',
@@ -128,6 +128,6 @@ export const generateSavingStrategies = (userProfile: UserProfile): SavingStrate
       'Consider energy-efficient appliances when replacements are needed'
     ]
   });
-  
+
   return strategies;
 };

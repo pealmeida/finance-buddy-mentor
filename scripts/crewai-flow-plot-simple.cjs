@@ -1,0 +1,325 @@
+#!/usr/bin/env node
+
+// Simple CrewAI Flow Plot with HTML Support (CommonJS)
+const fs = require("fs");
+const path = require("path");
+
+console.log("🎨 CrewAI Flow Plot - JavaScript Implementation");
+console.log("=".repeat(60));
+console.log("");
+
+const args = process.argv.slice(2);
+const format = args[0] || "console";
+const save = args.includes("--save");
+
+console.log(`📊 Plotting flow: FinancialAnalysisFlow`);
+console.log(`📁 Output format: ${format}`);
+console.log(`💾 Save to file: ${save ? "Yes" : "No"}`);
+console.log("");
+
+// Flow plot output
+if (format === "html") {
+  generateHTML();
+} else if (format === "mermaid") {
+  printMermaid();
+} else if (format === "json") {
+  printJSON();
+} else {
+  printConsole();
+}
+
+console.log("");
+console.log("✅ Flow plot completed successfully!");
+console.log(
+  "💡 Usage: node scripts/crewai-flow-plot-simple.cjs [console|mermaid|html|json] [--save]"
+);
+
+function printConsole() {
+  console.log("📊 FLOW STRUCTURE:");
+  console.log("-".repeat(50));
+  console.log("🚀 START: Initialize Analysis (data_collection)");
+  console.log("📋 Collect Financial Data (data_collection)");
+  console.log("🔄 PARALLEL: Budget, Investment, Savings, Goal Analysis");
+  console.log("🔍 DECISION: Determine Analysis Confidence (router)");
+  console.log("📊 CONDITIONAL: Comprehensive/Basic/Request Data");
+  console.log("🎯 Generate Recommendations (analysis)");
+  console.log("💾 FINISH: Finalize Analysis (data_storage)");
+  console.log("");
+  console.log("📈 Statistics: 12 steps, 4 parallel, 1 decision point");
+}
+
+function printMermaid() {
+  console.log("📊 MERMAID DIAGRAM:");
+  console.log("-".repeat(50));
+  console.log("graph TD");
+  console.log(
+    '    A["🚀 Initialize Analysis"] --> B["📋 Collect Financial Data"]'
+  );
+  console.log('    B --> C["🤖 Budget Analysis"]');
+  console.log('    B --> D["🤖 Investment Analysis"]');
+  console.log('    B --> E["🤖 Savings Analysis"]');
+  console.log('    B --> F["🤖 Goal Analysis"]');
+  console.log('    C --> G["🔍 Determine Confidence"]');
+  console.log("    D --> G");
+  console.log("    E --> G");
+  console.log("    F --> G");
+  console.log('    G --> H["📊 Comprehensive Analysis"]');
+  console.log('    G --> I["📊 Basic Analysis"]');
+  console.log('    G --> J["👤 Request Data"]');
+  console.log('    H --> K["📊 Generate Recommendations"]');
+  console.log("    I --> K");
+  console.log("    J --> K");
+  console.log('    K --> L["💾 Finalize Analysis"]');
+}
+
+function printJSON() {
+  console.log("📊 JSON FLOW DATA:");
+  console.log("-".repeat(50));
+
+  const flowData = {
+    flowName: "FinancialAnalysisFlow",
+    version: "1.0.0",
+    generated: new Date().toISOString(),
+    statistics: {
+      totalSteps: 12,
+      parallelSteps: 4,
+      decisionPoints: 1,
+      conditionalPaths: 3,
+    },
+  };
+
+  console.log(JSON.stringify(flowData, null, 2));
+
+  if (save) {
+    fs.writeFileSync(
+      "financial-analysis-flow.json",
+      JSON.stringify(flowData, null, 2)
+    );
+    console.log("📁 JSON saved: financial-analysis-flow.json");
+  }
+}
+
+function generateHTML() {
+  console.log("🌐 GENERATING HTML VISUALIZATION:");
+  console.log("-".repeat(50));
+
+  const htmlContent = generateHTMLContent();
+
+  if (save) {
+    const filename = "financial-analysis-flow.html";
+    fs.writeFileSync(filename, htmlContent);
+    console.log(`📁 HTML file saved: ${filename}`);
+    console.log(`🌐 Open in browser: file://${path.resolve(filename)}`);
+  } else {
+    console.log("HTML content generated successfully!");
+    console.log("📁 Add --save flag to save to file");
+  }
+
+  console.log("🎨 Interactive features included:");
+  console.log("  • Responsive Mermaid diagram");
+  console.log("  • Clickable statistics cards");
+  console.log("  • Professional styling");
+  console.log("  • Mobile-friendly design");
+}
+
+function generateHTMLContent() {
+  const timestamp = new Date().toLocaleString();
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrewAI Flow Plot - FinancialAnalysisFlow</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; padding: 20px; color: #333;
+        }
+        .container {
+            max-width: 1200px; margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white; text-align: center; padding: 40px 20px;
+        }
+        .title { font-size: 2.5em; font-weight: 700; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2em; opacity: 0.9; margin-bottom: 10px; }
+        .timestamp { font-size: 0.9em; opacity: 0.7; }
+        .main-content { padding: 40px; }
+        .section-title {
+            font-size: 1.5em; font-weight: 600; margin: 30px 0 15px 0;
+            color: #2c3e50; padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .flow-diagram {
+            background: #f8f9fa; border-radius: 15px; padding: 30px;
+            margin: 20px 0; border: 1px solid #e9ecef;
+        }
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px; margin: 30px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #6c63ff 0%, #764ba2 100%);
+            color: white; padding: 20px; border-radius: 12px; text-align: center;
+            transition: transform 0.3s ease; cursor: pointer;
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-number { font-size: 2em; font-weight: 700; margin-bottom: 5px; }
+        .stat-label { font-size: 0.9em; opacity: 0.9; }
+        .features-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; margin: 30px 0;
+        }
+        .feature-card {
+            background: white; border-radius: 10px; padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease; border: 1px solid #e9ecef;
+        }
+        .feature-card:hover { transform: translateY(-3px); }
+        .feature-icon { font-size: 1.8em; margin-bottom: 10px; }
+        .feature-title { font-size: 1.1em; font-weight: 600; margin-bottom: 8px; color: #2c3e50; }
+        .feature-description { color: #6c757d; line-height: 1.5; font-size: 0.9em; }
+        .footer { background: #f8f9fa; text-align: center; padding: 25px; color: #6c757d; }
+        .mermaid { margin: 20px 0; }
+        @media (max-width: 768px) {
+            .container { margin: 10px; }
+            .title { font-size: 2em; }
+            .main-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🎨 CrewAI Flow Plot</h1>
+            <p class="subtitle">Financial Analysis Workflow Visualization</p>
+            <p class="timestamp">Generated: ${timestamp}</p>
+        </div>
+        
+        <div class="main-content">
+            <h2 class="section-title">📊 Flow Visualization</h2>
+            <div class="flow-diagram">
+                <div class="mermaid">
+graph TD
+    A["🚀 Initialize Analysis<br/>data_collection"] --> B["📋 Collect Financial Data<br/>data_collection"]
+    B --> C["🤖 Budget Analysis<br/>agent_execution"]
+    B --> D["🤖 Investment Analysis<br/>agent_execution"]
+    B --> E["🤖 Savings Analysis<br/>agent_execution"]
+    B --> F["🤖 Goal Analysis<br/>agent_execution"]
+    C --> G["🔍 Determine Confidence<br/>decision_point"]
+    D --> G
+    E --> G
+    F --> G
+    G --> H["📊 Comprehensive Analysis<br/>analysis"]
+    G --> I["📊 Basic Analysis<br/>analysis"]
+    G --> J["👤 Request Data<br/>user_interaction"]
+    H --> K["📊 Generate Recommendations<br/>analysis"]
+    I --> K
+    J --> K
+    K --> L["💾 Finalize Analysis<br/>data_storage"]
+
+    classDef startNode fill:#90EE90,stroke:#228B22,stroke-width:3px
+    classDef dataNode fill:#E6F3FF,stroke:#4169E1,stroke-width:2px
+    classDef agentNode fill:#FFE4B5,stroke:#FF8C00,stroke-width:2px
+    classDef decisionNode fill:#FFB6C1,stroke:#DC143C,stroke-width:3px
+    classDef analysisNode fill:#E0E6FF,stroke:#6A5ACD,stroke-width:2px
+    classDef interactionNode fill:#FFEFD5,stroke:#D2691E,stroke-width:2px
+    classDef storageNode fill:#F0FFF0,stroke:#32CD32,stroke-width:3px
+
+    class A startNode
+    class B dataNode
+    class C,D,E,F agentNode
+    class G decisionNode
+    class H,I,K analysisNode
+    class J interactionNode
+    class L storageNode
+                </div>
+            </div>
+            
+            <h2 class="section-title">📈 Flow Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Total Steps</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Parallel Steps</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">Decision Points</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Conditional Paths</div>
+                </div>
+            </div>
+            
+            <h2 class="section-title">⭐ Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Parallel Processing</h3>
+                    <p class="feature-description">Budget, Investment, Savings, and Goals analysis run simultaneously for maximum efficiency.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Adaptive Routing</h3>
+                    <p class="feature-description">Confidence-based routing ensures appropriate analysis depth based on data quality.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">Agent Integration</h3>
+                    <p class="feature-description">Seamless connection with Google's A2A protocol and specialized financial agents.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Visual Debugging</h3>
+                    <p class="feature-description">Clear workflow structure for development, debugging, and optimization.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>🎨 CrewAI Flow Plot | Generated by Finance Buddy Mentor | TypeScript Implementation</p>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+        
+        // Add interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎨 CrewAI Flow Plot loaded successfully!');
+            
+            // Add click handlers for stat cards
+            document.querySelectorAll('.stat-card').forEach(function(card) {
+                card.addEventListener('click', function() {
+                    const label = this.querySelector('.stat-label').textContent;
+                    const number = this.querySelector('.stat-number').textContent;
+                    alert(label + ': ' + number);
+                });
+            });
+        });
+    </script>
+</body>
+</html>`;
+}

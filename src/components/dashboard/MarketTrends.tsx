@@ -2,9 +2,12 @@ import React from "react";
 import { Separator } from "../ui/separator";
 import { useTranslation } from "react-i18next";
 import { useMarketData } from "../../hooks/useMarketData";
-import { Loader2 } from "lucide-react";
+import { Loader2, TrendingUp } from "lucide-react";
+import { formatNumber } from "../../lib/utils";
 
-const MarketTrends: React.FC = () => {
+interface MarketTrendsProps {}
+
+const MarketTrends: React.FC<MarketTrendsProps> = () => {
   const { t } = useTranslation();
   const { marketData, isLoading, error } = useMarketData();
 
@@ -27,12 +30,9 @@ const MarketTrends: React.FC = () => {
   // Function to format price based on symbol
   const formatPrice = (symbol: string, price: number) => {
     if (symbol === "BTC-USD") {
-      return `$${price.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`;
+      return `$${formatNumber(price, 0)}`;
     }
-    return `$${price.toFixed(2)}`;
+    return `$${formatNumber(price, 0)}`;
   };
 
   // Function to get description based on type
@@ -54,7 +54,7 @@ const MarketTrends: React.FC = () => {
   if (isLoading) {
     return (
       <div className='glass-panel rounded-2xl p-6'>
-        <div className='flex items-center justify-between mb-4'>
+        <div className='mb-4'>
           <h2 className='text-xl font-semibold'>
             {t("dashboard.marketTrends")}
           </h2>
@@ -72,7 +72,7 @@ const MarketTrends: React.FC = () => {
   if (error) {
     return (
       <div className='glass-panel rounded-2xl p-6'>
-        <div className='flex items-center justify-between mb-4'>
+        <div className='mb-4'>
           <h2 className='text-xl font-semibold'>
             {t("dashboard.marketTrends")}
           </h2>
@@ -86,16 +86,15 @@ const MarketTrends: React.FC = () => {
 
   return (
     <div className='glass-panel rounded-2xl p-6'>
-      <div className='flex items-center justify-between mb-4'>
-        <h2 className='text-xl font-semibold'>{t("dashboard.marketTrends")}</h2>
-        <div className='text-xs text-gray-500'>
-          {marketData.length > 0 && (
-            <>
-              {t("common.lastUpdated", "Last updated")}:{" "}
-              {marketData[0].lastUpdated.toLocaleTimeString()}
-            </>
-          )}
-        </div>
+      <div className='mb-4'>
+        <h2 className='text-xl font-semibold'>
+          <div className='flex items-center gap-3'>
+            <div className='p-2 rounded-lg bg-green-50 border border-green-100'>
+              <TrendingUp className='h-5 w-5 text-green-500' />
+            </div>
+            {t("dashboard.marketTrends")}
+          </div>
+        </h2>
       </div>
 
       <div className='space-y-4'>
@@ -104,8 +103,8 @@ const MarketTrends: React.FC = () => {
           const isPositive = item.changePercent >= 0;
 
           return (
-            <React.Fragment key={item.id}>
-              <div className='flex items-center justify-between'>
+            <div key={item.id}>
+              <div className='flex items-center justify-between pb-2'>
                 <div className='flex items-center gap-2'>
                   <div
                     className={`h-8 w-8 rounded-full ${typeStyle.bg} flex items-center justify-center`}>
@@ -134,7 +133,7 @@ const MarketTrends: React.FC = () => {
                 </div>
               </div>
               {index < marketData.length - 1 && <Separator />}
-            </React.Fragment>
+            </div>
           );
         })}
       </div>

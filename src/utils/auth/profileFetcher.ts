@@ -41,9 +41,9 @@ const savePreferredLanguage = (language: Language) => {
 /**
  * Convert raw JSON data to typed MonthlyAmount array for expenses
  */
-const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] => {
+const convertToTypedExpensesData = (data: Json | null, year: number = new Date().getFullYear()): MonthlyAmount[] => {
   if (!data || typeof data !== 'object' || !Array.isArray(data)) {
-    return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+    return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, year, amount: 0 }));
   }
 
   try {
@@ -52,13 +52,14 @@ const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] => {
         const itemObj = item as Record<string, unknown>;
         const month = typeof itemObj.month === 'number' ? itemObj.month : 0;
         const amount = typeof itemObj.amount === 'number' ? itemObj.amount : 0;
-        return { month, amount };
+        const itemYear = typeof itemObj.year === 'number' ? itemObj.year : year;
+        return { month, year: itemYear, amount };
       }
-      return { month: 0, amount: 0 };
+      return { month: 0, year, amount: 0 };
     }).filter(item => item.month >= 1 && item.month <= 12);
 
     if (typedData.length !== 12) {
-      const completeData = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+      const completeData = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, year, amount: 0 }));
       typedData.forEach(item => {
         if (item.month >= 1 && item.month <= 12) {
           completeData[item.month - 1] = item;
@@ -70,7 +71,7 @@ const convertToTypedExpensesData = (data: Json | null): MonthlyAmount[] => {
     return typedData.sort((a, b) => a.month - b.month);
   } catch (error) {
     console.error("Error converting JSON to typed expenses data:", error);
-    return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, amount: 0 }));
+    return Array.from({ length: 12 }, (_, i) => ({ month: i + 1, year, amount: 0 }));
   }
 };
 
@@ -107,7 +108,6 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
     }
 
     // Fetch the related data
-    console.log('fetchUserProfileFromSupabase: Fetching related data for user:', userId);
     const { data: goalsData } = await supabase
       .from('financial_goals')
       .select('*')
@@ -135,12 +135,6 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       .select('*')
       .eq('user_id', userId);
 
-    console.log('fetchUserProfileFromSupabase: Raw goals data:', goalsData);
-    console.log('fetchUserProfileFromSupabase: Raw investments data:', investmentsData);
-    console.log('fetchUserProfileFromSupabase: Raw debt data:', debtDetailsData);
-    console.log('fetchUserProfileFromSupabase: Raw monthly expenses data:', monthlyExpensesData);
-    console.log('fetchUserProfileFromSupabase: Raw monthly savings data:', monthlySavingsData);
-
     // Transform goals data
     const financialGoals = goalsData ? goalsData.map((goal: any) => ({
       id: goal.id,
@@ -160,8 +154,7 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       annualReturn: investment.annual_return
     })) : [];
 
-    console.log('fetchUserProfileFromSupabase: Transformed goals:', financialGoals);
-    console.log('fetchUserProfileFromSupabase: Transformed investments:', investments);
+
 
     // Transform debt details data
     const debtDetails = debtDetailsData ? debtDetailsData.map((debt: any) => ({
@@ -177,7 +170,7 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
     const monthlyExpenses = monthlyExpensesData && monthlyExpensesData.length > 0 ? {
       userId: userId,
       year: monthlyExpensesData[0].year,
-      data: convertToTypedExpensesData(monthlyExpensesData[0].data)
+      data: convertToTypedExpensesData(monthlyExpensesData[0].data, monthlyExpensesData[0].year)
     } : undefined;
 
     // Transform monthly savings data
@@ -188,8 +181,7 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
       data: convertToTypedSavingsData(monthlySavingsData[0].data)
     } : undefined;
 
-    console.log('fetchUserProfileFromSupabase: Transformed monthly expenses:', monthlyExpenses);
-    console.log('fetchUserProfileFromSupabase: Transformed monthly savings:', monthlySavings);
+
 
     // Ensure riskProfile is a valid RiskProfile type
     const riskProfile = validateRiskProfile(financialProfileData?.risk_profile ?? null);
@@ -198,7 +190,7 @@ export const fetchUserProfileFromSupabase = async (userId: string): Promise<User
     const preferredCurrency = (profileData as any)?.preferred_currency as Currency || getPreferredCurrency();
     const preferredLanguage = (profileData as any)?.preferred_language as Language || getPreferredLanguage();
 
-    console.log('fetchUserProfileFromSupabase: Loaded preferences:', { preferredCurrency, preferredLanguage });
+
 
     // Save preferences to localStorage to ensure consistency
     if (preferredCurrency) savePreferredCurrency(preferredCurrency);

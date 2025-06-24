@@ -17,25 +17,17 @@ export function combineExpensesData(
 
     // Group detailed expenses by month
     const expensesByMonth: { [month: number]: ExpenseItem[] } = {};
-
-    console.log(`combineExpensesData: Processing ${detailedExpenses.length} expenses for year ${year}`);
-
     detailedExpenses.forEach(expense => {
         const date = new Date(expense.date);
         const expenseYear = date.getFullYear();
         const month = date.getMonth() + 1; // getMonth() returns 0-based month
-
-        console.log(`combineExpensesData: Processing expense ${expense.id} - date: ${expense.date}, year: ${expenseYear}, target year: ${year}`);
-
         // Only include expenses from the selected year
         if (expenseYear === year) {
             if (!expensesByMonth[month]) {
                 expensesByMonth[month] = [];
             }
             expensesByMonth[month].push(expense);
-            console.log(`combineExpensesData: Added expense to month ${month}`);
         } else {
-            console.log(`combineExpensesData: Skipped expense from year ${expenseYear} (target: ${year})`);
         }
     });
 

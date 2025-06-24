@@ -14,7 +14,6 @@ export const fetchProfile = async (
     const profile = await fetchUserProfileFromSupabase(userId);
     
     if (profile) {
-      console.log('Profile loaded:', profile);
       // Check if profile is complete enough to skip onboarding
       const profileIsComplete = 
         profile.monthlyIncome > 0 && 
@@ -39,7 +38,6 @@ export const fetchProfile = async (
         investments: [],
         debtDetails: [],
       };
-      console.log('Creating minimal profile:', minimalProfile);
       setIsProfileComplete(false);
       setUserProfile(minimalProfile);
       localStorage.setItem('userProfile', JSON.stringify(minimalProfile));

@@ -18,7 +18,7 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({ title, actions }) => {
 
   const getHeaderClasses = () => {
     return cn(
-      "sticky top-0 z-40 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80",
+      "fixed top-0 left-0 right-0 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 z-40 safe-area-inset-top",
       isMobile ? "block" : "md:hidden"
     );
   };

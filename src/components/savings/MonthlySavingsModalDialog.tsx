@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "../../components/ui/dialog";
 import {
   Sheet,
@@ -82,6 +83,8 @@ const MonthlySavingsModalDialog: React.FC<MonthlySavingsModalDialogProps> = ({
                 monthlyIncome={monthlyIncome}
                 monthlyExpenses={monthlyExpenses}
                 isMobile={true}
+                onClose={onClose}
+                modalTitle={getModalTitle()}
               />
             )}
           </div>
@@ -93,9 +96,15 @@ const MonthlySavingsModalDialog: React.FC<MonthlySavingsModalDialogProps> = ({
   // Render desktop dialog for desktop devices
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='w-full h-full sm:max-w-4xl sm:max-h-[90vh] overflow-y-auto'>
+      <DialogContent className='w-full h-full sm:max-w-4xl sm:h-[622px] overflow-y-auto p-0'>
         <DialogHeader>
           <DialogTitle>{getModalTitle()}</DialogTitle>
+          <DialogDescription>
+            {t(
+              "savings.editSavingsDescription",
+              "Manage and edit your monthly savings for the selected month."
+            )}
+          </DialogDescription>
         </DialogHeader>
         {selectedMonthData && (
           <DetailedSavingsList
@@ -104,6 +113,8 @@ const MonthlySavingsModalDialog: React.FC<MonthlySavingsModalDialogProps> = ({
             onSaveAmount={onSaveAmount}
             monthlyIncome={monthlyIncome}
             monthlyExpenses={monthlyExpenses}
+            onClose={onClose}
+            modalTitle={getModalTitle()}
           />
         )}
       </DialogContent>

@@ -19,23 +19,21 @@ export const loadFromLocalStorage = (
   setIsProfileComplete: (complete: boolean) => void
 ) => {
   const savedProfile = localStorage.getItem('userProfile');
-  
+
   if (savedProfile) {
     try {
       const parsedProfile = JSON.parse(savedProfile);
-      
+
       // Validate the riskProfile
       parsedProfile.riskProfile = validateRiskProfile(parsedProfile.riskProfile);
-      
-      console.log('Using local profile (no auth):', parsedProfile);
       setUserProfile(parsedProfile);
-      
+
       // Check if profile is complete
-      const profileIsComplete = 
-        parsedProfile.monthlyIncome > 0 && 
-        parsedProfile.age > 0 && 
+      const profileIsComplete =
+        parsedProfile.monthlyIncome > 0 &&
+        parsedProfile.age > 0 &&
         parsedProfile.riskProfile !== undefined;
-      
+
       setIsProfileComplete(profileIsComplete);
     } catch (e) {
       console.error("Error parsing stored profile", e);
@@ -43,7 +41,11 @@ export const loadFromLocalStorage = (
       setIsProfileComplete(false);
     }
   } else {
-    console.log('No profile found, user needs to sign in');
+    // Only log once to avoid spam in console
+    if (!(window as any).__profileLoadAttempted) {
+      console.log('No profile found, user needs to sign in');
+      (window as any).__profileLoadAttempted = true;
+    }
     setUserProfile(null);
     setIsProfileComplete(false);
   }

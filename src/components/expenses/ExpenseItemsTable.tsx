@@ -1,5 +1,5 @@
 import React from "react";
-import { ExpenseItem } from "@/types/finance";
+import { ExpenseItem } from "../../types/finance";
 import {
   Table,
   TableBody,
@@ -7,15 +7,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+} from "../ui/table";
+import { Badge } from "../ui/badge";
 import { format } from "date-fns";
 import { XCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "@/context/CurrencyContext";
+import { useCurrency } from "../../context/CurrencyContext";
 import ExpenseItemActions from "./ExpenseItemActions";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useIsMobile } from "../../hooks/use-mobile";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 interface ExpenseItemsTableProps {
   items: ExpenseItem[];
@@ -34,13 +34,13 @@ const ExpenseItemsTable: React.FC<ExpenseItemsTableProps> = ({
 
   const getCategoryBadgeColor = (category: ExpenseItem["category"]) => {
     const colors: Record<ExpenseItem["category"], string> = {
-      housing: "bg-blue-100 text-blue-800",
-      food: "bg-green-100 text-green-800",
-      transportation: "bg-yellow-100 text-yellow-800",
-      utilities: "bg-purple-100 text-purple-800",
-      entertainment: "bg-pink-100 text-pink-800",
-      healthcare: "bg-cyan-100 text-cyan-800",
-      other: "bg-gray-100 text-gray-800",
+      housing: "bg-blue-200 text-blue-900",
+      food: "bg-green-200 text-green-900",
+      transportation: "bg-yellow-200 text-yellow-900",
+      utilities: "bg-purple-200 text-purple-900",
+      entertainment: "bg-pink-200 text-pink-900",
+      healthcare: "bg-cyan-200 text-cyan-900",
+      other: "bg-gray-200 text-gray-900",
     };
 
     return colors[category];

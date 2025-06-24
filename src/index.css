@@ -88,6 +88,78 @@
 
 /* Menu-consistent utilities - matching mobile navigation margins and sizing */
 @layer utilities {
+  /* Safe area utilities for mobile devices */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Floating AI Chat utilities */
+  .ai-chat-mobile-bottom {
+    bottom: calc(env(safe-area-inset-bottom) + 4.5rem);
+  }
+  
+  .ai-chat-mobile-window {
+    bottom: calc(env(safe-area-inset-bottom) + 4rem);
+    max-height: calc(100vh - env(safe-area-inset-bottom) - 5rem);
+  }
+
+  /* Fullscreen height accounting for safe areas */
+  .ai-chat-fullscreen-message-height {
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 200px);
+  }
+
+  /* Fullscreen mobile window - ocupa toda a tela acima do menu inferior */
+  .ai-chat-fullscreen-mobile {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: calc(env(safe-area-inset-bottom) + 4.5rem) !important;
+    width: 100vw !important;
+    height: calc(100vh - env(safe-area-inset-bottom) - 4.5rem) !important;
+    border-radius: 0 !important;
+    z-index: 9999 !important;
+  }
+
+  /* Fullscreen desktop window - ocupa 90% da tela e é centralizado */
+  .ai-chat-fullscreen-desktop {
+    width: 90vw;
+    height: 90vh;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 70;
+    border-radius: 1rem; /* Adiciona um arredondamento para desktop */
+  }
+
+  /* Ajuste da área de mensagens em fullscreen mobile */
+  .ai-chat-fullscreen-mobile-messages {
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 220px) !important;
+  }
+
+  /* Fullscreen desktop messages area */
+  .ai-chat-fullscreen-desktop-messages {
+    max-height: calc(90vh - 250px); /* Ajustado para garantir a visibilidade do input e do cabeçalho em fullscreen desktop */
+  }
+
+  /* New overlay for fullscreen chat */
+  .ai-chat-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent dark background */
+    backdrop-filter: blur(5px); /* Apply blur effect */
+    z-index: 55; /* Lower than chat window (60 or 70) */
+    transition: opacity 0.3s ease-in-out;
+    opacity: 1;
+  }
+
   /* Menu-consistent container - matching mobile nav styling */
   .menu-consistent-container {
     @apply container mx-auto;
@@ -363,11 +435,13 @@
 }
 
 .glass-card {
-  @apply bg-white/70 dark:bg-black/20 backdrop-blur-lg border border-white/20 dark:border-white/10;
+  background-color: rgb(255, 255, 255);
+  @apply border border-white/20 dark:border-white/10;
 }
 
 .glass-panel {
-  @apply bg-white/50 dark:bg-black/30 backdrop-blur-md border border-white/30 dark:border-white/5;
+  background-color: rgb(255, 255, 255);
+  @apply border border-white/30 dark:border-white/5;
 }
 
 .subtle-shadow {
@@ -407,6 +481,53 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* AI Chat Button Animations */
+.ai-chat-button-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-3px) rotate(1deg); }
+  50% { transform: translateY(-6px) rotate(0deg); }
+  75% { transform: translateY(-3px) rotate(-1deg); }
+}
+
+.ai-chat-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.ai-chat-pulse-ring {
+  animation: pulseRing 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  80%, 100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+.ai-chat-sparkle {
+  animation: sparkle 2s linear infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
 /* Progress bar animation */
 .progress-animation {
   transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -437,4 +558,35 @@
   .responsive-button {
     @apply px-6 py-3;
   }
+}
+
+/* Line clamp utilities for text truncation */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Enhanced mobile chat styling */
+.ai-chat-mobile-suggestion {
+  @apply transition-all duration-200;
+}
+
+.ai-chat-mobile-suggestion:active {
+  @apply bg-blue-100 scale-95;
 }

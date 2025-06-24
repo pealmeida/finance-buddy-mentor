@@ -25,10 +25,6 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
   savingsProgress,
   expensesRatio,
 }) => {
-  console.log(
-    "PersonalizedInsights: received savingsProgress:",
-    savingsProgress
-  );
   const { t } = useTranslation();
 
   // Generate personalized insights based on user data
@@ -155,11 +151,13 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
   const investmentData = getInvestmentAdviceData();
 
   return (
-    <Card>
-      <CardHeader className='flex flex-row items-center justify-between pb-2'>
+    <Card style={{ backgroundColor: "rgb(255, 255, 255)" }}>
+      <CardHeader className='pb-2'>
         <CardTitle className='text-lg font-medium'>
-          <div className='flex items-center gap-2'>
-            <BrainCircuit className='h-5 w-5 text-purple-500' />
+          <div className='flex items-center gap-3'>
+            <div className='p-2 rounded-lg bg-purple-50 border border-purple-100'>
+              <BrainCircuit className='h-5 w-5 text-purple-500' />
+            </div>
             {t("dashboard.personalizedInsights")}
           </div>
         </CardTitle>
@@ -199,7 +197,7 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
           <div className='mb-4'>
             <Progress
               value={savingsProgress}
-              className='h-3 bg-white/50'
+              className={`h-3 bg-white/50`}
               indicatorClassName={savingsData.progressColor}
             />
           </div>
@@ -208,7 +206,7 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
           </p>
         </div>
 
-        {/* Monthly Expenses */}
+        {/* Expense Analysis */}
         <div
           className={`rounded-xl p-5 ${expenseData.bgColor} border border-gray-200/50 shadow-sm`}>
           <div className='flex items-center gap-3 mb-4'>
@@ -240,7 +238,8 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
             <div className='w-full bg-white/50 rounded-full h-3 relative overflow-hidden'>
               <div
                 className={`${expenseData.progressColor} h-3 rounded-full transition-all duration-300 ease-out`}
-                style={{ width: `${Math.min(expensesRatio, 100)}%` }}></div>
+                style={{ width: `${Math.min(expensesRatio, 100)}%` }}
+              />
             </div>
           </div>
           <p className={`text-sm ${expenseData.color} leading-relaxed`}>
@@ -249,37 +248,26 @@ const PersonalizedInsights: React.FC<PersonalizedInsightsProps> = ({
         </div>
 
         {/* Investment Strategy */}
-        <div className='rounded-xl p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/40 shadow-sm'>
+        <div className='rounded-xl p-5 bg-gradient-to-r from-purple-50 to-purple-50 border border-purple-200/40 shadow-sm'>
           <div className='flex items-start gap-3 mb-4'>
             <div className='p-2.5 rounded-full bg-white shadow-md border border-gray-100'>
-              <TrendingUp className='h-5 w-5 text-blue-600' />
+              <TrendingUp className='h-5 w-5 text-purple-600' />
             </div>
             <div className='flex-1'>
               <h3 className='text-lg font-semibold text-gray-900'>
-                {t("dashboard.investmentStrategy", "Investment Strategy")}
+                {t("investments.strategy")}
               </h3>
               <div className='flex items-center gap-2 mt-2'>
-                <Badge className='bg-blue-600 hover:bg-blue-700 text-white border-0 text-xs px-2 py-1 shadow-sm'>
-                  {t("dashboard.common.recommendedLabel", "⭐ Recommended")}
+                <Badge className='bg-purple-600 hover:bg-purple-700 text-white border-0 text-xs px-2 py-1 shadow-sm'>
+                  ⭐ {t("investments.recommended")}
                 </Badge>
-                <Badge
-                  variant='outline'
-                  className='text-blue-600 border-blue-300 bg-white/60 text-xs font-medium'>
-                  {t(`dashboard.riskProfiles.${investmentData.riskLevel}`, {
-                    defaultValue: `${investmentData.riskLevel} risk`, // Fallback
-                  })}
+                <Badge className='text-purple-600 border-purple-300 bg-white/60 text-xs font-medium'>
+                  {t(`common.riskProfile.${investmentData.riskLevel}`)}
                 </Badge>
-                {investmentData.isAgeAdjusted && (
-                  <Badge
-                    variant='outline'
-                    className='text-amber-600 border-amber-300 bg-white/60 text-xs font-medium'>
-                    {t("dashboard.common.ageAdjustedLabel", "Age-adjusted")}
-                  </Badge>
-                )}
               </div>
             </div>
           </div>
-          <p className='text-sm text-blue-700 leading-relaxed bg-white/60 p-3 rounded-lg'>
+          <p className='text-sm text-purple-700 leading-relaxed bg-white/60 p-3 rounded-lg'>
             {investmentData.message}
           </p>
         </div>

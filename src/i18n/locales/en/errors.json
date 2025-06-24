@@ -1,4 +1,13 @@
-
 {
-  "errorCalculating": "Error calculating financial metrics"
+  "errorCalculating": "Error calculating financial metrics",
+  "expensesFetchFailed": "Failed to fetch expenses data",
+  "savingsFetchFailed": "Failed to fetch savings data",
+  "investmentsFetchFailed": "Failed to fetch investments data",
+  "goalsFetchFailed": "Failed to fetch financial goals",
+  "profileUpdateFailed": "Failed to update profile",
+  "authenticationFailed": "Authentication failed",
+  "networkError": "Network connection error",
+  "validationError": "Validation error",
+  "unknownError": "An unknown error occurred",
+  "sessionExpired": "Your session has expired"
 }

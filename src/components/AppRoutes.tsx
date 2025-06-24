@@ -43,24 +43,30 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
         path='/dashboard'
         element={
           authRedirect ||
-          completeRedirect || (
+          completeRedirect ||
+          (userProfile ? (
             <Dashboard
-              userProfile={userProfile as UserProfile}
+              userProfile={userProfile}
               onProfileUpdate={onProfileUpdate}
             />
-          )
+          ) : (
+            <Navigate to='/login' replace />
+          ))
         }
       />
 
       <Route
         path='/onboarding'
         element={
-          authRedirect || (
+          authRedirect ||
+          (userProfile ? (
             <OnboardingPage
               onProfileComplete={onProfileComplete}
-              userProfile={userProfile as UserProfile}
+              userProfile={userProfile}
             />
-          )
+          ) : (
+            <Navigate to='/login' replace />
+          ))
         }
       />
 
@@ -68,12 +74,15 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
         path='/full-profile'
         element={
           authRedirect ||
-          completeRedirect || (
+          completeRedirect ||
+          (userProfile ? (
             <FullProfilePage
               onProfileComplete={onProfileComplete}
-              userProfile={userProfile as UserProfile}
+              userProfile={userProfile}
             />
-          )
+          ) : (
+            <Navigate to='/login' replace />
+          ))
         }
       />
 
@@ -81,12 +90,15 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
         path='/profile'
         element={
           authRedirect ||
-          completeRedirect || (
+          completeRedirect ||
+          (userProfile ? (
             <ProfilePage
-              userProfile={userProfile as UserProfile}
+              userProfile={userProfile}
               onProfileUpdate={onProfileUpdate}
             />
-          )
+          ) : (
+            <Navigate to='/login' replace />
+          ))
         }
       />
 
@@ -94,9 +106,12 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
         path='/goals'
         element={
           authRedirect ||
-          completeRedirect || (
-            <GoalsPage userProfile={userProfile as UserProfile} />
-          )
+          completeRedirect ||
+          (userProfile ? (
+            <GoalsPage userProfile={userProfile} />
+          ) : (
+            <Navigate to='/login' replace />
+          ))
         }
       />
 
@@ -104,12 +119,12 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
         path='/monthly-savings'
         element={
           authRedirect ||
-          completeRedirect || (
-            <MonthlySavingsPage
-              userProfile={userProfile as UserProfile}
-              onProfileUpdate={onProfileUpdate}
-            />
-          )
+          completeRedirect ||
+          (userProfile ? (
+            <MonthlySavingsPage userProfile={userProfile} />
+          ) : (
+            <Navigate to='/login' replace />
+          ))
         }
       />
 
@@ -117,12 +132,15 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
         path='/monthly-expenses'
         element={
           authRedirect ||
-          completeRedirect || (
+          completeRedirect ||
+          (userProfile ? (
             <MonthlyExpensesPage
-              userProfile={userProfile as UserProfile}
+              userProfile={userProfile}
               onProfileUpdate={onProfileUpdate}
             />
-          )
+          ) : (
+            <Navigate to='/login' replace />
+          ))
         }
       />
 
@@ -130,12 +148,15 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
         path='/investments'
         element={
           authRedirect ||
-          completeRedirect || (
+          completeRedirect ||
+          (userProfile ? (
             <InvestmentsPage
-              userProfile={userProfile as UserProfile}
+              userProfile={userProfile}
               onProfileUpdate={onProfileUpdate}
             />
-          )
+          ) : (
+            <Navigate to='/login' replace />
+          ))
         }
       />
 
@@ -143,9 +164,12 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
         path='/savings-analysis'
         element={
           authRedirect ||
-          completeRedirect || (
-            <SavingsAnalysisPage userProfile={userProfile as UserProfile} />
-          )
+          completeRedirect ||
+          (userProfile ? (
+            <SavingsAnalysisPage userProfile={userProfile} />
+          ) : (
+            <Navigate to='/login' replace />
+          ))
         }
       />
 

@@ -27,9 +27,6 @@ export function useSaveMonthlySavings() {
       if (!monthlySavings.id) {
         monthlySavings.id = uuidv4();
       }
-
-      console.log("Attempting to save monthly savings:", monthlySavings);
-
       // Check authentication before saving
       const { data: sessionData } = await supabase.auth.getSession();
       if (!sessionData.session) {

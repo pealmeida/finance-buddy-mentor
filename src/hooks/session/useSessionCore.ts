@@ -38,24 +38,14 @@ export const useSessionCore = ({
         }
 
         if (session?.user) {
-          console.log('Session found, fetching profile for user:', session.user.id);
           const profile = await fetchUserProfileFromSupabase(session.user.id);
           if (isMounted && profile) {
-            console.log('useSessionCore: Raw profile from Supabase:', profile);
-            console.log('useSessionCore: Profile investments:', profile.investments);
-            console.log('useSessionCore: Profile goals:', profile.financialGoals);
-
             const profileIsComplete = isProfileComplete(profile);
-            console.log('useSessionCore: Profile fetched from Supabase:', profile);
-            console.log('useSessionCore: Profile completion check result:', profileIsComplete);
             setIsProfileComplete(profileIsComplete);
             setUserProfile(profile);
             localStorage.setItem('userProfile', JSON.stringify(profile));
-          } else {
-            console.warn('useSessionCore: No profile returned from fetchUserProfileFromSupabase');
           }
         } else {
-          console.log('No session, loading from localStorage for guest.');
           loadFromLocalStorage(setUserProfile, setIsProfileComplete);
         }
       } catch (e) {
@@ -67,7 +57,6 @@ export const useSessionCore = ({
         if (isMounted) {
           setIsLoading(false);
           setAuthChecked(true);
-          console.log('Session initialization complete. Loading state finished.');
         }
       }
     };
@@ -77,19 +66,15 @@ export const useSessionCore = ({
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (!isMounted) return;
-        console.log('Auth state changed:', event);
 
         if (event === 'SIGNED_IN' && session?.user) {
           initializeSession(); // Re-initialize to fetch profile
         } else if (event === 'SIGNED_OUT') {
-          console.log('User signed out, clearing profile.');
           setUserProfile(null);
           setIsProfileComplete(false);
           localStorage.removeItem('userProfile');
-        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-          // Don't re-initialize on token refresh, just log it
-          console.log('Token refreshed for user:', session.user.id);
         }
+        // Don't re-initialize on token refresh, just ignore it
       }
     );
 

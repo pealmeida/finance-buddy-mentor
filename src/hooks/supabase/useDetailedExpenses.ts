@@ -28,8 +28,6 @@ export function useDetailedExpenses(userId: string, year: number) {
     const { data: detailedExpenses, isLoading, error } = useQuery<ExpenseItem[], Error>({
         queryKey: queryKey,
         queryFn: async (): Promise<ExpenseItem[]> => {
-            console.log("useDetailedExpenses: Fetching detailed expenses for userId:", userId, "year:", year);
-
             // Get the date range for the year
             const startDate = `${year}-01-01`;
             const endDate = `${year}-12-31`;
@@ -41,10 +39,6 @@ export function useDetailedExpenses(userId: string, year: number) {
                 .gte('date', startDate)
                 .lte('date', endDate)
                 .order('date', { ascending: false });
-
-            console.log("useDetailedExpenses: Supabase response - data:", data, "error:", error);
-            console.log("useDetailedExpenses: Date range filter - start:", startDate, "end:", endDate);
-
             if (error) {
                 console.error("useDetailedExpenses: Error fetching detailed expenses:", error);
                 throw error;

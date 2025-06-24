@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-// ... existing code ...
-// Updated with login implementation and test report saving feature
-// ... existing code ...
-=======
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { writeFileSync } from 'fs';
+const { writeFileSync } = require('fs');
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -131,4 +126,3 @@ test('Successful login flow', async ({ page }) => {
         throw error;
     }
 });
->>>>>>> combined-features

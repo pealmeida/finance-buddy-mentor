@@ -45,8 +45,6 @@ export const useAuthCheck = (userId?: string) => {
           setAuthChecked(false);
           return false;
         }
-        
-        console.log("Session refreshed successfully");
       }
       
       // Session is valid

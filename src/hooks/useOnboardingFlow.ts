@@ -40,7 +40,6 @@ export function useOnboardingFlow({
       try {
         const { data } = await supabase.auth.getSession();
         if (data?.session?.user) {
-          console.log('Setting user ID:', data.session.user.id);
           setUserId(data.session.user.id);
         } else {
           console.log('No authenticated session found');
@@ -124,9 +123,6 @@ export function useOnboardingFlow({
         monthlySavings: profile.monthlySavings,
         monthlyExpenses: profile.monthlyExpenses
       };
-
-      console.log('Completing onboarding with profile:', completeProfile);
-
       // Complete onboarding flow by calling the parent handler
       await onComplete(completeProfile);
 

@@ -44,7 +44,6 @@ export const useAuthCheck = (userId?: string) => {
       
       // Check if the session is for the expected user
       if (userId && data.session.user.id !== userId) {
-        console.log("Session user ID doesn't match expected user ID");
         sessionVerifiedRef.current = false;
         return false;
       }

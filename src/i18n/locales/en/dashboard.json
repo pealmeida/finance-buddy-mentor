@@ -20,12 +20,29 @@
   "investments": "Investments",
   "emergencyFund": "Emergency Fund",
   "emergencyFundProgress": "of 6 months target",
+  "emergencyFundProgressShort": "of target",
   "emergencyFundTarget": "Emergency fund complete!",
-  "emergencyFundRecommended": "Recommended: 6 months of expenses",
+  "emergencyFundRecommended": "Recommended: 6 months of income",
+  "emergencyFundRecommendedExpenses": "Recommended: 6 months of expenses",
+  "emergencyFundRecommendedIncome": "Recommended: 6 months of income",
+  "emergencyFundRecommendedIncomeFull": "Recommended: {{months}} months of income",
+  "emergencyFundRecommendedExpensesFull": "Recommended: {{months}} months of expenses",
+  "emergencyFundDetails": "Emergency Fund Details",
+  "emergencyFundDetailsDescription": "View your emergency fund progress and recommendations for financial security.",
+  "portfolioDistributionDetails": "View detailed breakdown of your investment portfolio allocation and performance.",
+  "currentProgress": "Current Progress",
+  "portfolioOverview": "Portfolio Overview",
+  "investmentBreakdown": "Investment Breakdown",
+  "investmentTip": "Investment Tip",
+  "conservativeTip": "Focus on bonds and stable investments for capital preservation.",
+  "moderateTip": "Balance growth and stability with a mix of stocks and bonds.",
+  "aggressiveTip": "Consider growth stocks and alternative investments for higher potential returns.",
+  "investmentPortfolioDetails": "Investment Portfolio Details",
+  "avgReturn": "avg return",
   "belowRecommended": "below recommended savings",
   "meetingRecommended": "Meeting recommended savings",
   "investmentDistribution": "Investment Distribution",
-  "recommendedAllocation": "Recommended allocation based on your risk profile",
+  "recommendedAllocation": "Recommended allocation - no investments yet",
   "marketTrends": "Market Trends",
   "riskProfile": "risk profile",
   "expensesSummary": "Expenses Summary",
@@ -83,5 +100,81 @@
     "crypto": "Crypto",
     "other": "Other"
   },
-  "investmentItem": "{{type}}: {{percentage}}%"
+  "investmentItem": "{{type}}: {{percentage}}%",
+  "emergencyFundInvestmentTitle": "Add Emergency Fund to Investments",
+  "emergencyFundInvestmentDescription": "Would you like to track your emergency fund as part of your investment portfolio?",
+  "emergencyFundAmount": "Emergency Fund Amount",
+  "emergencyFundSafetyWarning": "⚠️ Important Safety Requirements",
+  "emergencyFundSafetyText": "Your emergency fund should ONLY be considered as an investment if it's allocated in safe, liquid instruments such as:",
+  "safeInvestmentFixedIncome": "Fixed Income securities (CDBs, Treasury Direct)",
+  "safeInvestmentBonds": "Government or high-grade corporate bonds",
+  "safeInvestmentCash": "Cash equivalents and savings accounts",
+  "safeInvestmentInsured": "Financial instruments secured by FDIC, FGC, or official federal deposit insurance",
+  "safeInvestmentMMF": "Money market funds or high-liquidity CDBs",
+  "acknowledgeSafety": "I confirm that my emergency fund is invested only in safe, low-risk instruments as listed above",
+  "acknowledgeLiquidity": "I understand that emergency funds must remain highly liquid and accessible within 24-48 hours",
+  "addToInvestments": "Add to Investments",
+  "addEmergencyFundToPortfolio": "Track as Investment",
+  "insights": {
+    "configure": "Configure Insights Display"
+  },
+  "customization": {
+    "title": "Customize Dashboard",
+    "description": "Configure which components are visible on your dashboard. You can hide or show components to create a personalized experience.",
+    "summary": "Dashboard Summary",
+    "visibleComponents": "Visible Components",
+    "configureFinancialOverview": "Configure Financial Overview",
+    "categories": {
+      "overview": "App Overview",
+      "goals": "Goals",
+      "charts": "Charts & Analytics",
+      "insights": "Insights"
+    },
+    "comingSoon": "Coming Soon",
+    "futureFeatures": "More customization options will be available in future updates",
+    "features": {
+      "dragAndDrop": "Drag & Drop Reordering",
+      "colorThemes": "Color Themes",
+      "widgetSizes": "Widget Sizes",
+      "customWidgets": "Custom Widgets"
+    },
+    "resetToDefaults": "Reset to Defaults"
+  },
+  "components": {
+    "financial-overview": "Financial Overview",
+    "financial-overview.description": "Main overview of your financial status",
+    "financial-goals": "Financial Goals",
+    "financial-goals.description": "Track and manage your financial goals",
+    "expenses-summary": "Expenses Summary",
+    "expenses-summary.description": "Monthly expense breakdown and analysis",
+    "personalized-insights": "Personalized Insights",
+    "personalized-insights.description": "AI-driven insights and recommendations",
+    "market-trends": "Market Trends",
+    "market-trends.description": "Current market data and trends",
+    "onboarding-checklist": "Onboarding Checklist",
+    "onboarding-checklist.description": "Profile completion progress tracker"
+  },
+  "financialOverviewComponents": {
+    "title": "Financial Overview",
+    "titleApp": "App Overview",
+    "description": "Configure which data is displayed within the Financial Overview section",
+    "monthlyIncomeCard": {
+      "name": "Monthly Income",
+      "description": "Display your monthly income information"
+    },
+    "totalInvestmentsCard": {
+      "name": "Investments",
+      "description": "Show total investment portfolio value"
+    },
+    "emergencyFund": {
+      "name": "Emergency Fund",
+      "description": "Emergency fund status and progress"
+    },
+    "investmentDistribution": {
+      "name": "Investment Distribution",
+      "description": "Portfolio allocation breakdown"
+    },
+    "required": "(Required)",
+    "atLeastOneVisible": "At least one component must remain visible"
+  }
 }

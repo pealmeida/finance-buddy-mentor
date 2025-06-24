@@ -18,9 +18,6 @@ export function useProfileSave() {
       const userId = profile.id;
       
       if (!userId) throw new Error("User ID is required to save profile");
-      
-      console.log('Saving profile for user:', userId);
-      
       // Validate profile data
       if (!profile.name) throw new Error("Name is required");
       if (!profile.email) throw new Error("Email is required");

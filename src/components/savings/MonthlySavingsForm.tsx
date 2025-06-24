@@ -8,6 +8,8 @@ import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/context/CurrencyContext";
 import { MonthlyAmount } from "@/types/finance";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { formatNumber } from "@/lib/utils";
+import { CurrencyInput } from "@/components/ui/currency-input";
 
 interface MonthlySavingsFormProps {
   month: number;
@@ -115,17 +117,17 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
               <div>
                 {t("savings.monthlyIncome", "Monthly Income")}:{" "}
                 {currencyConfig.symbol}
-                {monthlyIncome.toLocaleString()}
+                {formatNumber(monthlyIncome, 2)}
               </div>
               <div>
                 {t("savings.monthlyExpenses", "Monthly Expenses")} (
                 {MONTHS[month - 1]}): {currencyConfig.symbol}
-                {monthExpenseAmount.toLocaleString()}
+                {formatNumber(monthExpenseAmount, 2)}
               </div>
               <div className='font-medium'>
                 {t("savings.suggestedSavings", "Suggested Savings")}:{" "}
                 {currencyConfig.symbol}
-                {calculateAutomaticSavings().toLocaleString()}
+                {formatNumber(calculateAutomaticSavings(), 2)}
               </div>
             </div>
           </AlertDescription>
@@ -143,15 +145,12 @@ const MonthlySavingsForm: React.FC<MonthlySavingsFormProps> = ({
               <span className='absolute left-3 top-1/2 -translate-y-1/2'>
                 {currencyConfig.symbol}
               </span>
-              <Input
+              <CurrencyInput
                 id='amount'
-                type='number'
                 value={value}
-                onChange={handleChange}
+                onChange={(newValue) => setValue(newValue)}
                 className='pl-7'
-                placeholder='0.00'
-                min='0'
-                step='0.01'
+                placeholder='0,00'
                 autoFocus
               />
             </div>

@@ -13,7 +13,6 @@ export interface MonthlyExpensesContentProps {
   onAddItem: (month: number, item: Omit<ExpenseItem, "id">) => Promise<void>;
   onUpdateItem: (month: number, item: ExpenseItem) => Promise<void>;
   onDeleteItem: (month: number, itemId: string) => Promise<void>;
-  onUpdateExpensesData: (updatedData: MonthlyAmount[]) => void;
 }
 
 const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
@@ -24,7 +23,6 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
   onAddItem,
   onUpdateItem,
   onDeleteItem,
-  onUpdateExpensesData,
 }) => {
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
@@ -35,16 +33,6 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
   const handleCloseModal = () => {
     setSelectedMonth(null);
   };
-
-  const handleUpdateMonthData = useCallback(
-    (updatedMonth: MonthlyAmount) => {
-      const updatedExpensesData = expensesData.map((month) =>
-        month.month === updatedMonth.month ? updatedMonth : month
-      );
-      onUpdateExpensesData(updatedExpensesData);
-    },
-    [expensesData, onUpdateExpensesData]
-  );
 
   // Handle loading state
   if (loadingData || error) {
@@ -61,7 +49,7 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
 
   const selectedMonthData =
     selectedMonth !== null
-      ? expensesData.find((item) => item.month === selectedMonth)
+      ? expensesData.find((item) => item.month === selectedMonth) || null
       : null;
 
   return (
@@ -69,6 +57,9 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
       {/* Chart Section */}
       <div className='p-4 bg-white rounded-lg shadow-md'>
         <MonthlyExpensesChart
+          key={`expenses-chart-${expensesData.length}-${JSON.stringify(
+            expensesData.map((d) => d.amount)
+          )}`}
           data={expensesData}
           onSelectMonth={handleAmountClick}
         />
@@ -85,7 +76,6 @@ const MonthlyExpensesContent: React.FC<MonthlyExpensesContentProps> = ({
         isOpen={selectedMonth !== null}
         onClose={handleCloseModal}
         selectedMonthData={selectedMonthData}
-        onUpdateMonthData={handleUpdateMonthData}
         onAddItem={onAddItem}
         onUpdateItem={onUpdateItem}
         onDeleteItem={onDeleteItem}

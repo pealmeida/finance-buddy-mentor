@@ -40,7 +40,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
   const { i18n } = useTranslation();
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem("language");
-    return (saved as Language) || "pt-BR";
+    return (saved as Language) || "en";
   });
 
   const languageConfig = LANGUAGES[language];

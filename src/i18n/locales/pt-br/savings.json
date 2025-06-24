@@ -1,51 +1,150 @@
 {
-  "title": "Poupança",
-  "monthlySavings": "Poupança Mensal",
-  "yearlySavings": "Poupança Anual",
-  "totalSavings": "Poupança Total",
-  "savingsGoal": "Meta de Poupança",
-  "savingsRate": "Taxa de Poupança",
-  "emergencyFund": "Fundo de Emergência",
-  "trackMonthlySavings": "Acompanhe sua poupança mensal para visualizar seu progresso ao longo do ano.",
-  "editSavingsFor": "Editar Poupança para",
-  "savingsAmount": "Valor da Poupança",
-  "monthlyIncome": "Renda Mensal",
-  "monthlyExpenses": "Gastos Mensais",
-  "suggestedSavings": "Poupança Sugerida",
-  "autoCalculate": "Calcular Automaticamente",
-  "autoCalculateDescription": "Atualizar automaticamente o valor de poupança baseado na renda e gastos (Renda - Gastos)",
+  "title": "Economias",
+  "monthlySavings": "Economia Mensal",
+  "yearlySavings": "Economia Anual",
+  "totalSavings": "Economia Total",
+  "savingsGoal": "Meta de Economia",
+  "savingsRate": "Taxa de Economia",
+  "chartTitle": "Histórico de Economia Mensal",
+  "trackMonthlySavings": "Acompanhe sua Economia mensal para visualizar seu progresso.",
+  "editSavingsFor": "Editar Economia para",
+  "savingsAmount": "Valor da Economia",
+  "noSavingsData": "Nenhum dado de Economia disponível. Comece a registrar sua Economia mensal!",
+  "autoCalculateSavings": "Calcular Economia Automaticamente",
+  "suggestedSavings": "Economia Sugerida",
+  "autoCalculateDescription": "Atualizar automaticamente o valor da Economia baseado na renda e gastos (Renda - Gastos)",
   "disableAutoToEdit": "Desative o cálculo automático para editar manualmente",
   "autoCalculatedValue": "Valor calculado automaticamente baseado na renda e gastos (Renda - Gastos)",
-  "autoCalculatedSuccess": "Poupança mensal calculada e atualizada automaticamente!",
+  "autoCalculatedSuccess": "Economia mensal calculada e atualizada automaticamente!",
   "noIncomeDataError": "Nenhum dado de renda mensal disponível para cálculo automático",
   "chartView": "Visualização em Gráfico",
   "tableView": "Visualização em Tabela",
-  "monthlySavingsData": "Dados de Poupança Mensal",
+  "monthlySavingsData": "Dados de Economia Mensal",
   "detailedBreakdown": "Detalhamento dos seus depósitos em",
   "amountSaved": "Valor Poupado",
   "comparisonToAverage": "vs Média",
-  "averageSavingsPerMonth": "Poupança média por mês",
+  "averageSavingsPerMonth": "Economia média por mês",
   "yearlyGoal": "Meta Anual",
   "progressTowardsGoal": "Progresso em direção à sua meta",
   "analysis": {
-    "title": "Análise de Poupança",
-    "subtitle": "Analise seus padrões de poupança e acompanhe seu progresso",
-    "averageMonthlySavings": "Poupança Mensal Média",
-    "totalAnnualSavings": "Poupança Anual Total",
-    "savingsGrowth": "Crescimento da Poupança",
-    "bestSavingsMonth": "Melhor Mês de Poupança",
-    "lowestSavingsMonth": "Menor Mês de Poupança",
+    "title": "Análise de Economias",
+    "subtitle": "Analise seus padrões de Economias e acompanhe seu progresso",
+    "averageMonthlySavings": "Economia Mensal Média",
+    "totalAnnualSavings": "Economia Anual Total",
+    "savingsGrowth": "Crescimento da Economia",
+    "bestSavingsMonth": "Melhor Mês de Economia",
+    "lowestSavingsMonth": "Menor Mês de Economia",
     "totalSaved": "Total Poupado",
     "averageSaved": "Média Poupada"
   },
   "strategies": {
-    "title": "Estratégias de Poupança",
-    "automaticSavings": "Poupança Automática",
+    "title": "Estratégias de Economias",
+    "description": "Estratégias personalizadas para ajudá-lo a economizar mais e alcançar seus objetivos financeiros mais rapidamente",
+    "createPlan": "Criar Plano de Economias",
+    "trackProgress": "Acompanhar Progresso",
+    "hideDetails": "Ocultar Detalhes",
+    "potentialSavings": "Economia Potencial",
+    "strategiesTitle": "Estratégias",
+    "available": "Disponíveis",
+    "quickWins": "Vitórias Rápidas",
+    "easy": "Fácil",
+    "avgSaving": "Economia Média",
+    "recommendedTitle": "Estratégias de Economias Recomendadas",
+    "automaticSavings": "Economia Automática",
     "budgetOptimization": "Otimização de Orçamento",
-    "expenseReduction": "Redução de Despesas"
+    "expenseReduction": "Redução de Despesas",
+    "potentialMonthly": "potencial mensal",
+    "timelineDifficulty": "Cronograma e Dificuldade",
+    "implementationSteps": "Etapas de Implementação",
+    "of": "de",
+    "completed": "concluídas",
+    "proTips": "Dicas Profissionais",
+    "potentialImpact": "Impacto Potencial",
+    "monthlySavingsLabel": "Economia Mensal",
+    "annualSavings": "Economia Anual",
+    "startStrategy": "Iniciar Esta Estratégia",
+    "scheduleReminder": "Agendar Lembrete",
+    "difficulty": {
+      "easy": "Fácil",
+      "medium": "Médio",
+      "hard": "Difícil"
+    },
+    "timeFrame": {
+      "immediate": "Imediato",
+      "shortTerm": "Curto prazo",
+      "longTerm": "Longo prazo"
+    },
+    "timeFrames": {
+      "immediate": "Comece hoje e veja resultados em 1-2 semanas",
+      "shortTerm": "Implemente ao longo de 1-3 meses para melhores resultados",
+      "longTerm": "Construa consistentemente ao longo de 6+ meses para máximo impacto",
+      "default": "O cronograma varia baseado na sua situação"
+    },
+    "tips": {
+      "budgetRule": [
+        "Use aplicativos de orçamento como YNAB ou Mint para rastrear gastos automaticamente",
+        "Revise seu orçamento semanalmente e ajuste conforme necessário",
+        "Comece com a regra 80/20 e gradualmente trabalhe em direção a 50/30/20"
+      ],
+      "subscriptions": [
+        "Use aplicativos como Truebill ou Honey para encontrar e cancelar assinaturas",
+        "Configure lembretes no calendário antes que períodos de teste gratuito terminem",
+        "Considere assinaturas anuais para serviços que você definitivamente usa - são frequentemente mais baratas"
+      ],
+      "emergencyFund": [
+        "Mantenha seu fundo de emergência em uma conta Economia de alto rendimento",
+        "Mire primeiro em 3 meses de despesas, depois construa para 6 meses",
+        "Não invista o dinheiro do fundo de emergência - mantenha-o líquido e seguro"
+      ],
+      "debtPayment": [
+        "Use o método de avalanche de dívidas para otimização matemática",
+        "Considere o método bola de neve de dívidas para vitórias psicológicas",
+        "Procure cartões de transferência de saldo para dívidas de cartão de crédito com juros altos"
+      ],
+      "automatedSavings": [
+        "Comece com apenas 1% da renda e aumente gradualmente",
+        "Configure transferências para o dia após o pagamento",
+        "Use contas separadas para diferentes objetivos de Economia"
+      ],
+      "mealPlanning": [
+        "Cozinhe em lotes nos fins de semana para economizar tempo e dinheiro",
+        "Compre produtos sazonais e congele os extras",
+        "Use cartões de crédito com cashback para compras no supermercado (se você os pagar mensalmente)"
+      ],
+      "energyEfficiency": [
+        "Desconecte eletrônicos quando não estiver usando - eles consomem energia mesmo quando desligados",
+        "Use um termostato inteligente para otimizar horários de aquecimento/resfriamento",
+        "Verifique se sua empresa de energia oferece auditorias energéticas"
+      ]
+    },
+    "strategyTitles": {
+      "budgetRule": "Implementar a Regra de Orçamento 50/30/20",
+      "subscriptions": "Auditar e Reduzir Serviços de Assinatura",
+      "emergencyFund": "Construir um Fundo de Economia",
+      "debtElimination": "Estratégia de Eliminação de Dívidas de Alto Juros",
+      "automatedSavings": "Configurar Economia Automática",
+      "mealPlanning": "Implementar Planejamento de Refeições e Otimização de Compras",
+      "energyEfficiency": "Reduzir Custos de Utilidades Através de Eficiência Energética"
+    },
+    "strategyDescriptions": {
+      "budgetRule": "Alocar 50% da renda para necessidades, 30% para desejos e 20% para Economia e pagamento de dívidas.",
+      "subscriptions": "Revisar e cancelar serviços de assinatura não utilizados ou desnecessários para reduzir despesas mensais.",
+      "emergencyFund": "Criar um fundo de Economia dedicado cobrindo 3-6 meses de despesas essenciais para segurança financeira.",
+      "debtElimination": "Focar no pagamento de dívidas com altos juros para reduzir pagamentos de juros e melhorar a saúde financeira.",
+      "automatedSavings": "Criar transferências automáticas para contas de Economia no dia do pagamento para garantir Economia consistente antes dos gastos.",
+      "mealPlanning": "Reduzir despesas com comida através de planejamento estratégico de refeições e compras mais inteligentes.",
+      "energyEfficiency": "Reduzir contas mensais de utilidades implementando práticas e melhorias de economia de energia."
+    }
   },
-  "monthlySavingsFor": "Poupança Mensal para {{month}}",
-  "adjustSavingsDescription": "Ajuste o valor da sua poupança para este mês baseado na sua renda e gastos",
-  "currentSavings": "Poupança Atual",
-  "monthlySummary": "Resumo Mensal"
+  "monthlySavingsFor": "Economia Mensal para {{month}}",
+  "adjustSavingsDescription": "Ajuste o valor da sua Economia para este mês baseado na sua renda e gastos",
+  "currentSavings": "Economia Atual",
+  "monthlySummary": "Resumo Mensal",
+  "emergencyFundInvestmentTip": "Mantenha seu fundo de emergência em uma conta Economia de alto rendimento",
+  "goalBasedSavingsDescription": "Use contas separadas para diferentes objetivos de Economias, como uma casa, carro ou aposentadoria.",
+  "budgetRule": "Alocar 50% da renda para necessidades, 30% para desejos e 20% para Economia e pagamento de dívidas.",
+  "emergencyFund": "Criar um fundo de Economia dedicado cobrindo 3-6 meses de despesas essenciais para segurança financeira.",
+  "automatedSavings": "Criar transferências automáticas para contas de Economia no dia do pagamento para garantir Economia consistente antes dos gastos.",
+  "monthlySavingsOverview": "Visão Geral da Economia Mensal",
+  "summary": "Sua Economia mensal média é de {{average}} e você economizou um total de {{total}} este ano. Seu melhor mês foi {{bestMonth}} com {{bestAmount}} e seu pior mês foi {{lowestMonth}} com {{lowestAmount}}."
 }

@@ -7,12 +7,13 @@ export interface CurrencyConfig {
   code: Currency;
   symbol: string;
   name: string;
+  locale: string;
 }
 
 export const CURRENCIES: Record<Currency, CurrencyConfig> = {
-  USD: { code: "USD", symbol: "$", name: "US Dollar" },
-  EUR: { code: "EUR", symbol: "€", name: "Euro" },
-  BRL: { code: "BRL", symbol: "R$", name: "Brazilian Real" },
+  USD: { code: "USD", symbol: "$", name: "US Dollar", locale: "pt-BR" },
+  EUR: { code: "EUR", symbol: "€", name: "Euro", locale: "pt-BR" },
+  BRL: { code: "BRL", symbol: "R$", name: "Brazilian Real", locale: "pt-BR" },
 };
 
 interface CurrencyContextType {
@@ -21,6 +22,7 @@ interface CurrencyContextType {
   setCurrency: (currency: Currency) => void;
   setCurrencyWithSync: (currency: Currency, userId?: string) => Promise<void>;
   formatCurrency: (amount: number) => string;
+  formatCurrencyWithoutSymbol: (amount: number) => string;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(
@@ -37,15 +39,28 @@ export const useCurrency = () => {
 
 interface CurrencyProviderProps {
   children: React.ReactNode;
+  initialCurrency?: Currency;
 }
 
 export const CurrencyProvider: React.FC<CurrencyProviderProps> = ({
   children,
+  initialCurrency,
 }) => {
   const [currency, setCurrencyState] = useState<Currency>(() => {
+    if (initialCurrency) {
+      return initialCurrency;
+    }
     const saved = localStorage.getItem("currency");
     return (saved as Currency) || "BRL";
   });
+
+  // Update currency state only when initialCurrency prop changes (not when currency changes)
+  useEffect(() => {
+    if (initialCurrency) {
+      setCurrencyState(initialCurrency);
+      localStorage.setItem("currency", initialCurrency);
+    }
+  }, [initialCurrency]);
 
   const currencyConfig = CURRENCIES[currency];
 
@@ -73,8 +88,16 @@ export const CurrencyProvider: React.FC<CurrencyProviderProps> = ({
     }
   };
 
+  const formatCurrencyWithoutSymbol = (amount: number): string => {
+    return amount.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
   const formatCurrency = (amount: number): string => {
-    return `${currencyConfig.symbol}${amount.toLocaleString()}`;
+    const formattedAmount = formatCurrencyWithoutSymbol(amount);
+    return `${currencyConfig.symbol} ${formattedAmount}`;
   };
 
   const value = {
@@ -83,6 +106,7 @@ export const CurrencyProvider: React.FC<CurrencyProviderProps> = ({
     setCurrency,
     setCurrencyWithSync,
     formatCurrency,
+    formatCurrencyWithoutSymbol,
   };
 
   return (

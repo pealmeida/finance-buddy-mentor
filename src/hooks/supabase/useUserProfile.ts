@@ -18,8 +18,6 @@ export function useUserProfile() {
   const fetchUserProfile = async (userId: string): Promise<UserProfile | null> => {
     try {
       setLoading(true);
-      console.log('Fetching profile for user:', userId);
-      
       // Fetch basic profile and financial profile data
       const profileData = await fetchProfileData(userId);
       
@@ -38,14 +36,6 @@ export function useUserProfile() {
       const financialGoals = await fetchFinancialGoals(userId);
       const investments = await fetchInvestments(userId);
       const debtDetails = await fetchDebtDetails(userId);
-      
-      console.log('Profile data fetched successfully:', {
-        ...profileData,
-        financialGoals,
-        investments,
-        debtDetails
-      });
-      
       // Complete the user profile
       return {
         ...profileData,

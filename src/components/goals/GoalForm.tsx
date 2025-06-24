@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react";
 import { format, isValid, isAfter } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { useTranslation } from "react-i18next";
+import { CurrencyInputController } from "../ui/currency-input";
 
 interface GoalFormProps {
   goal: FinancialGoal | null;
@@ -135,11 +136,10 @@ const GoalForm: React.FC<GoalFormProps> = ({
             <Label htmlFor='targetAmount'>
               {t("goals.targetAmount", "Target Amount")} ($)
             </Label>
-            <Input
+            <CurrencyInputController
               id='targetAmount'
-              type='number'
-              placeholder='10000'
-              {...register("targetAmount", {
+              placeholder='10.000,00'
+              field={register("targetAmount", {
                 required: t(
                   "goals.targetAmountRequired",
                   "Target amount is required"
@@ -164,11 +164,10 @@ const GoalForm: React.FC<GoalFormProps> = ({
             <Label htmlFor='currentAmount'>
               {t("goals.currentAmount", "Current Amount")} ($)
             </Label>
-            <Input
+            <CurrencyInputController
               id='currentAmount'
-              type='number'
-              placeholder='0'
-              {...register("currentAmount", {
+              placeholder='0,00'
+              field={register("currentAmount", {
                 required: t(
                   "goals.currentAmountRequired",
                   "Current amount is required"

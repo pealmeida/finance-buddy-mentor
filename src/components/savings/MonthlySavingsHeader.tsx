@@ -17,28 +17,19 @@ const MonthlySavingsHeader: React.FC<MonthlySavingsHeaderProps> = ({
   const { t } = useTranslation();
 
   return (
-    <>
-      <div className='flex items-center justify-between mb-4'>
-        <h2 className='text-2xl font-semibold flex items-center gap-2'>
-          <CircleDollarSign className='text-finance-blue' />
-          {t("savings.monthlySavings")}
-        </h2>
-        <div className='flex gap-4 items-center'>
-          <YearSelector
-            selectedYear={selectedYear}
-            onYearChange={onYearChange}
-            disabled={disabled}
-          />
-        </div>
-      </div>
-
+    <div className='flex justify-between items-center gap-4 mb-4'>
       <p className='text-gray-600'>
         {t(
           "savings.trackMonthlySavings",
           "Track your monthly savings to visualize your progress throughout the year."
         )}
       </p>
-    </>
+      <YearSelector
+        selectedYear={selectedYear}
+        onYearChange={onYearChange}
+        disabled={disabled}
+      />
+    </div>
   );
 };
 

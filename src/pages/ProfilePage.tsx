@@ -3,20 +3,11 @@ import { UserProfile } from "../types/finance";
 import Header from "../components/Header";
 import UserDataProvider from "../components/profile/UserDataProvider";
 import PersonalInfoTab from "../components/profile/PersonalInfoTab";
-import InvestmentRecommendations from "../components/InvestmentRecommendations";
-import SavingStrategies from "../components/SavingStrategies";
 import { Button } from "../components/ui/button";
-import { ChevronLeft, Pencil, User, LineChart, PiggyBank } from "lucide-react";
+import { ChevronLeft, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../components/ui/tabs";
 import MobileHeader from "../components/ui/mobile-header";
 import MobileBottomNav from "../components/ui/mobile-bottom-nav";
-import ResponsiveContainer from "../components/ui/responsive-container";
 import { useTranslation } from "react-i18next";
 
 interface ProfilePageProps {
@@ -28,9 +19,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   userProfile,
   onProfileUpdate,
 }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeTab, setActiveTab] = useState("personal-info");
   const navigate = useNavigate();
 
   const handleProfileUpdate = async (updatedProfile: UserProfile) => {
@@ -57,127 +47,81 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       <MobileHeader title={t("profile.title", "Profile Settings")} />
 
       {/* Main Content */}
-      <main className='pb-20 md:pb-8'>
+      <main className='pt-16 pb-20 md:pt-0 md:pb-8'>
         <UserDataProvider
           userProfile={userProfile}
           onProfileUpdate={onProfileUpdate}>
           {({ profile, userName, handleInputChange }) => (
-            <ResponsiveContainer className='py-4 md:py-8 px-4'>
-              {/* Desktop Header Section */}
-              <div className='hidden md:flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4'>
-                <div>
-                  <h1 className='text-3xl font-bold'>
-                    {t("profile.title", "Profile Settings")}
-                  </h1>
-                  <p className='text-gray-500 mt-1'>
-                    {t("profile.welcome", "Welcome")},{" "}
-                    <span className='font-medium'>{userName}</span>
-                  </p>
+            <div className='w-full'>
+              {/* Full-width container consistent with header */}
+              <div className='container mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8'>
+                {/* Desktop Header Section */}
+                <div className='hidden md:flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4'>
+                  <div>
+                    <h1 className='text-3xl font-bold'>
+                      {t("profile.title", "Profile Settings")}
+                    </h1>
+                    <p className='text-gray-500 mt-1'>
+                      {t("profile.welcome", "Welcome")},{" "}
+                      <span className='font-medium'>{userName}</span>
+                    </p>
+                  </div>
+                  <div className='flex flex-wrap gap-3'>
+                    <Button
+                      variant='outline'
+                      onClick={handleEditFullProfile}
+                      className='flex items-center gap-2 border-finance-blue text-finance-blue hover:bg-finance-blue hover:text-white'>
+                      <Pencil className='h-4 w-4' />{" "}
+                      {t("profile.editFullProfile", "Edit Full Profile")}
+                    </Button>
+                    <Button
+                      variant='outline'
+                      onClick={() => navigate("/dashboard")}
+                      className='flex items-center gap-2'>
+                      <ChevronLeft className='h-4 w-4' />{" "}
+                      {t("profile.backToDashboard", "Back to Dashboard")}
+                    </Button>
+                  </div>
                 </div>
-                <div className='flex flex-wrap gap-3'>
+
+                {/* Mobile Welcome Message and Edit Button */}
+                <div className='md:hidden mb-4 flex flex-row items-center justify-between gap-3 px-4'>
+                  <p className='text-gray-600 text-left flex-1'>
+                    {t("profile.welcome", "Welcome")},{" "}
+                    <span className='font-medium text-finance-blue'>
+                      {userName}
+                    </span>
+                  </p>
                   <Button
                     variant='outline'
                     onClick={handleEditFullProfile}
-                    className='flex items-center gap-2 border-finance-blue text-finance-blue hover:bg-finance-blue hover:text-white'>
+                    className='flex-shrink-0 flex items-center justify-center gap-2 border-finance-blue text-finance-blue hover:bg-finance-blue hover:text-white'>
                     <Pencil className='h-4 w-4' />{" "}
                     {t("profile.editFullProfile", "Edit Full Profile")}
                   </Button>
-                  <Button
-                    variant='outline'
-                    onClick={() => navigate("/dashboard")}
-                    className='flex items-center gap-2'>
-                    <ChevronLeft className='h-4 w-4' />{" "}
-                    {t("profile.backToDashboard", "Back to Dashboard")}
-                  </Button>
+                </div>
+
+                {/* Personal Information Content */}
+                <div className='w-full'>
+                  <PersonalInfoTab
+                    profile={profile}
+                    onInputChange={handleInputChange}
+                    isSubmitting={isSubmitting}
+                  />
+
+                  <div className='mt-8 flex justify-center md:justify-end'>
+                    <Button
+                      onClick={() => handleProfileUpdate(profile)}
+                      disabled={isSubmitting}
+                      className='w-full md:w-auto bg-finance-blue hover:bg-finance-blue-dark text-white px-8 py-3 font-medium shadow-lg'>
+                      {isSubmitting
+                        ? t("profile.saving", "Saving...")
+                        : t("profile.saveChanges", "Save Changes")}
+                    </Button>
+                  </div>
                 </div>
               </div>
-
-              {/* Mobile Welcome Message and Edit Button */}
-              <div className='md:hidden mb-4 flex flex-row items-center justify-between gap-3 px-4'>
-                <p className='text-gray-600 text-left flex-1'>
-                  {t("profile.welcome", "Welcome")},{" "}
-                  <span className='font-medium text-finance-blue'>
-                    {userName}
-                  </span>
-                </p>
-                <Button
-                  variant='outline'
-                  onClick={handleEditFullProfile}
-                  className='flex-shrink-0 flex items-center justify-center gap-2 border-finance-blue text-finance-blue hover:bg-finance-blue hover:text-white'>
-                  <Pencil className='h-4 w-4' />{" "}
-                  {t("profile.editFullProfile", "Edit Full Profile")}
-                </Button>
-              </div>
-
-              {/* Tabs */}
-              <div className='w-full max-w-4xl mx-auto'>
-                <Tabs
-                  defaultValue='personal-info'
-                  value={activeTab}
-                  onValueChange={setActiveTab}
-                  className='w-full'>
-                  {/* Mobile Tab List - Scrollable */}
-                  <TabsList className='w-full justify-center mb-6 bg-transparent p-0 md:space-x-6 border-b border-gray-200 overflow-x-auto overflow-y-hidden transition-colors duration-300 my-3'>
-                    <div
-                      className={`flex space-x-2 md:space-x-6 w-max px-5 ${
-                        i18n.language === "pt-BR" ? "ml-[100px]" : "ml-5"
-                      }`}>
-                      <TabsTrigger
-                        value='personal-info'
-                        className='flex items-center gap-2 px-3 py-4 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none justify-center'>
-                        <User className='h-5 w-5' />
-                        <span className='font-medium text-base md:text-lg'>
-                          {t("profile.personalInfoTab", "Personal Info")}
-                        </span>
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value='investments'
-                        className='flex items-center gap-2 px-3 py-4 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none justify-center'>
-                        <LineChart className='h-5 w-5' />
-                        <span className='font-medium text-base md:text-lg'>
-                          {t("profile.investmentsTab", "Investments")}
-                        </span>
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value='savings'
-                        className='flex items-center gap-2 px-3 py-4 whitespace-nowrap data-[state=active]:border-b-2 data-[state=active]:border-finance-blue data-[state=active]:text-finance-blue rounded-none justify-center'>
-                        <PiggyBank className='h-5 w-5' />
-                        <span className='font-medium text-base md:text-lg'>
-                          {t("profile.strategiesTab", "Strategies")}
-                        </span>
-                      </TabsTrigger>
-                    </div>
-                  </TabsList>
-
-                  <TabsContent value='personal-info' className=''>
-                    <PersonalInfoTab
-                      profile={profile}
-                      onInputChange={handleInputChange}
-                      isSubmitting={isSubmitting}
-                    />
-
-                    <div className='mt-8 flex justify-center md:justify-end'>
-                      <Button
-                        onClick={() => handleProfileUpdate(profile)}
-                        disabled={isSubmitting}
-                        className='w-full md:w-auto bg-finance-blue hover:bg-finance-blue-dark text-white'>
-                        {isSubmitting
-                          ? t("profile.saving", "Saving...")
-                          : t("profile.saveChanges", "Save Changes")}
-                      </Button>
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value='investments' className=''>
-                    <InvestmentRecommendations userProfile={userProfile} />
-                  </TabsContent>
-
-                  <TabsContent value='savings' className=''>
-                    <SavingStrategies userProfile={userProfile} />
-                  </TabsContent>
-                </Tabs>
-              </div>
-            </ResponsiveContainer>
+            </div>
           )}
         </UserDataProvider>
       </main>

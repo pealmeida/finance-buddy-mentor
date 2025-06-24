@@ -3,6 +3,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import GoalForm from "./GoalForm";
 import { FinancialGoal } from "@/types/finance";
@@ -41,6 +42,17 @@ const GoalModal = ({
           <DialogTitle>
             {goal ? t("goals.editGoal") : t("goals.addNewGoal")}
           </DialogTitle>
+          <DialogDescription>
+            {goal
+              ? t(
+                  "goals.editGoalDescription",
+                  "Update your financial goal details."
+                )
+              : t(
+                  "goals.addGoalDescription",
+                  "Create a new financial goal to track your progress."
+                )}
+          </DialogDescription>
         </DialogHeader>
         <ErrorBoundary>
           <GoalForm

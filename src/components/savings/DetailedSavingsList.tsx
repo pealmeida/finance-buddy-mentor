@@ -14,9 +14,10 @@ import { Switch } from "../../components/ui/switch";
 import { Save, X, Calculator, Info, TrendingUp } from "lucide-react";
 import { useTranslatedMonths } from "../../constants/months";
 import { useTranslation } from "react-i18next";
-import { cn } from "../../lib/utils";
+import { cn, formatNumber } from "../../lib/utils";
 import { Alert, AlertDescription } from "../../components/ui/alert";
 import { useCurrency } from "../../context/CurrencyContext";
+import { CurrencyInput } from "../../components/ui/currency-input";
 
 interface DetailedSavingsListProps {
   monthData: MonthlyAmount;
@@ -25,6 +26,8 @@ interface DetailedSavingsListProps {
   monthlyIncome?: number;
   monthlyExpenses?: MonthlyAmount[];
   isMobile?: boolean;
+  onClose?: () => void;
+  modalTitle: string;
 }
 
 const DetailedSavingsList: React.FC<DetailedSavingsListProps> = ({
@@ -34,6 +37,8 @@ const DetailedSavingsList: React.FC<DetailedSavingsListProps> = ({
   monthlyIncome,
   monthlyExpenses,
   isMobile = false,
+  onClose,
+  modalTitle,
 }) => {
   const { t } = useTranslation();
   const { currencyConfig } = useCurrency();
@@ -144,9 +149,27 @@ const DetailedSavingsList: React.FC<DetailedSavingsListProps> = ({
         isMobile && "border-0 shadow-none bg-transparent"
       )}>
       <CardHeader className={cn(isMobile && "px-0 pt-4")}>
+        {/* Main modal title and close button for desktop */}
+        {!isMobile && (
+          <div className='flex justify-between items-center relative w-full pb-4 border-b'>
+            <h2 className='text-xl font-semibold leading-none tracking-tight'>
+              {modalTitle}
+            </h2>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className='absolute right-0 top-0 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground'
+                aria-label='Close'>
+                <X className='h-4 w-4' />
+                <span className='sr-only'>Close</span>
+              </button>
+            )}
+          </div>
+        )}
+
         <CardTitle
           className={cn(
-            "flex justify-between items-center",
+            "flex justify-between items-center pt-4",
             isMobile ? "flex-col space-y-3 items-stretch" : "flex-row"
           )}>
           <span className={cn(isMobile ? "text-xl text-center" : "text-2xl")}>
@@ -174,17 +197,17 @@ const DetailedSavingsList: React.FC<DetailedSavingsListProps> = ({
                 <div>
                   {t("savings.monthlyIncome", "Monthly Income")}:{" "}
                   {currencyConfig.symbol}
-                  {monthlyIncome.toLocaleString()}
+                  {formatNumber(monthlyIncome, 2)}
                 </div>
                 <div>
                   {t("savings.monthlyExpenses", "Monthly Expenses")} (
                   {monthName}): {currencyConfig.symbol}
-                  {monthExpenseAmount.toLocaleString()}
+                  {formatNumber(monthExpenseAmount, 2)}
                 </div>
                 <div className='font-medium'>
                   {t("savings.suggestedSavings", "Suggested Savings")}:{" "}
                   {currencyConfig.symbol}
-                  {suggestedSavings.toLocaleString()}
+                  {formatNumber(suggestedSavings, 2)}
                 </div>
               </div>
             </AlertDescription>
@@ -202,20 +225,17 @@ const DetailedSavingsList: React.FC<DetailedSavingsListProps> = ({
                 <span className='absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10'>
                   {currencyConfig.symbol}
                 </span>
-                <Input
+                <CurrencyInput
                   id='amount'
-                  type='number'
                   value={value}
-                  onChange={handleChange}
+                  onChange={(newValue) => setValue(newValue)}
                   disabled={autoCalculationEnabled}
                   className={cn(
                     "pl-7",
                     isMobile && "h-12 text-base",
                     autoCalculationEnabled && "bg-muted cursor-not-allowed"
                   )}
-                  placeholder='0.00'
-                  min='0'
-                  step='0.01'
+                  placeholder='0,00'
                   autoFocus={!autoCalculationEnabled}
                 />
               </div>
