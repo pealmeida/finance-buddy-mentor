@@ -3,7 +3,6 @@ import Header from "../components/Header";
 import { UserProfile } from "../types/finance";
 import { useSimpleAuthCheck } from "../hooks/useSimpleAuthCheck";
 import MonthlySavings from "../components/savings/MonthlySavings";
-import SavingStrategies from "../components/SavingStrategies";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import MobileHeader from "../components/ui/mobile-header";
@@ -67,11 +66,6 @@ const MonthlySavingsPage: React.FC<MonthlySavingsPageProps> = ({
             className='bg-white rounded-lg md:rounded-2xl shadow-sm md:shadow-lg p-4 md:p-8'
             style={{ marginTop: "0px" }}>
             <MonthlySavings profile={userProfile} onSave={handleSave} />
-          </div>
-
-          {/* Saving Strategies Section */}
-          <div className='w-full'>
-            <SavingStrategies userProfile={userProfile} />
           </div>
         </ResponsiveContainer>
       </main>

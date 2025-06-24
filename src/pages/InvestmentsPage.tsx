@@ -2,7 +2,6 @@ import React from "react";
 import Header from "../components/Header";
 import { UserProfile } from "../types/finance";
 import Investments from "../components/investments/Investments";
-import InvestmentRecommendations from "../components/InvestmentRecommendations";
 import { Card, CardContent } from "../components/ui/card";
 import { useTranslation } from "react-i18next";
 import MobileHeader from "../components/ui/mobile-header";
@@ -50,11 +49,6 @@ const InvestmentsPage: React.FC<InvestmentsPageProps> = ({
               <Investments profile={userProfile} onSave={onProfileUpdate} />
             </CardContent>
           </Card>
-
-          {/* Investment Recommendations Section */}
-          <div className='w-full'>
-            <InvestmentRecommendations userProfile={userProfile} />
-          </div>
         </ResponsiveContainer>
       </main>
 
