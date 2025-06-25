@@ -248,10 +248,10 @@ const FinancialOverviewConfigModal: React.FC<
             <PieChart className='h-5 w-5 text-blue-600' />
             {t("overview.configuration.title", "Configure Financial Overview")}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className='sr-only'>
             {t(
-              "overview.configuration.description",
-              "Customize which financial data and components are displayed within your financial overview. The overview section itself will always remain visible."
+              "dashboard.financialOverviewConfigDescription",
+              "Configure your financial overview settings"
             )}
           </DialogDescription>
         </DialogHeader>

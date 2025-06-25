@@ -124,11 +124,17 @@ const ExpenseFormDialogs: React.FC<ExpenseFormDialogsProps> = ({
     <>
       {/* Add Expense Dialog (Desktop) */}
       <Dialog open={isAddDialogOpen} onOpenChange={onCloseAddDialog}>
-        <DialogContent>
+        <DialogContent aria-describedby='add-expense-description'>
           <DialogHeader>
             <DialogTitle>{addExpenseTitle}</DialogTitle>
             <DialogDescription>{addExpenseDescription}</DialogDescription>
           </DialogHeader>
+          <p id='add-expense-description'>
+            {t(
+              "expenses.addExpenseDescription",
+              "Fill out the form to add a new expense."
+            )}
+          </p>
           <ExpenseItemForm onSubmit={onAddExpense} defaultMonth={monthNumber} />
         </DialogContent>
       </Dialog>
@@ -137,11 +143,17 @@ const ExpenseFormDialogs: React.FC<ExpenseFormDialogsProps> = ({
       <Dialog
         open={!!editingExpense}
         onOpenChange={(open) => !open && onCloseEditDialog()}>
-        <DialogContent>
+        <DialogContent aria-describedby='edit-expense-description'>
           <DialogHeader>
             <DialogTitle>{editExpenseTitle}</DialogTitle>
             <DialogDescription>{editExpenseDescription}</DialogDescription>
           </DialogHeader>
+          <p id='edit-expense-description'>
+            {t(
+              "expenses.editExpenseDescription",
+              "Update the expense details below."
+            )}
+          </p>
           {editingExpense && (
             <ExpenseItemForm
               onSubmit={onUpdateExpense}

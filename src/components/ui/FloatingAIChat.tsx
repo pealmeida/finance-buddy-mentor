@@ -402,7 +402,7 @@ const FloatingAIChat: React.FC<FloatingAIChatProps> = ({
           ratio: Math.round(expensesRatio),
           defaultValue: `Muito bem ${userName}! 👏 Suas despesas estão controladas em ${Math.round(
             expensesRatio
-          )}% da renda.\n\n✅ Continue monitorando\n�� Considere aumentar economias\n📈 Explore oportunidades de investimento\n🎯 Defina metas de longo prazo\n\nPosso ajudar a otimizar ainda mais suas finanças!`,
+          )}% da renda.\n\n✅ Continue monitorando\n Considere aumentar economias\n📈 Explore oportunidades de investimento\n🎯 Defina metas de longo prazo\n\nPosso ajudar a otimizar ainda mais suas finanças!`,
         });
       }
     }
@@ -531,6 +531,12 @@ const FloatingAIChat: React.FC<FloatingAIChatProps> = ({
 
   const handleFullScreen = () => {
     setIsFullScreen(!isFullScreen);
+  };
+
+  // Add a handler to close both full-screen and floating dialogs
+  const handleCloseChat = () => {
+    setIsFullScreen(false);
+    setIsOpen(false);
   };
 
   const clearChat = () => {
@@ -1195,7 +1201,7 @@ const FloatingAIChat: React.FC<FloatingAIChatProps> = ({
         <Sheet open={isFullScreen} onOpenChange={setIsFullScreen}>
           <SheetContent
             side='bottom'
-            className='fixed z-[10000] gap-4 bg-background shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 inset-x-0 bottom-0 data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom h-[95vh] w-full rounded-t-lg border-t flex flex-col overflow-hidden p-0'
+            className='fixed z-[10000] gap-4 bg-background shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 inset-x-0 bottom-0 data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom h-[95vh] w-full rounded-t-lg border-t-0 flex flex-col overflow-hidden p-0'
             role='dialog'
             aria-describedby='chat-description'
             aria-labelledby='chat-title'>
@@ -1240,10 +1246,22 @@ const FloatingAIChat: React.FC<FloatingAIChatProps> = ({
                     />
                   </Button>
 
-                  <SheetClose className='rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none h-8 w-8 p-0'>
-                    <span className='sr-only'>Close</span>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    onClick={handleFullScreen}
+                    className='h-8 w-8 p-0 hover:bg-white/20 transition-all duration-200'
+                    title='Tela Normal'>
+                    <Minimize className='h-4 w-4 text-white' />
+                  </Button>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    onClick={handleCloseChat}
+                    className='h-8 w-8 p-0 hover:bg-white/20 transition-all duration-200'
+                    title='Fechar'>
                     <X className='h-4 w-4 text-white' />
-                  </SheetClose>
+                  </Button>
                 </div>
               </div>
             </SheetHeader>

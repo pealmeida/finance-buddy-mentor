@@ -128,12 +128,12 @@ const GoalList: React.FC<GoalListProps> = ({ goals, onEdit, onDelete }) => {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>
-                          {t("goals.deleteGoal", "Delete Financial Goal")}
+                          {t("goals.confirmDeletion", "Confirm Goal Deletion")}
                         </AlertDialogTitle>
                         <AlertDialogDescription>
                           {t(
-                            "goals.deleteConfirmation",
-                            "Are you sure you want to delete this financial goal? This action cannot be undone."
+                            "goals.confirmDeletionDescription",
+                            "Are you sure you want to delete this goal? This action cannot be undone."
                           )}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
@@ -251,12 +251,15 @@ const GoalList: React.FC<GoalListProps> = ({ goals, onEdit, onDelete }) => {
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>
-                            {t("goals.deleteGoal", "Delete Financial Goal")}
+                            {t(
+                              "goals.confirmDeletion",
+                              "Confirm Goal Deletion"
+                            )}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
                             {t(
-                              "goals.deleteConfirmation",
-                              "Are you sure you want to delete this financial goal? This action cannot be undone."
+                              "goals.confirmDeletionDescription",
+                              "Are you sure you want to delete this goal? This action cannot be undone."
                             )}
                           </AlertDialogDescription>
                         </AlertDialogHeader>

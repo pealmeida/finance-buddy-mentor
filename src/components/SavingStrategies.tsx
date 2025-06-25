@@ -29,6 +29,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogTrigger,
 } from "./ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
@@ -334,6 +335,12 @@ const SavingStrategies: React.FC<SavingStrategiesProps> = ({ userProfile }) => {
               <DialogTitle className='text-2xl font-bold text-center pr-12'>
                 Create Your Savings Plan
               </DialogTitle>
+              <DialogDescription className='sr-only'>
+                {t(
+                  "savings.strategies.modalDescription",
+                  "Start with easy strategies and gradually implement more advanced ones. Small changes can lead to significant savings over time."
+                )}
+              </DialogDescription>
             </DialogHeader>
             <div className='px-6 pb-6'>
               <ModalContent />

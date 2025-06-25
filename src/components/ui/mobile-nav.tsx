@@ -10,16 +10,16 @@ import {
   User,
   LogOut,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "./button";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from "./sheet";
 import { useTranslation } from "react-i18next";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "../../integrations/supabase/client";
 
 const MobileNav: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -61,7 +61,7 @@ const MobileNav: React.FC = () => {
           <span className='sr-only'>Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side='left' className='w-[280px] p-0'>
+      <SheetContent side='left' className='w-[280px] p-0 border-r-0'>
         <SheetHeader className='px-6 py-4 border-b bg-finance-blue text-white'>
           <SheetTitle className='text-left text-white font-bold text-lg'>
             Finance Buddy

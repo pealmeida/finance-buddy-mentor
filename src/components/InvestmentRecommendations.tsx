@@ -21,7 +21,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./ui/accordion";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "./ui/dialog";
 import { Sheet, SheetContent, SheetTitle } from "./ui/sheet";
 import { useIsMobile } from "../hooks/use-mobile";
 import { useTranslation } from "react-i18next";
@@ -348,6 +354,12 @@ const InvestmentRecommendations: React.FC<InvestmentRecommendationsProps> = ({
                   "Create Your Investment Plan"
                 )}
               </DialogTitle>
+              <DialogDescription className='sr-only'>
+                {t(
+                  "investments.recommendations.modalDescription",
+                  "Start with diversified portfolios and gradually build your wealth. Smart investing today can lead to significant returns over time."
+                )}
+              </DialogDescription>
             </DialogHeader>
             <div className='px-6 pb-6'>
               <ModalContent />
