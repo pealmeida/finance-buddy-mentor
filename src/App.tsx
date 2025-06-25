@@ -1,4 +1,6 @@
 import React from "react";
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { useAuth } from "./hooks/useAuth";
 import LoadingScreen from "./components/LoadingScreen";
 import AppRoutes from "./components/AppRoutes";
@@ -33,6 +35,8 @@ function App() {
           onProfileComplete={handleProfileComplete}
           onProfileUpdate={handleProfileUpdate}
         />
+        <Analytics />
+        <SpeedInsights />
       </CurrencyProvider>
     </LanguageProvider>
   );
